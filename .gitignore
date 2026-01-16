@@ -344,7 +344,7 @@ fabric.properties
 ### Python Patch ###
 # Poetry local configuration file - https://python-poetry.org/docs/configuration/#local-configuration
 poetry.toml
-
+debug.log
 # ruff
 .ruff_cache/
 
