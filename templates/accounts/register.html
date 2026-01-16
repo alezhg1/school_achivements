@@ -1,871 +1,832 @@
-[file name]: register.html
-[file content begin]
-{% extends 'base.html' %}
-{% block title %}Регистрация - Мои достижения 444{% endblock %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="csrf-token" content="{{ csrf_token }}">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Регистрация - Мои достижения 444</title>
+  <style>
+    /* СБРОС СТИЛЕЙ */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-{% block content %}
-<div class="auth-page">
-  <div class="auth-container">
-    
-    <!-- Левый блок - Минимальная информация -->
-    <div class="auth-info-card">
-      <div class="auth-header">
-        <h1>Регистрация</h1>
-        <div class="platform-icon">🎯</div>
-        <p class="platform-title">Мои достижения 444</p>
-      </div>
+    html, body {
+      height: 100%;
+      background: white;
+      font-family: "Segoe UI", Roboto, -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+      font-size: 13px; /* Еще меньше */
+      line-height: 1.3;
+    }
 
-      <!-- Краткое описание -->
-      <div class="brief-description">
-        <p>Создайте аккаунт для доступа ко всем возможностям платформы</p>
-      </div>
+    /* HEADER - КАК В BASE.HTML НО БЕЗ ОТСТУПОВ */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(90deg, #0077e6 0%, #005bb5 100%);
+      color: #fff;
+      z-index: 1200;
+      box-shadow: 0 3px 8px rgba(3, 36, 74, 0.12);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 12px;
+      width: 100%;
+      height: 55px; /* Меньше */
+    }
 
-      <!-- Ссылка на вход -->
-      <div class="auth-switch">
-        <p>Уже есть аккаунт?</p>
-        <a href="{% url 'login' %}" class="switch-link">Войти в систему</a>
-      </div>
+    .logo a {
+      font-weight: 700;
+      font-size: 1rem; /* Меньше */
+      color: #fff;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      flex: 1;
+    }
+
+    nav a {
+      color: rgba(255, 255, 255, 0.95);
+      text-decoration: none;
+      padding: 5px 7px;
+      border-radius: 5px;
+      font-weight: 600;
+      transition: all 0.22s;
+      font-size: 0.8rem; /* Меньше */
+      white-space: nowrap;
+    }
+
+    nav a:hover {
+      background: rgba(255, 255, 255, 0.08);
+      transform: translateY(-1px);
+    }
+
+    .logout-btn {
+      background: rgba(220, 53, 69, 0.9);
+      color: white;
+      padding: 5px 8px;
+      border-radius: 5px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.75rem; /* Меньше */
+      border: none;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.3s ease;
+      margin-left: 5px;
+    }
+
+    .logout-btn:hover {
+      background: #dc3545;
+      transform: translateY(-1px);
+    }
+
+    /* ОСНОВНОЙ КОНТЕНТ - РЕГИСТРАЦИЯ */
+    .main-content {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: calc(100vh - 55px); /* Высота минус хедер */
+      margin-top: 55px; /* Отступ под хедер */
+      box-sizing: border-box;
+      padding: 15px; /* Меньше */
+    }
+
+    /* КОНТЕЙНЕР РЕГИСТРАЦИИ - ЕЩЕ МЕНЬШЕ */
+    .register-container {
+      display: grid;
+      grid-template-columns: 0.5fr 1.5fr; /* Левая часть еще уже */
+      gap: 20px; /* Меньше */
+      max-width: 800px; /* Еще меньше */
+      width: 100%;
+      animation: fadeIn 0.5s ease;
+      align-self: center;
+    }
+
+    /* Левый блок - Минимальная информация */
+    .auth-info-card {
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      border: 1px solid #dee2e6;
+      color: #333;
+      padding: 20px 15px; /* Еще меньше */
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 15px; /* Еще меньше */
+      text-align: center;
+      height: auto;
+    }
+
+    .auth-header h1 {
+      font-size: 1.4rem; /* Еще меньше */
+      margin: 0;
+      font-weight: 800;
+      line-height: 1.2;
+      color: #003366;
+    }
+
+    .platform-icon {
+      font-size: 2rem; /* Еще меньше */
+      margin: 8px auto; /* Еще меньше */
+    }
+
+    .platform-title {
+      font-size: 1rem; /* Еще меньше */
+      font-weight: 600;
+      color: #007bff;
+      margin: 0;
+    }
+
+    .brief-description p {
+      font-size: 0.75rem; /* Еще меньше */
+      color: #666;
+      line-height: 1.3; /* Еще меньше */
+      margin: 0;
+    }
+
+    /* Ссылка на вход */
+    .auth-switch {
+      margin-top: 10px; /* Еще меньше */
+      padding-top: 10px; /* Еще меньше */
+      border-top: 1px solid #dee2e6;
+    }
+
+    .auth-switch p {
+      color: #666;
+      font-size: 0.75rem; /* Еще меньше */
+      margin: 0 0 6px 0;
+    }
+
+    .switch-link {
+      display: inline-block;
+      background: #007bff;
+      color: white;
+      padding: 6px 12px; /* Еще меньше */
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.75rem; /* Еще меньше */
+      transition: all 0.3s ease;
+    }
+
+    .switch-link:hover {
+      background: #0056b3;
+      transform: translateY(-2px);
+    }
+
+    /* Правый блок - Форма (еще меньше) */
+    .auth-form-card {
+      background: white;
+      padding: 20px; /* Еще меньше */
+      border-radius: 12px;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06);
+      border: 1px solid #e9ecef;
+      height: auto;
+    }
+
+    .auth-form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px; /* Еще меньше */
+    }
+
+    /* Уведомление для учителей */
+    .teacher-notice {
+      background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+      color: #0d47a1;
+      padding: 8px 10px; /* Еще меньше */
+      border-radius: 6px;
+      border: 1px solid #90caf9;
+      margin-bottom: 10px; /* Еще меньше */
+    }
+
+    .teacher-notice.hidden {
+      display: none;
+    }
+
+    .notice-header {
+      display: flex;
+      align-items: center;
+      gap: 6px; /* Еще меньше */
+    }
+
+    .notice-icon {
+      font-size: 1rem; /* Еще меньше */
+    }
+
+    .notice-header div {
+      flex: 1;
+    }
+
+    .notice-header strong {
+      display: block;
+      font-size: 0.8rem; /* Еще меньше */
+      margin-bottom: 1px;
+    }
+
+    .notice-header p {
+      margin: 0;
+      font-size: 0.7rem; /* Еще меньше */
+      opacity: 0.9;
+    }
+
+    /* Секции формы (еще меньше) */
+    .form-section {
+      display: flex;
+      flex-direction: column;
+      gap: 8px; /* Еще меньше */
+    }
+
+    .form-section h3 {
+      color: #003366;
+      margin: 0;
+      font-size: 0.9rem; /* Еще меньше */
+      font-weight: 600;
+    }
+
+    /* Выбор роли (еще меньше) */
+    .role-selection {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px; /* Еще меньше */
+    }
+
+    .role-card {
+      position: relative;
+      cursor: pointer;
+    }
+
+    .role-card input[type="radio"] {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .role-card-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px; /* Еще меньше */
+      padding: 12px 8px; /* Еще меньше */
+      border: 1.5px solid #e8f4ff;
+      border-radius: 8px;
+      background: white;
+      transition: all 0.3s ease;
+      text-align: center;
+    }
+
+    .role-card input[type="radio"]:checked + .role-card-content,
+    .role-card.active .role-card-content {
+      background: #007bff;
+      color: white;
+      border-color: #007bff;
+      box-shadow: 0 2px 6px rgba(0, 123, 255, 0.15);
+      transform: translateY(-1px);
+    }
+
+    .role-card:hover .role-card-content {
+      border-color: #007bff;
+      transform: translateY(-1px);
+    }
+
+    .role-icon {
+      font-size: 1.3rem; /* Еще меньше */
+    }
+
+    .role-title {
+      font-weight: 600;
+      font-size: 0.8rem; /* Еще меньше */
+    }
+
+    /* Сетка формы (еще меньше) */
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px; /* Еще меньше */
+    }
+
+    .form-row {
+      display: flex;
+      gap: 10px; /* Еще меньше */
+    }
+
+    .form-row .form-group {
+      flex: 1;
+    }
+
+    /* Группы формы (еще меньше) */
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px; /* Еще меньше */
+    }
+
+    .form-group label {
+      font-weight: 600;
+      color: #003366;
+      font-size: 0.75rem; /* Еще меньше */
+    }
+
+    .auth-form input:not([type="checkbox"]),
+    .auth-form select {
+      width: 100%;
+      padding: 8px 10px; /* Еще меньше */
+      border: 1.5px solid #e8f4ff;
+      border-radius: 6px;
+      background: #f9fcff;
+      font-size: 0.8rem; /* Еще меньше */
+      transition: all 0.3s ease;
+      font-family: inherit;
+    }
+
+    .auth-form input:focus,
+    .auth-form select:focus {
+      border-color: #007bff;
+      box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.1);
+      outline: none;
+      background: white;
+    }
+
+    .error-field {
+      border-color: #dc3545 !important;
+    }
+
+    .email-hint small {
+      color: #007bff;
+      font-size: 0.65rem; /* Еще меньше */
+    }
+
+    /* Чекбокс (еще меньше) */
+    .checkbox-group {
+      display: flex;
+      align-items: flex-start;
+      gap: 6px; /* Еще меньше */
+    }
+
+    .checkbox-group input[type="checkbox"] {
+      width: 12px; /* Еще меньше */
+      height: 12px; /* Еще меньше */
+      margin-top: 1px;
+    }
+
+    .checkbox-label {
+      font-size: 0.75rem; /* Еще меньше */
+      color: #333;
+      line-height: 1.2; /* Еще меньше */
+      cursor: pointer;
+    }
+
+    .checkbox-label a {
+      color: #007bff;
+      font-weight: 600;
+    }
+
+    /* Кнопка (еще меньше) */
+    .btn-primary {
+      background: linear-gradient(135deg, #007bff, #0047b3);
+      color: white;
+      border: none;
+      padding: 10px; /* Еще меньше */
+      font-weight: 600;
+      border-radius: 7px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 0.85rem; /* Еще меньше */
+      margin-top: 5px; /* Еще меньше */
+      width: 100%;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Ошибки (еще меньше) */
+    .alert {
+      padding: 8px 10px; /* Еще меньше */
+      border-radius: 6px;
+      margin-bottom: 10px;
+    }
+
+    .alert-error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    .field-errors {
+      margin-top: 2px;
+    }
+
+    .error {
+      color: #dc3545;
+      font-size: 0.65rem; /* Еще меньше */
+      display: block;
+    }
+
+    /* Футер формы (еще меньше) */
+    .auth-footer {
+      text-align: center;
+      margin-top: 10px; /* Еще меньше */
+      color: #666;
+      font-size: 0.7rem; /* Еще меньше */
+    }
+
+    .auth-footer a {
+      color: #007bff;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .auth-footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* Анимации */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* Для очень маленьких экранов */
+    @media (max-width: 768px) {
+      .register-container {
+        grid-template-columns: 1fr;
+        max-width: 95%;
+        gap: 15px;
+      }
+
+      .auth-info-card {
+        padding: 15px 12px;
+        display: none;
+      }
+
+      .auth-form-card {
+        padding: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Хедер как в base.html -->
+  <header>
+    <div class="logo">
+      <a href="/">Мои достижения</a>
     </div>
 
-    <!-- Правый блок - Форма регистрации -->
-    <div class="auth-form-card">
-      <form method="post" class="auth-form" id="registerForm" novalidate>
-        {% csrf_token %}
+    <nav>
+      {% if user.is_authenticated %}
+        <a href="{% url 'dashboard' %}">Главная</a>
+        <a href="{% url 'profile' user.username %}">Профиль</a>
+        <a href="{% url 'logout' %}" class="logout-btn">Выйти</a>
+      {% else %}
+        <a href="{% url 'login' %}">Войти</a>
+        <a href="{% url 'register' %}" class="logout-btn">Регистрация</a>
+      {% endif %}
+    </nav>
+  </header>
 
-        <!-- Уведомление для учителей -->
-        <div class="teacher-notice hidden" id="teacherNotice">
-          <div class="notice-header">
-            <span class="notice-icon">👨‍🏫</span>
-            <div>
-              <strong>Регистрация учителя</strong>
-              <p>Используйте школьный email @schmos444.ru</p>
-            </div>
-          </div>
+  <!-- Основной контент -->
+  <div class="main-content">
+    <div class="register-container">
+      
+      <!-- Левый блок -->
+      <div class="auth-info-card">
+        <div class="auth-header">
+          <h1>Регистрация</h1>
+          <div class="platform-icon">🎯</div>
+          <p class="platform-title">Мои достижения 444</p>
         </div>
 
-        <!-- Вывод общих ошибок -->
-        {% if form.non_field_errors %}
-          <div class="alert alert-error">
-            {% for error in form.non_field_errors %}
-              {{ error }}
-            {% endfor %}
-          </div>
-        {% endif %}
+        <div class="brief-description">
+          <p>Создайте аккаунт для доступа ко всем возможностям платформы</p>
+        </div>
 
-        <!-- Роль пользователя -->
-        <div class="form-section">
-          <h3>Выберите роль *</h3>
-          <div class="role-selection">
-            <label class="role-card {% if form.role.value == 'student' or not form.role.value %}active{% endif %}">
-              <input type="radio" name="role" value="student" {% if form.role.value == 'student' or not form.role.value %}checked{% endif %}>
-              <div class="role-card-content">
-                <span class="role-icon">👨‍🎓</span>
-                <span class="role-title">Ученик</span>
+        <div class="auth-switch">
+          <p>Уже есть аккаунт?</p>
+          <a href="{% url 'login' %}" class="switch-link">Войти в систему</a>
+        </div>
+      </div>
+
+      <!-- Правый блок - Форма -->
+      <div class="auth-form-card">
+        <form method="post" class="auth-form" id="registerForm" novalidate>
+          {% csrf_token %}
+
+          <!-- Уведомление для учителей -->
+          <div class="teacher-notice hidden" id="teacherNotice">
+            <div class="notice-header">
+              <span class="notice-icon">👨‍🏫</span>
+              <div>
+                <strong>Регистрация учителя</strong>
+                <p>Используйте школьный email @schmos444.ru</p>
               </div>
-            </label>
-            
-            <label class="role-card {% if form.role.value == 'teacher' %}active{% endif %}">
-              <input type="radio" name="role" value="teacher" {% if form.role.value == 'teacher' %}checked{% endif %}>
-              <div class="role-card-content">
-                <span class="role-icon">👨‍🏫</span>
-                <span class="role-title">Учитель</span>
-              </div>
-            </label>
+            </div>
           </div>
-          {% if form.role.errors %}
-            <div class="field-errors">
-              {% for error in form.role.errors %}
-                <span class="error">{{ error }}</span>
+
+          <!-- Вывод общих ошибок -->
+          {% if form.non_field_errors %}
+            <div class="alert alert-error">
+              {% for error in form.non_field_errors %}
+                {{ error }}
               {% endfor %}
             </div>
           {% endif %}
-        </div>
 
-        <!-- Основная информация -->
-        <div class="form-section">
-          <h3>Основная информация</h3>
-          <div class="form-grid">
-            <div class="form-group">
-              <label for="id_username">Логин *</label>
-              <input type="text" name="username" id="id_username" 
-                     value="{{ form.username.value|default:'' }}" 
-                     class="{% if form.username.errors %}error-field{% endif %}" 
-                     placeholder="Придумайте логин" required>
-              {% if form.username.errors %}
-                <div class="field-errors">
-                  {% for error in form.username.errors %}
-                    <span class="error">{{ error }}</span>
-                  {% endfor %}
+          <!-- Роль пользователя -->
+          <div class="form-section">
+            <h3>Выберите роль *</h3>
+            <div class="role-selection">
+              <label class="role-card {% if form.role.value == 'student' or not form.role.value %}active{% endif %}">
+                <input type="radio" name="role" value="student" {% if form.role.value == 'student' or not form.role.value %}checked{% endif %}>
+                <div class="role-card-content">
+                  <span class="role-icon">👨‍🎓</span>
+                  <span class="role-title">Ученик</span>
                 </div>
-              {% endif %}
+              </label>
+              
+              <label class="role-card {% if form.role.value == 'teacher' %}active{% endif %}">
+                <input type="radio" name="role" value="teacher" {% if form.role.value == 'teacher' %}checked{% endif %}>
+                <div class="role-card-content">
+                  <span class="role-icon">👨‍🏫</span>
+                  <span class="role-title">Учитель</span>
+                </div>
+              </label>
             </div>
+          </div>
 
-            <div class="form-group">
-              <label for="id_email">Email *</label>
-              <input type="email" name="email" id="id_email" 
-                     value="{{ form.email.value|default:'' }}" 
-                     class="{% if form.email.errors %}error-field{% endif %}" 
-                     placeholder="your@email.com" required>
-              {% if form.email.errors %}
-                <div class="field-errors">
-                  {% for error in form.email.errors %}
-                    <span class="error">{{ error }}</span>
-                  {% endfor %}
+          <!-- Основная информация -->
+          <div class="form-section">
+            <h3>Основная информация</h3>
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="id_username">Логин *</label>
+                <input type="text" name="username" id="id_username" 
+                       value="{{ form.username.value|default:'' }}" 
+                       placeholder="Придумайте логин" required>
+              </div>
+
+              <div class="form-group">
+                <label for="id_email">Email *</label>
+                <input type="email" name="email" id="id_email" 
+                       value="{{ form.email.value|default:'' }}" 
+                       placeholder="your@email.com" required>
+                <div class="email-hint hidden" id="teacherEmailHint">
+                  <small>Для учителей: используйте @schmos444.ru</small>
                 </div>
-              {% endif %}
-              <div class="email-hint hidden" id="teacherEmailHint">
-                <small>Для учителей: используйте @schmos444.ru</small>
+              </div>
+
+              <div class="form-group">
+                <label for="id_first_name">Имя</label>
+                <input type="text" name="first_name" id="id_first_name" 
+                       value="{{ form.first_name.value|default:'' }}" 
+                       placeholder="Ваше имя">
+              </div>
+
+              <div class="form-group">
+                <label for="id_last_name">Фамилия</label>
+                <input type="text" name="last_name" id="id_last_name" 
+                       value="{{ form.last_name.value|default:'' }}" 
+                       placeholder="Ваша фамилия">
               </div>
             </div>
-
-            <div class="form-group">
-              <label for="id_first_name">Имя</label>
-              <input type="text" name="first_name" id="id_first_name" 
-                     value="{{ form.first_name.value|default:'' }}" 
-                     placeholder="Ваше имя">
-            </div>
-
-            <div class="form-group">
-              <label for="id_last_name">Фамилия</label>
-              <input type="text" name="last_name" id="id_last_name" 
-                     value="{{ form.last_name.value|default:'' }}" 
-                     placeholder="Ваша фамилия">
-            </div>
           </div>
-        </div>
 
-        <!-- Класс (только для учеников) -->
-        <div class="form-section student-fields {% if form.role.value == 'teacher' %}hidden{% endif %}" id="studentFields">
-          <h3>Информация о классе *</h3>
-          <div class="form-row">
-            <div class="form-group">
-              <label for="id_class_number">Номер класса</label>
-              <input type="text" name="class_number" id="id_class_number" 
-                     value="{{ form.class_number.value|default:'' }}" 
-                     placeholder="Например: 5" required>
-            </div>
-            
-            <div class="form-group">
-              <label for="id_class_letter">Буква класса</label>
-              <input type="text" name="class_letter" id="id_class_letter" 
-                     value="{{ form.class_letter.value|default:'' }}" 
-                     placeholder="Например: А" required>
-            </div>
-          </div>
-        </div>
-
-        <!-- Пароли -->
-        <div class="form-section">
-          <h3>Безопасность</h3>
-          <div class="form-row">
-            <div class="form-group">
-              <label for="id_password1">Пароль *</label>
-              <input type="password" name="password1" id="id_password1" 
-                     class="{% if form.password1.errors %}error-field{% endif %}" 
-                     placeholder="Не менее 8 символов" required>
-              {% if form.password1.errors %}
-                <div class="field-errors">
-                  {% for error in form.password1.errors %}
-                    <span class="error">{{ error }}</span>
-                  {% endfor %}
-                </div>
-              {% endif %}
-            </div>
-            
-            <div class="form-group">
-              <label for="id_password2">Подтвердите пароль *</label>
-              <input type="password" name="password2" id="id_password2" 
-                     class="{% if form.password2.errors %}error-field{% endif %}" 
-                     placeholder="Повторите пароль" required>
-              {% if form.password2.errors %}
-                <div class="field-errors">
-                  {% for error in form.password2.errors %}
-                    <span class="error">{{ error }}</span>
-                  {% endfor %}
-                </div>
-              {% endif %}
-            </div>
-          </div>
-        </div>
-
-        <!-- Соглашение -->
-        <div class="form-section">
-          <div class="checkbox-group">
-            <input type="checkbox" name="accept_policy" 
-                   id="id_accept_policy" 
-                   {% if form.accept_policy.value %}checked{% endif %} required>
-            <label for="id_accept_policy" class="checkbox-label">
-              Я согласен с <a href="#" style="color: #007bff; text-decoration: none;">политикой обработки персональных данных</a> *
-            </label>
-            {% if form.accept_policy.errors %}
-              <div class="field-errors">
-                {% for error in form.accept_policy.errors %}
-                  <span class="error">{{ error }}</span>
-                {% endfor %}
+          <!-- Класс (только для учеников) -->
+          <div class="form-section student-fields {% if form.role.value == 'teacher' %}hidden{% endif %}" id="studentFields">
+            <h3>Информация о классе *</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="id_class_number">Номер класса</label>
+                <input type="text" name="class_number" id="id_class_number" 
+                       value="{{ form.class_number.value|default:'' }}" 
+                       placeholder="Например: 5" required>
               </div>
-            {% endif %}
+              
+              <div class="form-group">
+                <label for="id_class_letter">Буква класса</label>
+                <input type="text" name="class_letter" id="id_class_letter" 
+                       value="{{ form.class_letter.value|default:'' }}" 
+                       placeholder="Например: А" required>
+              </div>
+            </div>
           </div>
-        </div>
 
-        <!-- Кнопка отправки -->
-        <button type="submit" class="btn-primary" id="submitBtn">
-          <span class="btn-text">Создать аккаунт</span>
-          <span class="btn-loading" style="display: none;">⏳ Создаем аккаунт...</span>
-        </button>
+          <!-- Пароли -->
+          <div class="form-section">
+            <h3>Безопасность</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="id_password1">Пароль *</label>
+                <input type="password" name="password1" id="id_password1" 
+                       placeholder="Не менее 8 символов" required>
+              </div>
+              
+              <div class="form-group">
+                <label for="id_password2">Подтвердите пароль *</label>
+                <input type="password" name="password2" id="id_password2" 
+                       placeholder="Повторите пароль" required>
+              </div>
+            </div>
+          </div>
 
-        <div class="auth-footer">
-          Есть вопросы? <a href="#">Написать в поддержку</a>
-        </div>
-      </form>
+          <!-- Соглашение -->
+          <div class="form-section">
+            <div class="checkbox-group">
+              <input type="checkbox" name="accept_policy" 
+                     id="id_accept_policy" 
+                     {% if form.accept_policy.value %}checked{% endif %} required>
+              <label for="id_accept_policy" class="checkbox-label">
+                Я согласен с <a href="#" style="color: #007bff; text-decoration: none;">политикой обработки персональных данных</a> *
+              </label>
+            </div>
+          </div>
+
+          <!-- Кнопка отправки -->
+          <button type="submit" class="btn-primary" id="submitBtn">
+            <span class="btn-text">Создать аккаунт</span>
+            <span class="btn-loading" style="display: none;">⏳ Создаем аккаунт...</span>
+          </button>
+
+          <div class="auth-footer">
+            Есть вопросы? <a href="#">Написать в поддержку</a>
+          </div>
+        </form>
+      </div>
+
     </div>
-
   </div>
-</div>
 
-<style>
-/* Полный сброс фона */
-html, body {
-  background: white !important;
-  margin: 0;
-  padding: 0;
-  min-height: 100vh;
-  height: 100vh;
-  overflow: hidden; /* Убираем скролл страницы */
-}
-
-/* Убираем черные отступы */
-* {
-  box-sizing: border-box;
-}
-
-.auth-page {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh; /* Занимаем всю высоту экрана */
-  width: 100%;
-  padding: 20px;
-  background: white;
-  position: relative;
-}
-
-.auth-container {
-  display: grid;
-  grid-template-columns: 0.7fr 1.3fr;
-  gap: 30px;
-  max-width: 1000px;
-  width: 100%;
-  animation: fadeIn 0.5s ease;
-  margin: 0 auto;
-  align-self: center;
-}
-
-/* Левый блок - Минимальная информация */
-.auth-info-card {
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-  border: 1px solid #dee2e6;
-  color: #333;
-  padding: 30px 25px;
-  border-radius: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 25px;
-  text-align: center;
-  height: auto;
-  align-self: center;
-}
-
-.auth-header {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-.auth-header h1 {
-  font-size: 1.8rem;
-  margin: 0;
-  font-weight: 800;
-  line-height: 1.2;
-  color: #003366;
-}
-
-.platform-icon {
-  font-size: 3rem;
-  margin: 0 auto;
-}
-
-.platform-title {
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: #007bff;
-  margin: 0;
-}
-
-/* Краткое описание */
-.brief-description {
-  padding: 0;
-}
-
-.brief-description p {
-  font-size: 0.9rem;
-  color: #666;
-  line-height: 1.5;
-  margin: 0;
-}
-
-/* Ссылка на вход */
-.auth-switch {
-  margin-top: auto;
-  padding-top: 20px;
-  border-top: 1px solid #dee2e6;
-}
-
-.auth-switch p {
-  color: #666;
-  font-size: 0.85rem;
-  margin: 0 0 10px 0;
-}
-
-.switch-link {
-  display: inline-block;
-  background: #007bff;
-  color: white;
-  padding: 10px 18px;
-  border-radius: 8px;
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 0.85rem;
-  transition: all 0.3s ease;
-}
-
-.switch-link:hover {
-  background: #0056b3;
-  transform: translateY(-2px);
-}
-
-/* Правый блок - Форма */
-.auth-form-card {
-  background: white;
-  padding: 35px 30px;
-  border-radius: 16px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
-  border: 1px solid #e9ecef;
-  height: auto;
-  align-self: center;
-}
-
-.auth-form {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-/* Уведомление для учителей */
-.teacher-notice {
-  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
-  color: #0d47a1;
-  padding: 12px 15px;
-  border-radius: 10px;
-  border: 1px solid #90caf9;
-  margin-bottom: 15px;
-}
-
-.teacher-notice.hidden {
-  display: none;
-}
-
-.notice-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.notice-icon {
-  font-size: 1.3rem;
-}
-
-.notice-header div {
-  flex: 1;
-}
-
-.notice-header strong {
-  display: block;
-  font-size: 0.9rem;
-  margin-bottom: 3px;
-}
-
-.notice-header p {
-  margin: 0;
-  font-size: 0.8rem;
-  opacity: 0.9;
-}
-
-/* Секции формы */
-.form-section {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.form-section h3 {
-  color: #003366;
-  margin: 0;
-  font-size: 1rem;
-  font-weight: 600;
-}
-
-/* Выбор роли */
-.role-selection {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-}
-
-.role-card {
-  position: relative;
-  cursor: pointer;
-}
-
-.role-card input[type="radio"] {
-  position: absolute;
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.role-card-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  padding: 18px 12px;
-  border: 2px solid #e8f4ff;
-  border-radius: 12px;
-  background: white;
-  transition: all 0.3s ease;
-  text-align: center;
-  height: 100%;
-}
-
-.role-card input[type="radio"]:checked + .role-card-content,
-.role-card.active .role-card-content {
-  background: #007bff;
-  color: white;
-  border-color: #007bff;
-  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.15);
-  transform: translateY(-2px);
-}
-
-.role-card:hover .role-card-content {
-  border-color: #007bff;
-  transform: translateY(-2px);
-}
-
-.role-icon {
-  font-size: 1.7rem;
-}
-
-.role-title {
-  font-weight: 600;
-  font-size: 0.9rem;
-}
-
-/* Сетка формы */
-.form-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 15px;
-}
-
-.form-row {
-  display: flex;
-  gap: 15px;
-}
-
-.form-row .form-group {
-  flex: 1;
-}
-
-/* Группы формы */
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.form-group label {
-  font-weight: 600;
-  color: #003366;
-  font-size: 0.85rem;
-}
-
-.auth-form input:not([type="checkbox"]),
-.auth-form select {
-  width: 100%;
-  padding: 10px 14px;
-  border: 2px solid #e8f4ff;
-  border-radius: 8px;
-  background: #f9fcff;
-  font-size: 0.9rem;
-  transition: all 0.3s ease;
-  font-family: inherit;
-}
-
-.auth-form input:focus,
-.auth-form select:focus {
-  border-color: #007bff;
-  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
-  outline: none;
-  background: white;
-}
-
-.error-field {
-  border-color: #dc3545 !important;
-}
-
-.email-hint small {
-  color: #007bff;
-  font-size: 0.75rem;
-}
-
-/* Чекбокс */
-.checkbox-group {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-}
-
-.checkbox-group input[type="checkbox"] {
-  width: 16px;
-  height: 16px;
-  margin-top: 3px;
-}
-
-.checkbox-label {
-  font-size: 0.85rem;
-  color: #333;
-  line-height: 1.4;
-  cursor: pointer;
-}
-
-.checkbox-label a {
-  color: #007bff;
-  font-weight: 600;
-}
-
-/* Кнопка */
-.btn-primary {
-  background: linear-gradient(135deg, #007bff, #0047b3);
-  color: white;
-  border: none;
-  padding: 14px;
-  font-weight: 600;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-size: 0.95rem;
-  margin-top: 10px;
-  width: 100%;
-}
-
-.btn-primary:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 15px rgba(0, 123, 255, 0.3);
-}
-
-.btn-primary:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-  transform: none;
-}
-
-/* Ошибки */
-.alert {
-  padding: 12px 15px;
-  border-radius: 8px;
-  margin-bottom: 15px;
-}
-
-.alert-error {
-  background: #f8d7da;
-  color: #721c24;
-  border: 1px solid #f5c6cb;
-}
-
-.field-errors {
-  margin-top: 4px;
-}
-
-.error {
-  color: #dc3545;
-  font-size: 0.75rem;
-  display: block;
-}
-
-/* Футер формы */
-.auth-footer {
-  text-align: center;
-  margin-top: 15px;
-  color: #666;
-  font-size: 0.8rem;
-}
-
-.auth-footer a {
-  color: #007bff;
-  font-weight: 600;
-  text-decoration: none;
-}
-
-.auth-footer a:hover {
-  text-decoration: underline;
-}
-
-/* Анимации */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* Утилиты */
-.hidden {
-  display: none !important;
-}
-
-/* Убираем все следы черного фона */
-:root {
-  --color-background: white;
-  --color-surface: white;
-  --color-text: #333;
-}
-
-/* Адаптация для разных экранов */
-@media (max-width: 768px) {
-  .auth-container {
-    grid-template-columns: 1fr;
-    gap: 20px;
-  }
-
-  .auth-info-card {
-    padding: 25px 20px;
-  }
-
-  .auth-form-card {
-    padding: 25px 20px;
-  }
-
-  .form-grid {
-    grid-template-columns: 1fr;
-    gap: 15px;
-  }
-
-  .form-row {
-    flex-direction: column;
-    gap: 15px;
-  }
-}
-</style>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  const form = document.getElementById('registerForm');
-  const submitBtn = document.getElementById('submitBtn');
-  const roleCards = document.querySelectorAll('.role-card');
-  const studentFields = document.getElementById('studentFields');
-  const teacherNotice = document.getElementById('teacherNotice');
-  const teacherEmailHint = document.getElementById('teacherEmailHint');
-  const emailInput = document.getElementById('id_email');
-  const studentClassNumber = document.getElementById('id_class_number');
-  const studentClassLetter = document.getElementById('id_class_letter');
-
-  // Переключение ролей
-  roleCards.forEach(card => {
-    const radio = card.querySelector('input[type="radio"]');
-
-    radio.addEventListener('change', function() {
-      // Обновляем активный класс
-      roleCards.forEach(c => c.classList.remove('active'));
-      card.classList.add('active');
-
-      // Показываем/скрываем поля класса
-      if (this.value === 'student') {
-        studentFields.classList.remove('hidden');
-        teacherNotice.classList.add('hidden');
-        teacherEmailHint.classList.add('hidden');
-
-        // Делаем поля обязательными для учеников
-        studentClassNumber.required = true;
-        studentClassLetter.required = true;
-
-        // Сбрасываем подсказку email
-        emailInput.placeholder = "your@email.com";
-      } else {
-        studentFields.classList.add('hidden');
-        teacherNotice.classList.remove('hidden');
-        teacherEmailHint.classList.remove('hidden');
-
-        // Делаем поля необязательными для учителей
-        studentClassNumber.required = false;
-        studentClassLetter.required = false;
-
-        // Обновляем подсказку email для учителей
-        emailInput.placeholder = "your@schmos444.ru";
-      }
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('registerForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const roleCards = document.querySelectorAll('.role-card');
+    const studentFields = document.getElementById('studentFields');
+    const teacherNotice = document.getElementById('teacherNotice');
+    const teacherEmailHint = document.getElementById('teacherEmailHint');
+    const emailInput = document.getElementById('id_email');
+    const studentClassNumber = document.getElementById('id_class_number');
+    const studentClassLetter = document.getElementById('id_class_letter');
+
+    // Переключение ролей
+    roleCards.forEach(card => {
+      const radio = card.querySelector('input[type="radio"]');
+
+      radio.addEventListener('change', function() {
+        // Обновляем активный класс
+        roleCards.forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+
+        // Показываем/скрываем поля класса
+        if (this.value === 'student') {
+          studentFields.classList.remove('hidden');
+          teacherNotice.classList.add('hidden');
+          teacherEmailHint.classList.add('hidden');
+
+          // Делаем поля обязательными для учеников
+          studentClassNumber.required = true;
+          studentClassLetter.required = true;
+
+          // Сбрасываем подсказку email
+          emailInput.placeholder = "your@email.com";
+        } else {
+          studentFields.classList.add('hidden');
+          teacherNotice.classList.remove('hidden');
+          teacherEmailHint.classList.remove('hidden');
+
+          // Делаем поля необязательными для учителей
+          studentClassNumber.required = false;
+          studentClassLetter.required = false;
+
+          // Обновляем подсказку email для учителей
+          emailInput.placeholder = "your@schmos444.ru";
+        }
+      });
+
+      // Также обрабатываем клик по всей карточке
+      card.addEventListener('click', function(e) {
+        if (e.target.type !== 'radio') {
+          radio.checked = true;
+          radio.dispatchEvent(new Event('change'));
+        }
+      });
     });
 
-    // Также обрабатываем клик по всей карточке
-    card.addEventListener('click', function(e) {
-      if (e.target.type !== 'radio') {
-        radio.checked = true;
-        radio.dispatchEvent(new Event('change'));
-      }
-    });
-  });
+    // Валидация формы перед отправкой
+    form.addEventListener('submit', function(e) {
+      const btnText = submitBtn.querySelector('.btn-text');
+      const btnLoading = submitBtn.querySelector('.btn-loading');
 
-  // Валидация email для учителей в реальном времени
-  emailInput.addEventListener('blur', function() {
-    const selectedRole = form.querySelector('input[name="role"]:checked');
-    if (selectedRole && selectedRole.value === 'teacher') {
-      const email = this.value.trim();
-      if (email && !email.endsWith('@schmos444.ru')) {
-        this.classList.add('error-field');
-        // Создаем или обновляем сообщение об ошибке
-        let errorDiv = this.parentElement.querySelector('.email-error');
-        if (!errorDiv) {
-          errorDiv = document.createElement('div');
-          errorDiv.className = 'field-errors email-error';
-          this.parentElement.appendChild(errorDiv);
-        }
-        errorDiv.innerHTML = '<span class="error">Для учителей используйте школьный домен @schmos444.ru</span>';
-      } else {
-        this.classList.remove('error-field');
-        const errorDiv = this.parentElement.querySelector('.email-error');
-        if (errorDiv) {
-          errorDiv.remove();
-        }
-      }
-    }
-  });
+      // Показываем индикатор загрузки
+      btnText.style.display = 'none';
+      btnLoading.style.display = 'inline';
+      submitBtn.disabled = true;
 
-  // Валидация формы перед отправкой
-  form.addEventListener('submit', function(e) {
-    const btnText = submitBtn.querySelector('.btn-text');
-    const btnLoading = submitBtn.querySelector('.btn-loading');
-
-    // Показываем индикатор загрузки
-    btnText.style.display = 'none';
-    btnLoading.style.display = 'inline';
-    submitBtn.disabled = true;
-
-    // Проверяем, что выбрана роль
-    const selectedRole = form.querySelector('input[name="role"]:checked');
-    if (!selectedRole) {
-      e.preventDefault();
-      btnText.style.display = 'inline';
-      btnLoading.style.display = 'none';
-      submitBtn.disabled = false;
-      alert('Пожалуйста, выберите роль (Ученик или Учитель)');
-      return;
-    }
-
-    // Для учителей проверяем email
-    if (selectedRole.value === 'teacher') {
-      const email = emailInput.value.trim();
-      if (!email.endsWith('@schmos444.ru')) {
+      // Проверяем, что выбрана роль
+      const selectedRole = form.querySelector('input[name="role"]:checked');
+      if (!selectedRole) {
         e.preventDefault();
         btnText.style.display = 'inline';
         btnLoading.style.display = 'none';
         submitBtn.disabled = false;
-        alert('Для регистрации учителем необходимо использовать школьный email с доменом @schmos444.ru');
-        emailInput.focus();
+        alert('Пожалуйста, выберите роль (Ученик или Учитель)');
         return;
       }
-    }
 
-    // Для учеников проверяем обязательные поля класса
-    if (selectedRole.value === 'student') {
-      if (!studentClassNumber.value.trim() || !studentClassLetter.value.trim()) {
+      // Для учителей проверяем email
+      if (selectedRole.value === 'teacher') {
+        const email = emailInput.value.trim();
+        if (!email.endsWith('@schmos444.ru')) {
+          e.preventDefault();
+          btnText.style.display = 'inline';
+          btnLoading.style.display = 'none';
+          submitBtn.disabled = false;
+          alert('Для регистрации учителем необходимо использовать школьный email с доменом @schmos444.ru');
+          emailInput.focus();
+          return;
+        }
+      }
+
+      // Для учеников проверяем обязательные поля класса
+      if (selectedRole.value === 'student') {
+        if (!studentClassNumber.value.trim() || !studentClassLetter.value.trim()) {
+          e.preventDefault();
+          btnText.style.display = 'inline';
+          btnLoading.style.display = 'none';
+          submitBtn.disabled = false;
+          alert('Для учеников необходимо указать номер и букву класса');
+          return;
+        }
+      }
+
+      // Простая валидация обязательных полей
+      const requiredFields = form.querySelectorAll('[required]');
+      let isValid = true;
+      let firstErrorField = null;
+
+      requiredFields.forEach(field => {
+        if (!field.value.trim() && field.type !== 'radio' && field.type !== 'checkbox') {
+          isValid = false;
+          field.classList.add('error-field');
+          if (!firstErrorField) firstErrorField = field;
+        } else if (field.type === 'checkbox' && !field.checked) {
+          isValid = false;
+        }
+      });
+
+      if (!isValid) {
         e.preventDefault();
         btnText.style.display = 'inline';
         btnLoading.style.display = 'none';
         submitBtn.disabled = false;
-        alert('Для учеников необходимо указать номер и букву класса');
-        return;
+
+        if (firstErrorField) {
+          firstErrorField.focus();
+        }
+
+        alert('Пожалуйста, заполните все обязательные поля.');
       }
+    });
+
+    // Автофокус на первое поле
+    const firstInput = form.querySelector('input:not([type="radio"]):not([type="checkbox"]):not([type="hidden"])');
+    if (firstInput) {
+      firstInput.focus();
     }
 
-    // Простая валидация обязательных полей
-    const requiredFields = form.querySelectorAll('[required]');
-    let isValid = true;
-    let firstErrorField = null;
-
-    requiredFields.forEach(field => {
-      if (!field.value.trim() && field.type !== 'radio' && field.type !== 'checkbox') {
-        isValid = false;
-        field.classList.add('error-field');
-        if (!firstErrorField) firstErrorField = field;
-      } else if (field.type === 'checkbox' && !field.checked) {
-        isValid = false;
-        field.parentElement.style.color = '#dc3545';
-      } else {
-        field.classList.remove('error-field');
-        if (field.type === 'checkbox') {
-          field.parentElement.style.color = '';
-        }
-      }
-    });
-
-    if (!isValid) {
-      e.preventDefault();
-      btnText.style.display = 'inline';
-      btnLoading.style.display = 'none';
-      submitBtn.disabled = false;
-
-      if (firstErrorField) {
-        firstErrorField.focus();
-      }
-
-      alert('Пожалуйста, заполните все обязательные поля.');
+    // Инициализация при загрузке страницы
+    const initialRole = form.querySelector('input[name="role"]:checked');
+    if (initialRole && initialRole.value === 'teacher') {
+      teacherNotice.classList.remove('hidden');
+      teacherEmailHint.classList.remove('hidden');
+      emailInput.placeholder = "your@schmos444.ru";
     }
   });
-
-  // Снимаем ошибку при вводе
-  const inputs = form.querySelectorAll('input');
-  inputs.forEach(input => {
-    input.addEventListener('input', function() {
-      if (this.value.trim()) {
-        this.classList.remove('error-field');
-
-        // Убираем ошибки email при вводе
-        if (this.type === 'email') {
-          const errorDiv = this.parentElement.querySelector('.email-error');
-          if (errorDiv) {
-            errorDiv.remove();
-          }
-        }
-      }
-    });
-
-    input.addEventListener('change', function() {
-      if (this.type === 'checkbox' && this.checked) {
-        this.parentElement.style.color = '';
-      }
-    });
-  });
-
-  // Автофокус на первое поле
-  const firstInput = form.querySelector('input:not([type="radio"]):not([type="checkbox"]):not([type="hidden"])');
-  if (firstInput) {
-    firstInput.focus();
-  }
-
-  // Инициализация при загрузке страницы
-  const initialRole = form.querySelector('input[name="role"]:checked');
-  if (initialRole && initialRole.value === 'teacher') {
-    teacherNotice.classList.remove('hidden');
-    teacherEmailHint.classList.remove('hidden');
-    emailInput.placeholder = "your@schmos444.ru";
-  }
-});
-</script>
-{% endblock %}
-[file content end]
+  </script>
+</body>
+</html>

@@ -4057,3 +4057,47 @@ Watching for file changes with StatReloader
 "GET /accounts/dashboard/ HTTP/1.1" 302 0
 "GET /accounts/login/?next=/accounts/dashboard/ HTTP/1.1" 200 17873
 "POST /accounts/login/?next=/accounts/dashboard/ HTTP/1.1" 200 18137
+Watching for file changes with StatReloader
+"GET / HTTP/1.1" 200 21549
+"GET /accounts/register/ HTTP/1.1" 200 36596
+Watching for file changes with StatReloader
+"GET / HTTP/1.1" 200 21549
+"GET /accounts/login/ HTTP/1.1" 200 17873
+"GET /accounts/register/ HTTP/1.1" 200 35758
+"GET / HTTP/1.1" 200 21549
+"GET /accounts/login/ HTTP/1.1" 200 17873
+"GET / HTTP/1.1" 200 21549
+Watching for file changes with StatReloader
+"GET / HTTP/1.1" 200 21549
+"GET /accounts/login/ HTTP/1.1" 200 17873
+"GET /accounts/register/ HTTP/1.1" 200 22659
+"GET /accounts/register/ HTTP/1.1" 200 22659
+Watching for file changes with StatReloader
+"GET /accounts/register/ HTTP/1.1" 200 22592
+Not Found: /.well-known/appspecific/com.chrome.devtools.json
+"GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 17163
+"GET / HTTP/1.1" 200 21549
+Not Found: /.well-known/appspecific/com.chrome.devtools.json
+"GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 17163
+"GET /accounts/login/ HTTP/1.1" 200 17873
+Not Found: /.well-known/appspecific/com.chrome.devtools.json
+"GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 17163
+"POST /accounts/login/ HTTP/1.1" 302 0
+"GET /accounts/teacher/dashboard/ HTTP/1.1" 200 23202
+Not Found: /.well-known/appspecific/com.chrome.devtools.json
+"GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 17523
+"GET / HTTP/1.1" 200 21913
+Not Found: /.well-known/appspecific/com.chrome.devtools.json
+"GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 17523
+"GET /accounts/logout/ HTTP/1.1" 302 0
+"GET / HTTP/1.1" 200 21549
+Watching for file changes with StatReloader
+"GET / HTTP/1.1" 200 21549
+"GET /accounts/register/ HTTP/1.1" 200 24839
+"GET /accounts/login/ HTTP/1.1" 200 17873
+"GET /accounts/register/ HTTP/1.1" 200 24839
+Watching for file changes with StatReloader
+"GET / HTTP/1.1" 200 21549
+"GET /accounts/register/ HTTP/1.1" 200 25036
+Watching for file changes with StatReloader
+"GET /accounts/register/ HTTP/1.1" 200 24969
