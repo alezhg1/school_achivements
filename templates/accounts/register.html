@@ -17,11 +17,12 @@
       height: 100%;
       background: white;
       font-family: "Segoe UI", Roboto, -apple-system, BlinkMacSystemFont, Arial, sans-serif;
-      font-size: 13px; /* Еще меньше */
+      font-size: 13px;
       line-height: 1.3;
+      overflow: hidden; /* Убираем прокрутку на всем сайте */
     }
 
-    /* HEADER - КАК В BASE.HTML НО БЕЗ ОТСТУПОВ */
+    /* HEADER */
     header {
       position: fixed;
       top: 0;
@@ -37,12 +38,12 @@
       gap: 10px;
       padding: 10px 12px;
       width: 100%;
-      height: 55px; /* Меньше */
+      height: 55px;
     }
 
     .logo a {
       font-weight: 700;
-      font-size: 1rem; /* Меньше */
+      font-size: 1rem;
       color: #fff;
       text-decoration: none;
       white-space: nowrap;
@@ -64,7 +65,7 @@
       border-radius: 5px;
       font-weight: 600;
       transition: all 0.22s;
-      font-size: 0.8rem; /* Меньше */
+      font-size: 0.8rem;
       white-space: nowrap;
     }
 
@@ -80,7 +81,7 @@
       border-radius: 5px;
       text-decoration: none;
       font-weight: 600;
-      font-size: 0.75rem; /* Меньше */
+      font-size: 0.75rem;
       border: none;
       cursor: pointer;
       white-space: nowrap;
@@ -93,45 +94,48 @@
       transform: translateY(-1px);
     }
 
-    /* ОСНОВНОЙ КОНТЕНТ - РЕГИСТРАЦИЯ */
+    /* ОСНОВНОЙ КОНТЕНТ */
     .main-content {
       display: flex;
       justify-content: center;
       align-items: center;
-      height: calc(100vh - 55px); /* Высота минус хедер */
-      margin-top: 55px; /* Отступ под хедер */
+      height: calc(100vh - 55px);
+      margin-top: 55px;
       box-sizing: border-box;
-      padding: 15px; /* Меньше */
+      padding: 15px;
+      overflow: hidden; /* Убираем прокрутку */
     }
 
-    /* КОНТЕЙНЕР РЕГИСТРАЦИИ - ЕЩЕ МЕНЬШЕ */
+    /* КОНТЕЙНЕР РЕГИСТРАЦИИ */
     .register-container {
       display: grid;
-      grid-template-columns: 0.5fr 1.5fr; /* Левая часть еще уже */
-      gap: 20px; /* Меньше */
-      max-width: 800px; /* Еще меньше */
+      grid-template-columns: 0.5fr 1.5fr;
+      gap: 20px;
+      max-width: 800px;
       width: 100%;
       animation: fadeIn 0.5s ease;
       align-self: center;
+      overflow: hidden; /* Убираем прокрутку */
     }
 
-    /* Левый блок - Минимальная информация */
+    /* Левый блок */
     .auth-info-card {
       background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
       border: 1px solid #dee2e6;
       color: #333;
-      padding: 20px 15px; /* Еще меньше */
+      padding: 20px 15px;
       border-radius: 12px;
       display: flex;
       flex-direction: column;
       justify-content: center;
-      gap: 15px; /* Еще меньше */
+      gap: 15px;
       text-align: center;
       height: auto;
+      overflow: hidden; /* Убираем прокрутку */
     }
 
     .auth-header h1 {
-      font-size: 1.4rem; /* Еще меньше */
+      font-size: 1.4rem;
       margin: 0;
       font-weight: 800;
       line-height: 1.2;
@@ -139,34 +143,34 @@
     }
 
     .platform-icon {
-      font-size: 2rem; /* Еще меньше */
-      margin: 8px auto; /* Еще меньше */
+      font-size: 2rem;
+      margin: 8px auto;
     }
 
     .platform-title {
-      font-size: 1rem; /* Еще меньше */
+      font-size: 1rem;
       font-weight: 600;
       color: #007bff;
       margin: 0;
     }
 
     .brief-description p {
-      font-size: 0.75rem; /* Еще меньше */
+      font-size: 0.75rem;
       color: #666;
-      line-height: 1.3; /* Еще меньше */
+      line-height: 1.3;
       margin: 0;
     }
 
     /* Ссылка на вход */
     .auth-switch {
-      margin-top: 10px; /* Еще меньше */
-      padding-top: 10px; /* Еще меньше */
+      margin-top: 10px;
+      padding-top: 10px;
       border-top: 1px solid #dee2e6;
     }
 
     .auth-switch p {
       color: #666;
-      font-size: 0.75rem; /* Еще меньше */
+      font-size: 0.75rem;
       margin: 0 0 6px 0;
     }
 
@@ -174,11 +178,11 @@
       display: inline-block;
       background: #007bff;
       color: white;
-      padding: 6px 12px; /* Еще меньше */
+      padding: 6px 12px;
       border-radius: 6px;
       text-decoration: none;
       font-weight: 600;
-      font-size: 0.75rem; /* Еще меньше */
+      font-size: 0.75rem;
       transition: all 0.3s ease;
     }
 
@@ -187,30 +191,32 @@
       transform: translateY(-2px);
     }
 
-    /* Правый блок - Форма (еще меньше) */
+    /* Правый блок - Форма */
     .auth-form-card {
       background: white;
-      padding: 20px; /* Еще меньше */
+      padding: 20px;
       border-radius: 12px;
       box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06);
       border: 1px solid #e9ecef;
       height: auto;
+      overflow: hidden; /* Убираем прокрутку */
     }
 
     .auth-form {
       display: flex;
       flex-direction: column;
-      gap: 15px; /* Еще меньше */
+      gap: 15px;
+      overflow: hidden; /* Убираем прокрутку */
     }
 
     /* Уведомление для учителей */
     .teacher-notice {
       background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
       color: #0d47a1;
-      padding: 8px 10px; /* Еще меньше */
+      padding: 8px 10px;
       border-radius: 6px;
       border: 1px solid #90caf9;
-      margin-bottom: 10px; /* Еще меньше */
+      margin-bottom: 10px;
     }
 
     .teacher-notice.hidden {
@@ -220,11 +226,11 @@
     .notice-header {
       display: flex;
       align-items: center;
-      gap: 6px; /* Еще меньше */
+      gap: 6px;
     }
 
     .notice-icon {
-      font-size: 1rem; /* Еще меньше */
+      font-size: 1rem;
     }
 
     .notice-header div {
@@ -233,35 +239,37 @@
 
     .notice-header strong {
       display: block;
-      font-size: 0.8rem; /* Еще меньше */
+      font-size: 0.8rem;
       margin-bottom: 1px;
     }
 
     .notice-header p {
       margin: 0;
-      font-size: 0.7rem; /* Еще меньше */
+      font-size: 0.7rem;
       opacity: 0.9;
     }
 
-    /* Секции формы (еще меньше) */
+    /* Секции формы */
     .form-section {
       display: flex;
       flex-direction: column;
-      gap: 8px; /* Еще меньше */
+      gap: 8px;
+      overflow: hidden; /* Убираем прокрутку */
     }
 
     .form-section h3 {
       color: #003366;
       margin: 0;
-      font-size: 0.9rem; /* Еще меньше */
+      font-size: 0.9rem;
       font-weight: 600;
     }
 
-    /* Выбор роли (еще меньше) */
+    /* Выбор роли */
     .role-selection {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 8px; /* Еще меньше */
+      gap: 8px;
+      overflow: hidden; /* Убираем прокрутку */
     }
 
     .role-card {
@@ -280,8 +288,8 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 5px; /* Еще меньше */
-      padding: 12px 8px; /* Еще меньше */
+      gap: 5px;
+      padding: 12px 8px;
       border: 1.5px solid #e8f4ff;
       border-radius: 8px;
       background: white;
@@ -304,51 +312,54 @@
     }
 
     .role-icon {
-      font-size: 1.3rem; /* Еще меньше */
+      font-size: 1.3rem;
     }
 
     .role-title {
       font-weight: 600;
-      font-size: 0.8rem; /* Еще меньше */
+      font-size: 0.8rem;
     }
 
-    /* Сетка формы (еще меньше) */
+    /* Сетка формы */
     .form-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 10px; /* Еще меньше */
+      gap: 10px;
+      overflow: hidden; /* Убираем прокрутку */
     }
 
     .form-row {
       display: flex;
-      gap: 10px; /* Еще меньше */
+      gap: 10px;
+      overflow: hidden; /* Убираем прокрутку */
     }
 
     .form-row .form-group {
       flex: 1;
     }
 
-    /* Группы формы (еще меньше) */
+    /* Группы формы */
     .form-group {
       display: flex;
       flex-direction: column;
-      gap: 4px; /* Еще меньше */
+      gap: 4px;
+      overflow: hidden; /* Убираем прокрутку */
     }
 
     .form-group label {
       font-weight: 600;
       color: #003366;
-      font-size: 0.75rem; /* Еще меньше */
+      font-size: 0.75rem;
     }
 
     .auth-form input:not([type="checkbox"]),
     .auth-form select {
       width: 100%;
-      padding: 8px 10px; /* Еще меньше */
+      padding: 8px 10px;
       border: 1.5px solid #e8f4ff;
       border-radius: 6px;
       background: #f9fcff;
-      font-size: 0.8rem; /* Еще меньше */
+      font-size: 0.8rem;
       transition: all 0.3s ease;
       font-family: inherit;
     }
@@ -367,26 +378,27 @@
 
     .email-hint small {
       color: #007bff;
-      font-size: 0.65rem; /* Еще меньше */
+      font-size: 0.65rem;
     }
 
-    /* Чекбокс (еще меньше) */
+    /* Чекбокс */
     .checkbox-group {
       display: flex;
       align-items: flex-start;
-      gap: 6px; /* Еще меньше */
+      gap: 6px;
+      overflow: hidden; /* Убираем прокрутку */
     }
 
     .checkbox-group input[type="checkbox"] {
-      width: 12px; /* Еще меньше */
-      height: 12px; /* Еще меньше */
+      width: 12px;
+      height: 12px;
       margin-top: 1px;
     }
 
     .checkbox-label {
-      font-size: 0.75rem; /* Еще меньше */
+      font-size: 0.75rem;
       color: #333;
-      line-height: 1.2; /* Еще меньше */
+      line-height: 1.2;
       cursor: pointer;
     }
 
@@ -395,18 +407,18 @@
       font-weight: 600;
     }
 
-    /* Кнопка (еще меньше) */
+    /* Кнопка */
     .btn-primary {
       background: linear-gradient(135deg, #007bff, #0047b3);
       color: white;
       border: none;
-      padding: 10px; /* Еще меньше */
+      padding: 10px;
       font-weight: 600;
       border-radius: 7px;
       cursor: pointer;
       transition: all 0.3s ease;
-      font-size: 0.85rem; /* Еще меньше */
-      margin-top: 5px; /* Еще меньше */
+      font-size: 0.85rem;
+      margin-top: 5px;
       width: 100%;
     }
 
@@ -421,9 +433,9 @@
       transform: none;
     }
 
-    /* Ошибки (еще меньше) */
+    /* Ошибки */
     .alert {
-      padding: 8px 10px; /* Еще меньше */
+      padding: 8px 10px;
       border-radius: 6px;
       margin-bottom: 10px;
     }
@@ -440,16 +452,16 @@
 
     .error {
       color: #dc3545;
-      font-size: 0.65rem; /* Еще меньше */
+      font-size: 0.65rem;
       display: block;
     }
 
-    /* Футер формы (еще меньше) */
+    /* Футер формы */
     .auth-footer {
       text-align: center;
-      margin-top: 10px; /* Еще меньше */
+      margin-top: 10px;
       color: #666;
-      font-size: 0.7rem; /* Еще меньше */
+      font-size: 0.7rem;
     }
 
     .auth-footer a {
@@ -479,12 +491,12 @@
         max-width: 95%;
         gap: 15px;
       }
-
+      
       .auth-info-card {
         padding: 15px 12px;
         display: none;
       }
-
+      
       .auth-form-card {
         padding: 15px;
       }
