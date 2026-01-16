@@ -3881,3 +3881,179 @@ Not Found: /.well-known/appspecific/com.chrome.devtools.json
 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 19206
 Not Found: /static/css/style.css
 "GET /static/css/style.css HTTP/1.1" 404 19206
+Watching for file changes with StatReloader
+"GET / HTTP/1.1" 200 37614
+"GET /accounts/login/ HTTP/1.1" 200 19916
+"POST /accounts/login/ HTTP/1.1" 302 0
+"GET /accounts/teacher/dashboard/ HTTP/1.1" 200 25245
+"GET / HTTP/1.1" 200 37271
+"GET /accounts/teacher/dashboard/ HTTP/1.1" 200 25245
+"GET /accounts/teacher/classes/ HTTP/1.1" 200 29780
+"GET / HTTP/1.1" 200 37271
+"GET /accounts/teacher/dashboard/ HTTP/1.1" 200 25245
+"GET / HTTP/1.1" 200 37271
+"GET /accounts/teacher/classes/ HTTP/1.1" 200 29780
+"GET /accounts/profile/alez/ HTTP/1.1" 200 27484
+"GET / HTTP/1.1" 200 37271
+"GET /accounts/teacher/classes/ HTTP/1.1" 200 29780
+"GET / HTTP/1.1" 200 37271
+"GET / HTTP/1.1" 200 37271
+Watching for file changes with StatReloader
+"GET / HTTP/1.1" 200 13834
+Not Found: /style.css
+"GET /style.css HTTP/1.1" 404 19566
+"GET / HTTP/1.1" 200 37271
+"GET /accounts/dashboard/ HTTP/1.1" 302 0
+"GET /accounts/teacher/dashboard/ HTTP/1.1" 200 25245
+"GET / HTTP/1.1" 200 37271
+"GET /accounts/profile/alez/ HTTP/1.1" 200 27484
+"GET / HTTP/1.1" 200 37271
+Watching for file changes with StatReloader
+"GET / HTTP/1.1" 200 25177
+"GET / HTTP/1.1" 200 25177
+"GET /accounts/teacher/dashboard/ HTTP/1.1" 200 25245
+"GET /accounts/teacher/classes/ HTTP/1.1" 200 29780
+"GET / HTTP/1.1" 200 25177
+Watching for file changes with StatReloader
+"GET / HTTP/1.1" 200 25161
+"GET / HTTP/1.1" 200 25161
+"GET / HTTP/1.1" 200 25161
+Watching for file changes with StatReloader
+"GET / HTTP/1.1" 200 23458
+"GET /accounts/teacher/dashboard/ HTTP/1.1" 200 23418
+"GET /accounts/teacher/classes/ HTTP/1.1" 200 27953
+"GET /accounts/teacher/classes/ HTTP/1.1" 200 29780
+"GET / HTTP/1.1" 200 25117
+"GET /accounts/teacher/dashboard/ HTTP/1.1" 200 25245
+"GET /accounts/teacher/classes/ HTTP/1.1" 200 29780
+"GET /accounts/profile/alez/ HTTP/1.1" 200 27484
+"GET /accounts/notifications/ HTTP/1.1" 200 75188
+"GET /accounts/profile/alez/ HTTP/1.1" 200 27484
+"GET / HTTP/1.1" 200 25117
+Not Found: /.well-known/appspecific/com.chrome.devtools.json
+"GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 19566
+"GET / HTTP/1.1" 200 25117
+Not Found: /.well-known/appspecific/com.chrome.devtools.json
+"GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 19566
+"GET /accounts/dashboard/ HTTP/1.1" 302 0
+"GET /accounts/teacher/dashboard/ HTTP/1.1" 200 25245
+Not Found: /.well-known/appspecific/com.chrome.devtools.json
+"GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 19566
+Watching for file changes with StatReloader
+"GET / HTTP/1.1" 200 24276
+"GET / HTTP/1.1" 200 24276
+Watching for file changes with StatReloader
+"GET / HTTP/1.1" 200 24232
+"GET / HTTP/1.1" 200 21964
+"GET / HTTP/1.1" 200 21964
+Watching for file changes with StatReloader
+"GET / HTTP/1.1" 200 21901
+"GET /accounts/teacher/dashboard/ HTTP/1.1" 200 23519
+"GET /accounts/teacher/classes/ HTTP/1.1" 200 28054
+"GET /accounts/profile/alez/ HTTP/1.1" 200 25758
+"GET /accounts/notifications/ HTTP/1.1" 200 73462
+"GET / HTTP/1.1" 200 21901
+Not Found: /.well-known/appspecific/com.chrome.devtools.json
+"GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 17840
+Watching for file changes with StatReloader
+"GET / HTTP/1.1" 200 21922
+"GET /accounts/profile/alez/ HTTP/1.1" 200 25758
+"GET / HTTP/1.1" 200 21913
+"GET /accounts/teacher/dashboard/ HTTP/1.1" 200 23519
+"GET /accounts/teacher/classes/ HTTP/1.1" 200 28054
+"GET /accounts/profile/alez/ HTTP/1.1" 200 25758
+"GET / HTTP/1.1" 200 21913
+"GET /accounts/logout/ HTTP/1.1" 302 0
+"GET / HTTP/1.1" 200 21529
+"GET /accounts/register/ HTTP/1.1" 200 32569
+Watching for file changes with StatReloader
+"GET /accounts/register/ HTTP/1.1" 200 33517
+"GET / HTTP/1.1" 200 21529
+"GET /accounts/register/ HTTP/1.1" 200 33517
+"GET / HTTP/1.1" 200 21529
+"GET /accounts/login/ HTTP/1.1" 200 18190
+"GET / HTTP/1.1" 200 21529
+"GET / HTTP/1.1" 200 21529
+"GET /accounts/register/ HTTP/1.1" 200 33517
+"GET / HTTP/1.1" 200 21529
+"GET /accounts/login/ HTTP/1.1" 200 18190
+"GET /accounts/register/ HTTP/1.1" 200 33517
+Watching for file changes with StatReloader
+"GET /accounts/register/ HTTP/1.1" 200 33200
+"GET / HTTP/1.1" 200 21526
+"GET / HTTP/1.1" 200 21526
+Watching for file changes with StatReloader
+"GET / HTTP/1.1" 200 21526
+Watching for file changes with StatReloader
+"GET / HTTP/1.1" 200 21526
+"GET / HTTP/1.1" 200 21526
+"GET /accounts/login/ HTTP/1.1" 200 17873
+"POST /accounts/login/ HTTP/1.1" 302 0
+"GET /accounts/teacher/dashboard/ HTTP/1.1" 200 23202
+"GET / HTTP/1.1" 200 21913
+"GET /accounts/logout/ HTTP/1.1" 302 0
+"GET / HTTP/1.1" 200 21526
+"GET /accounts/register/ HTTP/1.1" 200 33200
+Watching for file changes with StatReloader
+"GET / HTTP/1.1" 200 21526
+"GET /accounts/login/ HTTP/1.1" 200 17873
+"GET /accounts/register/ HTTP/1.1" 200 36378
+Watching for file changes with StatReloader
+"GET /accounts/register/ HTTP/1.1" 200 34458
+Watching for file changes with StatReloader
+"GET / HTTP/1.1" 200 21526
+"GET /accounts/register/ HTTP/1.1" 200 35740
+"GET / HTTP/1.1" 200 21526
+Watching for file changes with StatReloader
+"GET / HTTP/1.1" 200 21526
+"GET /accounts/register/ HTTP/1.1" 200 37541
+"GET /accounts/register/ HTTP/1.1" 200 37541
+Not Found: /.well-known/appspecific/com.chrome.devtools.json
+"GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 17163
+"GET /accounts/register/ HTTP/1.1" 200 37541
+"GET /accounts/register/ HTTP/1.1" 200 37541
+"GET /accounts/register/ HTTP/1.1" 200 37541
+"GET /accounts/register/ HTTP/1.1" 200 37541
+"GET /accounts/register/ HTTP/1.1" 200 37541
+"GET /accounts/register/ HTTP/1.1" 200 37541
+"GET /accounts/register/ HTTP/1.1" 200 37541
+"GET / HTTP/1.1" 200 21526
+"GET /accounts/register/ HTTP/1.1" 200 37541
+"POST /accounts/register/ HTTP/1.1" 302 0
+"GET /accounts/login/ HTTP/1.1" 200 17873
+"POST /accounts/login/ HTTP/1.1" 302 0
+"GET /accounts/dashboard/ HTTP/1.1" 200 28222
+"GET /accounts/logout/ HTTP/1.1" 302 0
+"GET / HTTP/1.1" 200 21526
+"GET /accounts/register/ HTTP/1.1" 200 37541
+Watching for file changes with StatReloader
+"GET /accounts/register/ HTTP/1.1" 200 37541
+"GET /accounts/register/ HTTP/1.1" 200 37541
+"GET / HTTP/1.1" 200 21526
+"GET /accounts/register/ HTTP/1.1" 200 37541
+"GET /accounts/register/ HTTP/1.1" 200 37541
+"GET /accounts/register/ HTTP/1.1" 200 37541
+"GET /accounts/register/ HTTP/1.1" 200 37541
+"GET /accounts/register/ HTTP/1.1" 200 37541
+"GET /accounts/register/ HTTP/1.1" 200 37541
+"GET /accounts/register/ HTTP/1.1" 200 37541
+"GET / HTTP/1.1" 200 21526
+Watching for file changes with StatReloader
+"GET / HTTP/1.1" 200 21549
+Watching for file changes with StatReloader
+"GET / HTTP/1.1" 200 21549
+"GET / HTTP/1.1" 200 21549
+"GET /accounts/register/ HTTP/1.1" 200 37541
+Watching for file changes with StatReloader
+"GET / HTTP/1.1" 200 21549
+"GET /accounts/dashboard/ HTTP/1.1" 302 0
+"GET /accounts/login/?next=/accounts/dashboard/ HTTP/1.1" 200 17873
+"GET /accounts/register/ HTTP/1.1" 200 34083
+"GET /accounts/register/ HTTP/1.1" 200 34083
+Watching for file changes with StatReloader
+"GET / HTTP/1.1" 200 21549
+"GET /accounts/register/ HTTP/1.1" 200 34668
+"GET / HTTP/1.1" 200 21549
+"GET /accounts/dashboard/ HTTP/1.1" 302 0
+"GET /accounts/login/?next=/accounts/dashboard/ HTTP/1.1" 200 17873
+"POST /accounts/login/?next=/accounts/dashboard/ HTTP/1.1" 200 18137
