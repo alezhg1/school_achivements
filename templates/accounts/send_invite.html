@@ -1,0 +1,874 @@
+{% extends 'base.html' %}
+{% block title %}Пригласить ученика в {{ classroom.name }}{% endblock %}
+{% block content %}
+<div class="invite-page">
+  <!-- Заголовок с анимацией -->
+  <div class="invite-header">
+    <div class="header-content">
+      <h1 class="page-title">
+        <span class="title-icon">👥</span>
+        Пригласить ученика
+      </h1>
+      <p class="page-subtitle">Отправьте приглашение в класс "{{ classroom.name }}"</p>
+    </div>
+    <div class="header-decoration">
+      <div class="decoration-circle circle-1"></div>
+      <div class="decoration-circle circle-2"></div>
+      <div class="decoration-circle circle-3"></div>
+    </div>
+  </div>
+
+  <!-- Основной контент -->
+  <div class="invite-container">
+    <div class="invite-card">
+      <!-- Информация о классе -->
+      <div class="class-info-section">
+        <div class="class-avatar">
+          <div class="avatar-icon">🏫</div>
+        </div>
+        <div class="class-details">
+          <h3>{{ classroom.name }}</h3>
+          <div class="class-meta">
+            <span class="meta-item">
+              <span class="meta-icon">📚</span>
+              ГБОУ 444
+            </span>
+            <span class="meta-item">
+              <span class="meta-icon">🎒</span>
+              {{ classroom.grade }}
+            </span>
+            <span class="meta-item">
+              <span class="meta-icon">👥</span>
+              {{ classroom.students.count }} учеников
+            </span>
+          </div>
+          {% if classroom.description %}
+          <p class="class-description">{{ classroom.description }}</p>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Форма приглашения -->
+      <div class="invite-form-section">
+        <form method="post" class="invite-form" id="inviteForm">
+          {% csrf_token %}
+
+          <div class="form-group animated-field">
+            <label for="userSearch" class="form-label">
+              <span class="label-icon">🔍</span>
+              Поиск ученика
+            </label>
+            <div class="search-container">
+              <div class="search-input-wrapper">
+                <input type="text"
+                       id="userSearch"
+                       class="search-input"
+                       placeholder="Введите имя, фамилию или логин ученика..."
+                       autocomplete="off">
+                <div class="search-icon">🔍</div>
+                <div class="loading-spinner" id="loadingSpinner" style="display: none;">
+                  <div class="spinner"></div>
+                </div>
+              </div>
+
+              <!-- Результаты поиска -->
+              <div class="search-results" id="searchResults" style="display: none;"></div>
+
+              <!-- Выбранный пользователь -->
+              <div class="selected-user" id="selectedUser" style="display: none;">
+                <div class="selected-user-card">
+                  <div class="user-avatar">
+                    <span id="selectedUserAvatar">👤</span>
+                  </div>
+                  <div class="user-info">
+                    <h4 id="selectedUserName"></h4>
+                    <p id="selectedUserDetails"></p>
+                  </div>
+                  <button type="button" class="remove-user-btn" onclick="clearSelectedUser()">
+                    <span class="remove-icon">×</span>
+                  </button>
+                </div>
+                <input type="hidden" name="to_user" id="selectedUserId">
+              </div>
+            </div>
+            <div class="field-hint">Начните вводить имя, фамилию или логин для поиска учеников</div>
+          </div>
+
+          <!-- Предварительный просмотр приглашения -->
+          <div class="invite-preview">
+            <div class="preview-header">
+              <h4>Предварительный просмотр приглашения</h4>
+              <div class="preview-badge">Пример</div>
+            </div>
+            <div class="preview-content">
+              <div class="preview-avatar">👤</div>
+              <div class="preview-text">
+                <p class="preview-title">Приглашение в класс</p>
+                <p class="preview-subtitle">Вы будете приглашены в класс "{{ classroom.name }}"</p>
+                <div class="preview-meta">
+                  <span class="preview-meta-item">От: {{ request.user.get_full_name|default:request.user.username }}</span>
+                  <span class="preview-meta-item">Школа: ГБОУ 444</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Действия формы -->
+          <div class="form-actions">
+            <a href="{% url 'class_detail' classroom.id %}" class="btn btn-secondary">
+              <span class="btn-icon">←</span>
+              Назад к классу
+            </a>
+            <button type="submit" class="btn btn-primary btn-send" id="submitBtn" disabled>
+              <span class="btn-icon">✉️</span>
+              Отправить приглашение
+              <span class="btn-sparkle">✨</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Боковая панель с подсказками -->
+    <div class="invite-sidebar">
+      <div class="sidebar-card">
+        <div class="sidebar-header">
+          <div class="sidebar-icon">💡</div>
+          <h4>Как найти ученика</h4>
+        </div>
+        <div class="sidebar-content">
+          <div class="tip-item">
+            <div class="tip-number">1</div>
+            <div class="tip-text">
+              <strong>Введите имя или фамилию</strong>
+              <p>Начните вводить имя ученика для поиска</p>
+            </div>
+          </div>
+          <div class="tip-item">
+            <div class="tip-number">2</div>
+            <div class="tip-text">
+              <strong>Выберите из списка</strong>
+              <p>Система покажет подходящих учеников</p>
+            </div>
+          </div>
+          <div class="tip-item">
+            <div class="tip-number">3</div>
+            <div class="tip-text">
+              <strong>Отправьте приглашение</strong>
+              <p>Ученик получит уведомление о приглашении</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.invite-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f8fbff 0%, #e8f4ff 100%);
+  padding: 40px 20px;
+  animation: fadeIn 0.8s ease;
+}
+
+/* Заголовок */
+.invite-header {
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+  border-radius: 20px;
+  padding: 40px;
+  color: white;
+  margin-bottom: 30px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 15px 35px rgba(0, 123, 255, 0.2);
+  animation: slideDown 0.6s ease;
+}
+
+.header-content {
+  position: relative;
+  z-index: 2;
+}
+
+.page-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.title-icon {
+  font-size: 2.2rem;
+  animation: bounce 2s infinite;
+}
+
+.page-subtitle {
+  font-size: 1.2rem;
+  opacity: 0.9;
+  margin: 0;
+}
+
+/* Основной контейнер */
+.invite-container {
+  display: grid;
+  grid-template-columns: 1fr 350px;
+  gap: 30px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Карточка приглашения */
+.invite-card {
+  background: white;
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 10px 30px rgba(0, 91, 181, 0.1);
+  border: 1px solid #e8f4ff;
+  animation: slideUp 0.6s ease 0.2s both;
+}
+
+/* Информация о классе */
+.class-info-section {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 25px;
+  background: linear-gradient(135deg, #f8fbff 0%, #f0f7ff 100%);
+  border-radius: 15px;
+  margin-bottom: 30px;
+  border: 1px solid #e8f4ff;
+}
+
+.class-avatar {
+  flex-shrink: 0;
+}
+
+.avatar-icon {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+}
+
+.class-details h3 {
+  color: #003366;
+  margin: 0 0 10px 0;
+  font-size: 1.5rem;
+}
+
+.class-meta {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: white;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: #555;
+  border: 1px solid #e8f4ff;
+}
+
+.meta-icon {
+  font-size: 0.8rem;
+}
+
+.class-description {
+  color: #666;
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+/* Поиск пользователей */
+.search-container {
+  position: relative;
+}
+
+.search-input-wrapper {
+  position: relative;
+}
+
+.search-input {
+  width: 100%;
+  padding: 16px 50px 16px 20px;
+  border: 2px solid #e8f4ff;
+  border-radius: 12px;
+  background: #f8fbff;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #007bff;
+  background: white;
+  box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.1);
+}
+
+.search-icon {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6c757d;
+  font-size: 1.1rem;
+}
+
+.loading-spinner {
+  position: absolute;
+  right: 50px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #e8f4ff;
+  border-top: 2px solid #007bff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Результаты поиска */
+.search-results {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 2px solid #e8f4ff;
+  border-top: none;
+  border-radius: 0 0 12px 12px;
+  box-shadow: 0 10px 30px rgba(0, 91, 181, 0.1);
+  max-height: 300px;
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+.user-result {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-bottom: 1px solid #f0f4f8;
+}
+
+.user-result:last-child {
+  border-bottom: none;
+}
+
+.user-result:hover {
+  background: #f8fbff;
+}
+
+.user-avatar-small {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  color: white;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.user-info-small h5 {
+  margin: 0 0 4px 0;
+  color: #003366;
+  font-size: 0.95rem;
+}
+
+.user-info-small p {
+  margin: 0;
+  color: #666;
+  font-size: 0.85rem;
+}
+
+.no-results {
+  padding: 20px;
+  text-align: center;
+  color: #666;
+}
+
+/* Выбранный пользователь */
+.selected-user-card {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 20px;
+  background: linear-gradient(135deg, #f0fff4, #e8f8ec);
+  border: 2px solid #28a745;
+  border-radius: 12px;
+  margin-top: 15px;
+  animation: slideUp 0.3s ease;
+}
+
+.user-avatar {
+  width: 50px;
+  height: 50px;
+  background: #28a745;
+  color: white;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.user-info {
+  flex: 1;
+}
+
+.user-info h4 {
+  margin: 0 0 4px 0;
+  color: #003366;
+  font-size: 1.1rem;
+}
+
+.user-info p {
+  margin: 0;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.remove-user-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #dc3545;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.remove-user-btn:hover {
+  background: #f8d7da;
+}
+
+/* Предварительный просмотр */
+.invite-preview {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border: 2px dashed #dee2e6;
+  border-radius: 15px;
+  padding: 25px;
+  margin: 30px 0;
+  transition: all 0.3s ease;
+}
+
+.invite-preview:hover {
+  border-color: #007bff;
+  background: linear-gradient(135deg, #f0f7ff 0%, #e8f4ff 100%);
+}
+
+.preview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.preview-header h4 {
+  color: #003366;
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.preview-badge {
+  background: #007bff;
+  color: white;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.preview-content {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.preview-avatar {
+  width: 50px;
+  height: 50px;
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+  border: 2px solid #e8f4ff;
+}
+
+.preview-text {
+  flex: 1;
+}
+
+.preview-title {
+  font-weight: 700;
+  color: #003366;
+  margin: 0 0 5px 0;
+}
+
+.preview-subtitle {
+  color: #666;
+  margin: 0 0 10px 0;
+  font-size: 0.9rem;
+}
+
+.preview-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.preview-meta-item {
+  font-size: 0.8rem;
+  color: #888;
+}
+
+/* Боковая панель */
+.invite-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.sidebar-card {
+  background: white;
+  border-radius: 15px;
+  padding: 25px;
+  box-shadow: 0 5px 20px rgba(0, 91, 181, 0.08);
+  border: 1px solid #e8f4ff;
+  animation: slideUp 0.6s ease 0.4s both;
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.sidebar-icon {
+  font-size: 1.5rem;
+}
+
+.sidebar-header h4 {
+  color: #003366;
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.tip-item {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.tip-item:last-child {
+  margin-bottom: 0;
+}
+
+.tip-number {
+  width: 30px;
+  height: 30px;
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.tip-text strong {
+  display: block;
+  color: #003366;
+  margin-bottom: 4px;
+  font-size: 0.95rem;
+}
+
+.tip-text p {
+  color: #666;
+  font-size: 0.85rem;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Кнопки */
+.btn {
+  padding: 14px 28px;
+  border-radius: 12px;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-secondary {
+  background: #f8f9fa;
+  color: #003366;
+  border: 2px solid #e9ecef;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  color: white;
+  box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 123, 255, 0.4);
+}
+
+/* Анимации */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-10px); }
+  60% { transform: translateY(-5px); }
+}
+
+/* Адаптивность */
+@media (max-width: 1024px) {
+  .invite-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .invite-page {
+    padding: 20px 15px;
+  }
+
+  .invite-header {
+    padding: 30px 25px;
+  }
+
+  .page-title {
+    font-size: 2rem;
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
+  }
+
+  .invite-card {
+    padding: 30px 25px;
+  }
+
+  .class-info-section {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .form-actions {
+    flex-direction: column;
+    gap: 15px;
+  }
+}
+</style>
+
+<script>
+let searchTimeout;
+
+document.addEventListener('DOMContentLoaded', function() {
+  const userSearch = document.getElementById('userSearch');
+  const searchResults = document.getElementById('searchResults');
+  const loadingSpinner = document.getElementById('loadingSpinner');
+  const selectedUser = document.getElementById('selectedUser');
+  const submitBtn = document.getElementById('submitBtn');
+
+  // Поиск пользователей
+  userSearch.addEventListener('input', function() {
+    const query = this.value.trim();
+
+    // Очищаем предыдущий таймаут
+    clearTimeout(searchTimeout);
+
+    // Скрываем результаты если запрос пустой
+    if (query.length === 0) {
+      searchResults.style.display = 'none';
+      loadingSpinner.style.display = 'none';
+      return;
+    }
+
+    // Показываем спиннер загрузки
+    loadingSpinner.style.display = 'block';
+    searchResults.style.display = 'none';
+
+    // Задержка перед поиском (дебаунс)
+    searchTimeout = setTimeout(() => {
+      searchUsers(query);
+    }, 300);
+  });
+
+  // Закрытие результатов при клике вне области
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.search-container')) {
+      searchResults.style.display = 'none';
+      loadingSpinner.style.display = 'none';
+    }
+  });
+});
+
+// Функция поиска пользователей через реальный API
+function searchUsers(query) {
+  const loadingSpinner = document.getElementById('loadingSpinner');
+  const searchResults = document.getElementById('searchResults');
+
+  // Используем реальный API endpoint
+  fetch(`/accounts/api/search-users/?q=${encodeURIComponent(query)}`)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    })
+    .then(users => {
+      loadingSpinner.style.display = 'none';
+      displaySearchResults(users);
+    })
+    .catch(error => {
+      console.error('Error searching users:', error);
+      loadingSpinner.style.display = 'none';
+      searchResults.innerHTML = '<div class="no-results">Ошибка при поиске пользователей</div>';
+      searchResults.style.display = 'block';
+    });
+}
+
+// Отображение результатов поиска
+function displaySearchResults(users) {
+  const searchResults = document.getElementById('searchResults');
+
+  if (users.length === 0) {
+    searchResults.innerHTML = '<div class="no-results">Пользователи не найдены</div>';
+    searchResults.style.display = 'block';
+    return;
+  }
+
+  let html = '';
+  users.forEach(user => {
+    // Создаем аватар из инициалов
+    const firstName = user.first_name || '';
+    const lastName = user.last_name || '';
+    const avatarText = (firstName.charAt(0) + lastName.charAt(0)).toUpperCase() || user.username.charAt(0).toUpperCase();
+
+    // Формируем отображаемое имя
+    const fullName = `${firstName} ${lastName}`.trim() || user.username;
+
+    // Информация о классе (если есть)
+    const classInfo = user.class_number ? ` • ${user.class_number}${user.class_letter || ''} класс` : '';
+
+    html += `
+      <div class="user-result" onclick="selectUser(${user.id}, '${firstName}', '${lastName}', '${user.username}', '${avatarText}')">
+        <div class="user-avatar-small">${avatarText}</div>
+        <div class="user-info-small">
+          <h5>${fullName}</h5>
+          <p>@${user.username}${classInfo}</p>
+        </div>
+      </div>
+    `;
+  });
+
+  searchResults.innerHTML = html;
+  searchResults.style.display = 'block';
+}
+
+// Выбор пользователя
+function selectUser(userId, firstName, lastName, username, avatarText) {
+  const selectedUser = document.getElementById('selectedUser');
+  const selectedUserName = document.getElementById('selectedUserName');
+  const selectedUserDetails = document.getElementById('selectedUserDetails');
+  const selectedUserAvatar = document.getElementById('selectedUserAvatar');
+  const selectedUserId = document.getElementById('selectedUserId');
+  const userSearch = document.getElementById('userSearch');
+  const searchResults = document.getElementById('searchResults');
+  const submitBtn = document.getElementById('submitBtn');
+
+  // Заполняем данные выбранного пользователя
+  const fullName = `${firstName || ''} ${lastName || ''}`.trim() || username;
+  selectedUserName.textContent = fullName;
+  selectedUserDetails.textContent = `@${username}`;
+  selectedUserAvatar.textContent = avatarText;
+  selectedUserId.value = userId;
+
+  // Показываем выбранного пользователя и скрываем результаты поиска
+  selectedUser.style.display = 'block';
+  searchResults.style.display = 'none';
+  userSearch.value = '';
+
+  // Активируем кнопку отправки
+  submitBtn.disabled = false;
+}
+
+// Очистка выбранного пользователя
+function clearSelectedUser() {
+  const selectedUser = document.getElementById('selectedUser');
+  const selectedUserId = document.getElementById('selectedUserId');
+  const submitBtn = document.getElementById('submitBtn');
+
+  selectedUser.style.display = 'none';
+  selectedUserId.value = '';
+  submitBtn.disabled = true;
+}
+</script>
+{% endblock %}

@@ -1,0 +1,288 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+.report-container {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(0,91,181,0.1);
+    margin: 20px 0;
+    overflow: hidden;
+}
+
+.report-header {
+    background: linear-gradient(135deg, #007bff, #0056b3);
+    color: white;
+    padding: 30px;
+    text-align: center;
+}
+
+.report-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.report-subtitle {
+    opacity: 0.9;
+    margin: 10px 0 0 0;
+}
+
+.student-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    padding: 30px;
+    background: #f8fbff;
+}
+
+.info-card {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    text-align: center;
+}
+
+.info-label {
+    color: #666;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+}
+
+.info-value {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #007bff;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 25px;
+    padding: 30px;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    border-left: 4px solid #007bff;
+}
+
+.stat-card h3 {
+    margin: 0 0 20px 0;
+    color: #003366;
+    font-size: 1.2rem;
+}
+
+.achievements-table {
+    margin: 0;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.achievements-table th {
+    background: #f8f9fa;
+    padding: 15px;
+    text-align: left;
+    font-weight: 600;
+    color: #495057;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.achievements-table td {
+    padding: 15px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.achievements-table tr:hover {
+    background: #f8fbff;
+}
+
+.badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.badge-success { background: #d4edda; color: #155724; }
+.badge-warning { background: #fff3cd; color: #856404; }
+.badge-info { background: #d1ecf1; color: #0c5460; }
+.badge-secondary { background: #e2e3e5; color: #383d41; }
+
+.export-buttons {
+    padding: 20px 30px;
+    background: #f8f9fa;
+    border-top: 1px solid #dee2e6;
+    text-align: center;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    margin: 0 10px;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: #007bff;
+    color: white;
+}
+
+.btn-success {
+    background: #28a745;
+    color: white;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #666;
+}
+
+.empty-state .icon {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    opacity: 0.5;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="report-container">
+    <div class="report-header">
+        <h1 class="report-title">📊 Отчет по ученику</h1>
+        <p class="report-subtitle">{{ student.get_full_name|default:student.username }} • {{ student.school }}</p>
+    </div>
+
+    <div class="student-info">
+        <div class="info-card">
+            <div class="info-label">Всего достижений</div>
+            <div class="info-value">{{ stats.total }}</div>
+        </div>
+        <div class="info-card">
+            <div class="info-label">За последние 30 дней</div>
+            <div class="info-value">{{ stats.recent_30_days }}</div>
+        </div>
+        <div class="info-card">
+            <div class="info-label">Класс</div>
+            <div class="info-value">
+                {% if student.class_number and student.class_letter %}
+                    {{ student.class_number }}{{ student.class_letter }}
+                {% else %}
+                    Не указан
+                {% endif %}
+            </div>
+        </div>
+        <div class="info-card">
+            <div class="info-label">Дата регистрации</div>
+            <div class="info-value">{{ student.date_joined|date:"d.m.Y" }}</div>
+        </div>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <h3>🏆 Распределение по результатам</h3>
+            {% if stats.by_result %}
+                {% for result, count in stats.by_result.items %}
+                <div style="display: flex; justify-content: space-between; margin-bottom: 10px; padding: 8px 0; border-bottom: 1px solid #f0f0f0;">
+                    <span>{{ result }}</span>
+                    <strong>{{ count }}</strong>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">
+                    <div class="icon">📭</div>
+                    <p>Нет данных о результатах</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="stat-card">
+            <h3>📅 Достижения по годам</h3>
+            {% if stats.by_year %}
+                {% for year, count in stats.by_year.items %}
+                <div style="display: flex; justify-content: space-between; margin-bottom: 10px; padding: 8px 0; border-bottom: 1px solid #f0f0f0;">
+                    <span>{{ year }}</span>
+                    <strong>{{ count }}</strong>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">
+                    <div class="icon">📅</div>
+                    <p>Нет данных по годам</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div style="padding: 30px;">
+        <h3 style="margin: 0 0 20px 0; color: #003366;">📋 Список достижений</h3>
+        {% if achievements %}
+            <table class="achievements-table">
+                <thead>
+                    <tr>
+                        <th>Название</th>
+                        <th>Результат</th>
+                        <th>Год</th>
+                        <th>Дата добавления</th>
+                        <th>Кто добавил</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for achievement in achievements %}
+                    <tr>
+                        <td>
+                            <strong>{{ achievement.title }}</strong>
+                            {% if achievement.description %}
+                                <br><small style="color: #666;">{{ achievement.description|truncatewords:10 }}</small>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="badge badge-{% if achievement.result == 'Победитель' %}success{% elif achievement.result == 'Призёр' %}warning{% else %}info{% endif %}">
+                                {{ achievement.get_result_display }}
+                            </span>
+                        </td>
+                        <td>{{ achievement.year|default:"-" }}</td>
+                        <td>{{ achievement.created_at|date:"d.m.Y" }}</td>
+                        <td>{{ achievement.added_by.get_full_name|default:achievement.added_by.username }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="empty-state">
+                <div class="icon">🏆</div>
+                <h3>Пока нет достижений</h3>
+                <p>У этого ученика еще не добавлено ни одного достижения</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="export-buttons">
+        <a href="{% url 'myadmin:export_student_csv' student.id %}" class="btn btn-success">
+            📥 Скачать CSV отчет
+        </a>
+        <a href="/admin/accounts/customuser/" class="btn btn-primary">
+            ← Назад к списку пользователей
+        </a>
+    </div>
+</div>
+{% endblock %}

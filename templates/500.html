@@ -1,0 +1,556 @@
+{% extends 'base.html' %}
+{% block title %}Ошибка сервера - 500{% endblock %}
+{% block content %}
+<div class="error-page">
+  <!-- Анимированный фон -->
+  <div class="error-background">
+    <div class="floating-object obj-1">5</div>
+    <div class="floating-object obj-2">0</div>
+    <div class="floating-object obj-3">0</div>
+    <div class="floating-shape shape-1"></div>
+    <div class="floating-shape shape-2"></div>
+    <div class="floating-shape shape-3"></div>
+    <div class="floating-shape shape-4"></div>
+  </div>
+
+  <!-- Основной контент -->
+  <div class="error-container">
+    <div class="error-content">
+      <!-- Анимированное число 500 -->
+      <div class="error-number">
+        <span class="digit digit-1">5</span>
+        <span class="digit digit-2">0</span>
+        <span class="digit digit-3">0</span>
+      </div>
+
+      <!-- Заголовок -->
+      <h1 class="error-title">Ошибка сервера</h1>
+
+      <p class="error-subtitle">Что-то пошло не так на нашей стороне. Мы уже работаем над исправлением</p>
+
+      <!-- Кнопки действий -->
+      <div class="error-actions">
+        <a href="{% url 'home' %}" class="btn btn-primary">
+          <span class="btn-icon">←</span>
+          На главную
+        </a>
+        <a href="javascript:location.reload()" class="btn btn-secondary">
+          <span class="btn-icon">🔄</span>
+          Обновить страницу
+        </a>
+        {% if user.is_authenticated %}
+        <a href="{% url 'dashboard' %}" class="btn btn-outline">
+          <span class="btn-icon">📊</span>
+          В кабинет
+        </a>
+        {% endif %}
+      </div>
+
+      <!-- Дополнительная информация -->
+      <div class="error-help">
+        <p>Если ошибка повторяется, пожалуйста, свяжитесь с поддержкой</p>
+        <div class="help-actions">
+          <a href="https://t.me/newzellandtg" target="_blank" class="help-link">
+            <span class="help-icon">💬</span>
+            Написать в поддержку
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Плавающие частицы -->
+  <div class="particles">
+    {% for i in "123456789101112" %}
+    <div class="particle particle-{{ forloop.counter }}"></div>
+    {% endfor %}
+  </div>
+</div>
+
+<style>
+.error-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #fff5f5 0%, #ffe8e8 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  padding: 20px;
+}
+
+/* Анимированный фон */
+.error-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* Плавающие цифры */
+.floating-object {
+  position: absolute;
+  font-size: 8rem;
+  font-weight: 900;
+  color: rgba(220, 53, 69, 0.03);
+  animation: floatSlow 15s ease-in-out infinite;
+}
+
+.obj-1 { top: 10%; left: 5%; animation-delay: 0s; }
+.obj-2 { top: 60%; right: 10%; animation-delay: 5s; }
+.obj-3 { bottom: 20%; left: 15%; animation-delay: 10s; }
+
+/* Плавающие геометрические фигуры */
+.floating-shape {
+  position: absolute;
+  background: rgba(220, 53, 69, 0.05);
+  border-radius: 50%;
+  animation: shapeFloat 20s ease-in-out infinite;
+}
+
+.shape-1 {
+  width: 120px;
+  height: 120px;
+  top: 20%;
+  right: 15%;
+  animation-delay: 0s;
+}
+
+.shape-2 {
+  width: 80px;
+  height: 80px;
+  bottom: 30%;
+  right: 25%;
+  animation-delay: 7s;
+  border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+}
+
+.shape-3 {
+  width: 150px;
+  height: 150px;
+  top: 50%;
+  left: 10%;
+  animation-delay: 14s;
+  border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+}
+
+.shape-4 {
+  width: 100px;
+  height: 100px;
+  bottom: 15%;
+  right: 40%;
+  animation-delay: 21s;
+  border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+}
+
+/* Основной контейнер */
+.error-container {
+  text-align: center;
+  position: relative;
+  z-index: 2;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.error-content {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 24px;
+  padding: 50px 40px;
+  box-shadow:
+    0 20px 40px rgba(220, 53, 69, 0.1),
+    0 0 0 1px rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+/* Анимированное число 500 */
+.error-number {
+  font-size: 6rem;
+  font-weight: 900;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+}
+
+.digit {
+  display: inline-block;
+  background: linear-gradient(135deg, #dc3545, #c82333);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 10px 30px rgba(220, 53, 69, 0.2);
+  animation: digitPulse 2s ease-in-out infinite;
+}
+
+.digit-1 { animation-delay: 0s; }
+.digit-2 { animation-delay: 0.7s; }
+.digit-3 { animation-delay: 1.4s; }
+
+/* Заголовок */
+.error-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #dc3545;
+  margin-bottom: 15px;
+  animation: titleSlide 1s ease-out;
+}
+
+.error-subtitle {
+  font-size: 1.1rem;
+  color: #666;
+  margin-bottom: 40px;
+  line-height: 1.6;
+  animation: subtitleFade 1s ease-out 0.3s both;
+}
+
+/* Кнопки действий */
+.error-actions {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 30px;
+}
+
+.btn {
+  padding: 14px 28px;
+  border-radius: 12px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #dc3545, #c82333);
+  color: white;
+  box-shadow: 0 8px 25px rgba(220, 53, 69, 0.3);
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.8);
+  color: #dc3545;
+  border: 2px solid #f8d7da;
+  backdrop-filter: blur(10px);
+}
+
+.btn-outline {
+  background: transparent;
+  color: #6c757d;
+  border: 2px solid #dee2e6;
+}
+
+.btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(220, 53, 69, 0.4);
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  transition: left 0.6s;
+}
+
+.btn:hover::before {
+  left: 100%;
+}
+
+.btn-icon {
+  font-size: 1.1rem;
+}
+
+/* Помощь */
+.error-help {
+  padding-top: 30px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.error-help p {
+  color: #666;
+  margin-bottom: 15px;
+  font-size: 0.9rem;
+}
+
+.help-actions {
+  display: flex;
+  justify-content: center;
+}
+
+.help-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #dc3545;
+  text-decoration: none;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  background: rgba(220, 53, 69, 0.1);
+}
+
+.help-link:hover {
+  background: rgba(220, 53, 69, 0.2);
+  transform: translateY(-2px);
+}
+
+.help-icon {
+  font-size: 1rem;
+}
+
+/* Плавающие частицы */
+.particles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.particle {
+  position: absolute;
+  background: rgba(220, 53, 69, 0.1);
+  border-radius: 50%;
+  animation: particleDrift 15s linear infinite;
+}
+
+.particle-1 { width: 3px; height: 3px; top: 11%; left: 7%; animation-delay: 1s; animation-duration: 11s; }
+.particle-2 { width: 4px; height: 4px; top: 12%; left: 14%; animation-delay: 2s; animation-duration: 12s; }
+.particle-3 { width: 5px; height: 5px; top: 13%; left: 21%; animation-delay: 3s; animation-duration: 13s; }
+.particle-4 { width: 6px; height: 6px; top: 14%; left: 28%; animation-delay: 4s; animation-duration: 14s; }
+.particle-5 { width: 7px; height: 7px; top: 15%; left: 35%; animation-delay: 5s; animation-duration: 15s; }
+.particle-6 { width: 8px; height: 8px; top: 16%; left: 42%; animation-delay: 6s; animation-duration: 16s; }
+.particle-7 { width: 9px; height: 9px; top: 17%; left: 49%; animation-delay: 7s; animation-duration: 17s; }
+.particle-8 { width: 10px; height: 10px; top: 18%; left: 56%; animation-delay: 8s; animation-duration: 18s; }
+.particle-9 { width: 11px; height: 11px; top: 19%; left: 63%; animation-delay: 9s; animation-duration: 19s; }
+.particle-10 { width: 12px; height: 12px; top: 20%; left: 70%; animation-delay: 10s; animation-duration: 20s; }
+.particle-11 { width: 13px; height: 13px; top: 21%; left: 77%; animation-delay: 11s; animation-duration: 21s; }
+.particle-12 { width: 14px; height: 14px; top: 22%; left: 84%; animation-delay: 12s; animation-duration: 22s; }
+
+/* Анимации */
+@keyframes floatSlow {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg) scale(1);
+  }
+  25% {
+    transform: translateY(-30px) rotate(5deg) scale(1.05);
+  }
+  50% {
+    transform: translateY(15px) rotate(-3deg) scale(0.95);
+  }
+  75% {
+    transform: translateY(-20px) rotate(2deg) scale(1.02);
+  }
+}
+
+@keyframes shapeFloat {
+  0%, 100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  25% {
+    transform: translate(50px, -40px) rotate(90deg);
+  }
+  50% {
+    transform: translate(-30px, 60px) rotate(180deg);
+  }
+  75% {
+    transform: translate(40px, -20px) rotate(270deg);
+  }
+}
+
+@keyframes digitPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+}
+
+@keyframes titleSlide {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes subtitleFade {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes particleDrift {
+  0% {
+    transform: translateY(100vh) translateX(0) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.6;
+  }
+  90% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateY(-100px) translateX(100px) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+/* Эффект пульсации для контейнера */
+.error-content::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(135deg, #dc3545, #c82333, #dc3545);
+  border-radius: 26px;
+  z-index: -1;
+  opacity: 0.1;
+  animation: pulseGlow 3s ease-in-out infinite;
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    opacity: 0.1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.15;
+    transform: scale(1.02);
+  }
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .error-content {
+    padding: 40px 30px;
+    margin: 20px;
+  }
+
+  .error-number {
+    font-size: 4rem;
+  }
+
+  .error-title {
+    font-size: 1.5rem;
+  }
+
+  .error-subtitle {
+    font-size: 1rem;
+  }
+
+  .error-actions {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .btn {
+    width: 200px;
+    justify-content: center;
+  }
+
+  .floating-object {
+    font-size: 5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .error-content {
+    padding: 30px 20px;
+  }
+
+  .error-number {
+    font-size: 3rem;
+  }
+
+  .error-title {
+    font-size: 1.3rem;
+  }
+
+  .floating-object {
+    font-size: 3rem;
+  }
+
+  .floating-shape {
+    display: none;
+  }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Создание дополнительных частиц
+  function createParticles() {
+    const particlesContainer = document.querySelector('.particles');
+    const existingParticles = particlesContainer.children.length;
+
+    for (let i = existingParticles; i < 20; i++) {
+      const particle = document.createElement('div');
+      particle.className = `particle particle-${i + 1}`;
+
+      // Случайные параметры
+      const size = Math.random() * 4 + 1;
+      const left = Math.random() * 100;
+      const top = Math.random() * 100;
+      const delay = Math.random() * 15;
+      const duration = Math.random() * 10 + 10;
+
+      particle.style.cssText = `
+        width: ${size}px;
+        height: ${size}px;
+        left: ${left}%;
+        top: ${top}%;
+        animation-delay: ${delay}s;
+        animation-duration: ${duration}s;
+        background: rgba(220, 53, 69, ${Math.random() * 0.2 + 0.05});
+      `;
+
+      particlesContainer.appendChild(particle);
+    }
+  }
+
+  createParticles();
+
+  // Пульсация цифр при загрузке
+  const digits = document.querySelectorAll('.digit');
+  digits.forEach((digit, index) => {
+    setTimeout(() => {
+      digit.style.animation = 'digitPulse 0.5s ease-in-out';
+      setTimeout(() => {
+        digit.style.animation = 'digitPulse 2s ease-in-out infinite';
+      }, 500);
+    }, index * 200);
+  });
+});
+</script>
+{% endblock %}

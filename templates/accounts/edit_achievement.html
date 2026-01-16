@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% block title %}Редактировать достижение{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+  <div class="auth-card">
+    <h2>Редактирование достижения</h2>
+    <p class="subtitle">Измените нужные данные и сохраните</p>
+
+    <form method="post" enctype="multipart/form-data" class="achievement-form">
+      {% csrf_token %}
+      <div class="form-group">
+        <label for="id_title">Название мероприятия</label>
+        {{ form.title }}
+      </div>
+
+      <div class="form-group">
+        <label for="id_description">Описание</label>
+        {{ form.description }}
+      </div>
+
+      <div class="form-row">
+        <div class="form-group" style="flex:1;">
+          <label for="id_result">Результат</label>
+          {{ form.result }}
+        </div>
+        <div class="form-group" style="width:150px;">
+          <label for="id_year">Год</label>
+          {{ form.year }}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="id_image">Фото / грамота</label>
+        {{ form.image }}
+      </div>
+
+      <div class="form-actions">
+        <a href="javascript:history.back()" class="btn-gray">Отмена</a>
+        <button type="submit" class="btn-blue">Сохранить</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<style>
+body { background: linear-gradient(180deg, #eaf4ff 0%, #dbeeff 100%); }
+
+.auth-page { display:flex; justify-content:center; align-items:center; min-height:80vh; }
+.auth-card {
+  background:white;
+  padding:40px 45px;
+  border-radius:20px;
+  box-shadow:0 8px 24px rgba(0,0,0,0.1);
+  width:100%;
+  max-width:700px;
+  animation:fadeIn .5s ease;
+}
+.auth-card h2 { text-align:center; color:#003366; margin-bottom:8px; }
+.subtitle { text-align:center; color:#567; margin-bottom:25px; }
+
+.achievement-form { display:flex; flex-direction:column; gap:18px; }
+.form-row { display:flex; gap:16px; flex-wrap:wrap; }
+.form-group label { color:#01325c; font-weight:600; margin-bottom:6px; display:block; }
+.achievement-form input, .achievement-form textarea, .achievement-form select {
+  width:100%; padding:10px 12px;
+  border-radius:10px; border:1px solid #cde0ff; background:#f9fcff;
+  font-size:15px; transition:.2s ease;
+}
+.achievement-form input:focus, .achievement-form textarea:focus, .achievement-form select:focus {
+  border-color:#007bff; box-shadow:0 0 0 3px rgba(0,123,255,0.15); outline:none;
+}
+.achievement-form textarea { min-height:100px; resize:vertical; }
+.btn-blue {
+  background:linear-gradient(135deg,#007bff,#0047b3);
+  color:white; border:none; padding:10px 16px;
+  font-weight:600; border-radius:10px; cursor:pointer;
+  transition:.3s ease;
+}
+.btn-blue:hover { transform:translateY(-2px); box-shadow:0 8px 18px rgba(0,123,255,0.25); }
+.btn-gray {
+  background:#f2f4f8; color:#002b5c; border:1px solid #d0e0ff;
+  padding:10px 16px; font-weight:600; border-radius:10px; text-decoration:none;
+}
+.form-actions { display:flex; justify-content:flex-end; gap:10px; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(20px);} to{opacity:1;transform:none;} }
+</style>
+{% endblock %}

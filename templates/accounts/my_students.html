@@ -1,0 +1,171 @@
+{% extends 'base.html' %}
+{% block title %}Мои ученики{% endblock %}
+{% block content %}
+<div class="teacher-students-page">
+  <!-- Заголовок и статистика -->
+  <div class="page-hero">
+    <div class="hero-content">
+      <h1>Мои ученики 👨‍🎓</h1>
+      <p>Управляйте прикрепленными учениками и их достижениями</p>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-card">
+        <div class="stat-icon">👥</div>
+        <div class="stat-info">
+          <span class="stat-number">{{ accepted_students.count }}</span>
+          <span class="stat-label">Прикреплено</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">📨</div>
+        <div class="stat-info">
+          <span class="stat-number">{{ pending_invitations.count }}</span>
+          <span class="stat-label">Ожидают</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">⏳</div>
+        <div class="stat-info">
+          <span class="stat-number">{{ pending_achievements.count }}</span>
+          <span class="stat-label">На проверке</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Пригласить нового ученика -->
+  <div class="invite-section">
+    <div class="section-header">
+      <h2>Пригласить нового ученика</h2>
+    </div>
+    <form method="post" class="invite-form">
+      {% csrf_token %}
+      <div class="form-group">
+        <label for="userSearch">Поиск ученика</label>
+        <div class="search-container">
+          <input type="text" id="userSearch" class="search-input" placeholder="Введите имя, фамилию или логин ученика...">
+          <div class="search-icon">🔍</div>
+          <div class="search-results" id="searchResults"></div>
+        </div>
+        {{ form.student }}
+      </div>
+      <button type="submit" class="btn btn-primary">Отправить приглашение</button>
+    </form>
+  </div>
+
+  <!-- Достижения на модерации -->
+  {% if pending_achievements %}
+  <div class="moderation-section">
+    <div class="section-header">
+      <h2>Достижения на проверке ⏳</h2>
+    </div>
+    <div class="achievements-grid">
+      {% for achievement in pending_achievements %}
+      <div class="achievement-card pending">
+        <div class="achievement-header">
+          <h3>{{ achievement.title }}</h3>
+          <span class="status-badge pending">На проверке</span>
+        </div>
+        <p class="student-info">Ученик: {{ achievement.student.get_full_name }}</p>
+        <p class="achievement-description">{{ achievement.description|truncatechars:100 }}</p>
+        <div class="achievement-meta">
+          <span class="meta-item">{{ achievement.result }}</span>
+          <span class="meta-item">{{ achievement.year }}</span>
+        </div>
+        <div class="achievement-actions">
+          <a href="{% url 'moderate_achievement' achievement.id %}" class="btn btn-primary">Проверить</a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Прикрепленные ученики -->
+  <div class="students-section">
+    <div class="section-header">
+      <h2>Прикрепленные ученики 👥</h2>
+    </div>
+
+    {% if accepted_students %}
+    <div class="students-grid">
+      {% for relationship in accepted_students %}
+      <div class="student-card">
+        <div class="student-avatar">
+          {{ relationship.student.first_name|slice:":1" }}{{ relationship.student.last_name|slice:":1" }}
+        </div>
+        <div class="student-info">
+          <h3>{{ relationship.student.get_full_name }}</h3>
+          <p class="username">@{{ relationship.student.username }}</p>
+          <div class="student-stats">
+            <span class="stat">
+              <strong>{{ relationship.student.achievements.count }}</strong>
+              <span>достижений</span>
+            </span>
+            <span class="stat">
+              <strong>{{ relationship.student.achievements.approved.count }}</strong>
+              <span>одобрено</span>
+            </span>
+          </div>
+        </div>
+        <div class="student-actions">
+          <a href="{% url 'profile' relationship.student.username %}" class="btn btn-outline">Профиль</a>
+          <a href="{% url 'add_achievement_for' relationship.student.id %}" class="btn btn-primary">Добавить достижение</a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <div class="empty-icon">👥</div>
+      <h3>Пока нет прикрепленных учеников</h3>
+      <p>Пригласите учеников, чтобы начать работу с их достижениями</p>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Ожидающие подтверждения -->
+  {% if pending_invitations %}
+  <div class="pending-section">
+    <div class="section-header">
+      <h2>Ожидают подтверждения 📨</h2>
+    </div>
+    <div class="invitations-list">
+      {% for invitation in pending_invitations %}
+      <div class="invitation-card">
+        <div class="invitation-content">
+          <div class="student-avatar small">
+            {{ invitation.student.first_name|slice:":1" }}{{ invitation.student.last_name|slice:":1" }}
+          </div>
+          <div class="invitation-info">
+            <h4>{{ invitation.student.get_full_name }}</h4>
+            <p>@{{ invitation.student.username }}</p>
+            <span class="invitation-date">Отправлено: {{ invitation.created_at|date:"d.m.Y" }}</span>
+          </div>
+        </div>
+        <div class="invitation-status">
+          <span class="status pending">Ожидает ответа</span>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+<style>
+.teacher-students-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  animation: fadeIn 0.6s ease;
+}
+
+/* Стили для страницы - аналогичные class_detail.html */
+/* Добавьте красивые стили с анимациями */
+</style>
+
+<script>
+// JavaScript для поиска учеников (аналогичный send_invite.html)
+</script>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}Неверный запрос - Мои достижения{% endblock %}
+{% block content %}
+<div class="error-page" style="min-height: calc(100vh - 140px); display: flex; align-items: center; justify-content: center; padding: 40px 20px; background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);">
+    <div style="text-align: center; max-width: 600px; width: 100%;">
+        <div style="font-size: 8rem; font-weight: 800; color: #17a2b8; margin-bottom: 2rem;">
+            400
+        </div>
+
+        <h1 style="font-size: 2.5rem; color: #0c5460; margin-bottom: 1rem;">
+            Неверный запрос
+        </h1>
+
+        <p style="font-size: 1.2rem; color: #0c5460; margin-bottom: 2rem; line-height: 1.6;">
+            Сервер не может обработать ваш запрос. Проверьте корректность введенных данных.
+        </p>
+
+        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+            <a href="{% url 'home' %}" style="background: #17a2b8; color: white; padding: 1rem 2rem; border-radius: 10px; text-decoration: none; font-weight: 600;">
+                На главную
+            </a>
+            <button onclick="window.history.back()" style="background: transparent; color: #17a2b8; padding: 1rem 2rem; border-radius: 10px; text-decoration: none; font-weight: 600; border: 2px solid #17a2b8; cursor: pointer;">
+                Вернуться назад
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}

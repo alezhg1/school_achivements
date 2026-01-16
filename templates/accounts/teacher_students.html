@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}Мои ученики{% endblock %}
+{% block content %}
+<div class="container">
+    <h2>Ученики</h2>
+    <ul>
+        {% for s in students %}
+            <li>
+                <a href="{% url 'profile' s.username %}" class="link">{{ s.get_full_name }} ({{ s.school }} {{ s.class_number }}{{ s.class_letter }})</a>
+                <a href="{% url 'add_achievement_for' s.id %}" class="btn">Добавить достижение</a>
+            </li>
+        {% empty %}
+            <p>Пока нет учеников.</p>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

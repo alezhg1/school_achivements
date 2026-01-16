@@ -1,0 +1,274 @@
+{% extends 'base.html' %}
+{% block title %}Вход в аккаунт{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+  <div class="auth-card">
+    <h2>Вход в аккаунт</h2>
+    <p class="subtitle">Добро пожаловать обратно 👋</p>
+
+    <form method="post" class="auth-form">
+      {% csrf_token %}
+      {{ form.non_field_errors }}
+
+      {% for field in form %}
+        <div class="form-group">
+          {{ field.label_tag }}
+          {{ field }}
+          {{ field.errors }}
+        </div>
+      {% endfor %}
+
+      <button type="submit" class="btn-primary">Войти</button>
+
+      <div class="auth-footer">
+        Нет аккаунта? <a href="{% url 'register' %}">Зарегистрироваться</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<style>
+/* Используем те же стили, что и в регистрации */
+body {
+  background: linear-gradient(180deg, #eaf4ff 0%, #dbeeff 100%);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.auth-page {
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  flex: 1;
+  padding: 20px 15px;
+  min-height: calc(100vh - 140px);
+}
+
+.auth-card {
+  background:white;
+  padding: 30px 25px;
+  border-radius:16px;
+  box-shadow:0 6px 20px rgba(0,0,0,0.1);
+  width:100%;
+  max-width:400px;
+  animation:fadeIn .5s ease;
+}
+
+.auth-card h2 {
+  text-align:center;
+  color:#003366;
+  margin-bottom:8px;
+  font-size: 1.5rem;
+}
+
+.subtitle {
+  text-align:center;
+  color:#567;
+  margin-bottom:25px;
+  font-size: 0.95rem;
+}
+
+.auth-form {
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group label {
+  color:#01325c;
+  font-weight:600;
+  font-size: 0.9rem;
+}
+
+.auth-form input {
+  width:100%;
+  padding:12px 14px;
+  border-radius:8px;
+  border:1px solid #cde0ff;
+  background:#f9fcff;
+  font-size:14px;
+  transition:.2s ease;
+  font-family: inherit;
+}
+
+.auth-form input:focus {
+  border-color:#007bff;
+  box-shadow:0 0 0 3px rgba(0,123,255,0.15);
+  outline:none;
+  background: white;
+}
+
+.btn-primary {
+  background:linear-gradient(135deg,#007bff,#0047b3);
+  color:white;
+  border:none;
+  padding:14px;
+  font-weight:600;
+  border-radius:8px;
+  cursor:pointer;
+  transition:.3s ease;
+  font-size: 15px;
+  margin-top: 10px;
+}
+
+.btn-primary:hover {
+  transform:translateY(-2px);
+  box-shadow:0 6px 15px rgba(0,123,255,0.25);
+}
+
+.auth-footer {
+  text-align:center;
+  margin-top:18px;
+  color:#01325c;
+  font-size: 0.9rem;
+}
+
+.auth-footer a {
+  color:#007bff;
+  font-weight:600;
+  text-decoration: none;
+}
+
+.errorlist {
+  list-style: none;
+  padding: 0;
+  margin: 4px 0 0 0;
+  color: #dc3545;
+  font-size: 0.8rem;
+}
+
+@keyframes fadeIn {
+  from{
+    opacity:0;
+    transform:translateY(20px);
+  }
+  to{
+    opacity:1;
+    transform:none;
+  }
+}
+
+/* АДАПТИВНОСТЬ ДЛЯ МОБИЛЬНЫХ */
+@media (max-width: 768px) {
+  .auth-page {
+    padding: 15px 10px;
+    align-items: flex-start;
+    min-height: calc(100vh - 120px);
+  }
+
+  .auth-card {
+    padding: 25px 20px;
+    border-radius: 14px;
+    margin-top: 20px;
+  }
+
+  .auth-card h2 {
+    font-size: 1.3rem;
+  }
+
+  .subtitle {
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+  }
+
+  .auth-form {
+    gap: 14px;
+  }
+
+  .auth-form input {
+    padding: 14px 12px;
+    font-size: 16px; /* Увеличиваем для удобства на мобильных */
+  }
+
+  .btn-primary {
+    padding: 16px;
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .auth-page {
+    padding: 10px 8px;
+  }
+
+  .auth-card {
+    padding: 20px 16px;
+    border-radius: 12px;
+    margin-top: 10px;
+  }
+
+  .auth-card h2 {
+    font-size: 1.2rem;
+  }
+
+  .subtitle {
+    font-size: 0.85rem;
+  }
+
+  .auth-form input {
+    padding: 12px 10px;
+  }
+
+  .btn-primary {
+    padding: 14px;
+  }
+
+  .auth-footer {
+    font-size: 0.85rem;
+  }
+}
+
+/* Для очень маленьких экранов */
+@media (max-width: 360px) {
+  .auth-card {
+    padding: 18px 14px;
+  }
+
+  .auth-card h2 {
+    font-size: 1.1rem;
+  }
+
+  .auth-form input {
+    font-size: 14px;
+  }
+}
+
+/* Улучшения для iOS */
+@supports (-webkit-touch-callout: none) {
+  .auth-form input {
+    font-size: 16px; /* Предотвращает zoom в iOS */
+  }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Автофокус на первое поле
+  const firstInput = document.querySelector('.auth-form input');
+  if (firstInput) {
+    firstInput.focus();
+  }
+
+  // Добавляем поддержку клавиши Enter для отправки формы
+  const form = document.querySelector('.auth-form');
+  const inputs = form.querySelectorAll('input');
+
+  inputs.forEach(input => {
+    input.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        form.submit();
+      }
+    });
+  });
+});
+</script>
+{% endblock %}
