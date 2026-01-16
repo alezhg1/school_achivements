@@ -1,9 +1,0 @@
-# school_achivements
-Миссия 1:
-1) Описание проекта:
-  Мои Достижения - это образовательная веб-платформа для создания и отслеживания  достижений школьников. Платформа помогает учителям и ученикам фиксировать успехи в учебе, спорте, творчестве и внеурочных активностях,            мотивируя к постоянному росту. Платформа позволяет быстро создавать персонализированные достижения: от "Участник конференции" до "Победитель олимпиады по математике".
-2) Название проекта: Мои Достижения
-
-3) Промт для создания логотипа преокта:
-
-A professional logo for a web platform that creates and tracks achievements for school students. Icon only, no text. The main symbol is a clean, modern combination of an upward arrow and a shining star integrated with a simple graduation cap or an open book, representing student progress, learning, and success. The style is minimalist and flat, using smooth vector shapes, no skeuomorphism, no 3D, no shadows, no gradients that are too complex. Primary color palette: deep educational blue and warm gold, with white as a background or highlight color, symbolizing trust, motivation, and excellence. The composition is perfectly centered and symmetrical inside a square icon, with balanced negative space and clear silhouette, instantly recognizable even at small sizes like app icons or favicons. The mood is inspiring, optimistic, and student‑friendly, but still professional enough for teachers and parents. No text, no slogans, no realistic photos, no complex backgrounds, no additional objects that distract from the main symbol. Plain, solid background, preferably white or very light neutral   color, to ensure maximum clarity and contrast. Ultra high resolution, crisp vector‑like edges, suitable for export as SVG and for use on websites, mobile apps, certificates, and social media profile images. Aspect ratio 1:1, square logo, icon‑style composition.
