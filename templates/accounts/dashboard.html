@@ -7,7 +7,7 @@
     <div class="hero-content">
       <h1 class="welcome-title">
         <span class="welcome-icon">👋</span>
-        Добро пожаловать, {{ user.first_name }}!
+        Добро пожаловать, {{ user.first_name|default:user.username }}!
       </h1>
       <p class="welcome-subtitle">Отслеживайте свои достижения и прогресс</p>
     </div>
@@ -191,21 +191,33 @@
 </div>
 
 <style>
+/* ОСНОВНЫЕ СТИЛИ - Согласованные с регистрацией */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 .student-dashboard {
   max-width: 1200px;
   margin: 0 auto;
   padding: 15px;
   animation: fadeIn 0.6s ease;
+  font-family: "Segoe UI", Roboto, -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+  font-size: 13px;
+  line-height: 1.3;
+  background: white;
 }
 
-/* Герой секция */
+/* Герой секция - в стиле регистрации */
 .dashboard-hero {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 16px;
+  background: linear-gradient(135deg, #0077e6 0%, #005bb5 100%);
+  border-radius: 12px;
   padding: 25px 20px;
   color: white;
   margin-bottom: 25px;
-  box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 3px 8px rgba(3, 36, 74, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .hero-content {
@@ -213,64 +225,71 @@
 }
 
 .welcome-title {
-  font-size: 1.8rem;
-  font-weight: 700;
+  font-size: 1.4rem;
+  font-weight: 800;
   margin-bottom: 8px;
   display: flex;
   align-items: center;
   gap: 12px;
   flex-wrap: wrap;
+  color: #fff;
 }
 
 .welcome-icon {
-  font-size: 1.8rem;
+  font-size: 1.4rem;
   animation: bounce 2s infinite;
 }
 
 .welcome-subtitle {
-  font-size: 1rem;
+  font-size: 0.9rem;
   opacity: 0.9;
   margin: 0;
+  font-weight: 500;
 }
 
 .hero-stats {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: 15px;
-  flex-wrap: wrap;
 }
 
 .stat-card {
   background: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(10px);
-  border-radius: 12px;
+  border-radius: 10px;
   padding: 15px;
   display: flex;
   align-items: center;
   gap: 12px;
   border: 1px solid rgba(255, 255, 255, 0.2);
-  transition: transform 0.3s ease;
-  flex: 1;
-  min-width: 140px;
+  transition: all 0.22s ease;
 }
 
 .stat-card:hover {
-  transform: translateY(-3px);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .stat-icon {
-  font-size: 1.8rem;
+  font-size: 1.5rem;
+}
+
+.stat-info {
+  flex: 1;
 }
 
 .stat-number {
   display: block;
-  font-size: 1.5rem;
-  font-weight: 700;
+  font-size: 1.3rem;
+  font-weight: 800;
   margin-bottom: 4px;
+  color: #fff;
 }
 
 .stat-label {
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   opacity: 0.9;
+  font-weight: 600;
 }
 
 /* Быстрые действия */
@@ -280,8 +299,8 @@
 
 .section-title {
   color: #003366;
-  font-size: 1.3rem;
-  font-weight: 700;
+  font-size: 0.9rem;
+  font-weight: 600;
   margin-bottom: 15px;
   display: flex;
   align-items: center;
@@ -289,7 +308,7 @@
 }
 
 .section-icon {
-  font-size: 1.2rem;
+  font-size: 1rem;
 }
 
 .actions-grid {
@@ -300,39 +319,44 @@
 
 .action-card {
   background: white;
-  border-radius: 12px;
-  padding: 20px;
+  border-radius: 10px;
+  padding: 18px;
   text-decoration: none;
   color: inherit;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-  border: 1px solid #e8f4ff;
-  transition: all 0.3s ease;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06);
+  border: 1.5px solid #e8f4ff;
+  transition: all 0.22s ease;
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
 .action-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(0, 123, 255, 0.15);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0, 123, 255, 0.15);
   border-color: #007bff;
 }
 
 .action-icon {
-  font-size: 2.2rem;
+  font-size: 1.8rem;
   flex-shrink: 0;
+}
+
+.action-content {
+  flex: 1;
 }
 
 .action-content h3 {
   color: #003366;
   margin: 0 0 6px 0;
-  font-size: 1rem;
+  font-size: 0.85rem;
+  font-weight: 700;
 }
 
 .action-content p {
   color: #666;
   margin: 0;
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   line-height: 1.3;
 }
 
@@ -346,16 +370,16 @@
 
 .achievement-card {
   background: white;
-  border-radius: 12px;
+  border-radius: 10px;
   padding: 18px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-  border: 1px solid #e8f4ff;
-  transition: all 0.3s ease;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06);
+  border: 1.5px solid #e8f4ff;
+  transition: all 0.22s ease;
 }
 
 .achievement-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 123, 255, 0.1);
+  box-shadow: 0 6px 15px rgba(0, 123, 255, 0.1);
 }
 
 .achievement-header {
@@ -370,7 +394,7 @@
 .achievement-title {
   color: #003366;
   margin: 0;
-  font-size: 1rem;
+  font-size: 0.85rem;
   font-weight: 700;
   flex: 1;
   min-width: 0;
@@ -379,7 +403,7 @@
 
 .achievement-badge {
   padding: 4px 8px;
-  border-radius: 10px;
+  border-radius: 8px;
   font-size: 0.65rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -390,26 +414,30 @@
 .achievement-badge.победитель {
   background: #d4edda;
   color: #155724;
+  border: 1px solid #c3e6cb;
 }
 
 .achievement-badge.призёр {
   background: #fff3cd;
   color: #856404;
+  border: 1px solid #ffeaa7;
 }
 
 .achievement-badge.участник {
   background: #e2e3e5;
   color: #383d41;
+  border: 1px solid #d6d8db;
 }
 
 .achievement-badge.другое {
   background: #d1ecf1;
   color: #0c5460;
+  border: 1px solid #bee5eb;
 }
 
 .achievement-description {
   color: #666;
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   line-height: 1.4;
   margin-bottom: 12px;
   display: -webkit-box;
@@ -429,7 +457,7 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   color: #888;
 }
 
@@ -452,13 +480,18 @@
 
 .invitation-card {
   background: white;
-  border-radius: 12px;
+  border-radius: 10px;
   padding: 18px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-  border: 1px solid #e8f4ff;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06);
+  border: 1.5px solid #e8f4ff;
   display: flex;
   flex-direction: column;
   gap: 15px;
+  transition: all 0.22s ease;
+}
+
+.invitation-card:hover {
+  border-color: #007bff;
 }
 
 .invitation-content {
@@ -472,11 +505,11 @@
   width: 45px;
   height: 45px;
   background: linear-gradient(135deg, #007bff, #0056b3);
-  border-radius: 10px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.3rem;
+  font-size: 1.2rem;
   flex-shrink: 0;
 }
 
@@ -488,14 +521,15 @@
 .invitation-info h3 {
   color: #003366;
   margin: 0 0 6px 0;
-  font-size: 1rem;
+  font-size: 0.85rem;
+  font-weight: 700;
   word-break: break-word;
 }
 
 .invitation-info p {
   color: #666;
   margin: 0 0 8px 0;
-  font-size: 0.85rem;
+  font-size: 0.75rem;
 }
 
 .invitation-meta {
@@ -508,21 +542,15 @@
   background: #f8f9fa;
   padding: 4px 8px;
   border-radius: 6px;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   color: #555;
+  border: 1px solid #e8f4ff;
 }
 
 .invitation-actions {
   flex-shrink: 0;
   display: flex;
   justify-content: flex-end;
-}
-
-.btn-accept {
-  padding: 8px 16px;
-  font-size: 0.85rem;
-  width: 100%;
-  text-align: center;
 }
 
 /* Мои классы */
@@ -534,16 +562,17 @@
 
 .class-card {
   background: white;
-  border-radius: 12px;
+  border-radius: 10px;
   padding: 18px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-  border: 1px solid #e8f4ff;
-  transition: all 0.3s ease;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06);
+  border: 1.5px solid #e8f4ff;
+  transition: all 0.22s ease;
 }
 
 .class-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 123, 255, 0.1);
+  box-shadow: 0 6px 15px rgba(0, 123, 255, 0.1);
+  border-color: #007bff;
 }
 
 .class-header {
@@ -558,7 +587,7 @@
 .class-name {
   color: #003366;
   margin: 0;
-  font-size: 1rem;
+  font-size: 0.85rem;
   font-weight: 700;
   flex: 1;
   min-width: 0;
@@ -569,16 +598,17 @@
   background: #e8f4ff;
   color: #007bff;
   padding: 4px 8px;
-  border-radius: 10px;
+  border-radius: 8px;
   font-size: 0.65rem;
   font-weight: 600;
+  border: 1px solid #cce5ff;
   margin-left: 8px;
   white-space: nowrap;
 }
 
 .class-description {
   color: #666;
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   line-height: 1.4;
   margin-bottom: 12px;
   display: -webkit-box;
@@ -588,7 +618,7 @@
 }
 
 .teacher-name {
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   color: #888;
   margin-bottom: 12px;
   display: block;
@@ -602,79 +632,82 @@
 /* Пустые состояния */
 .empty-state {
   text-align: center;
-  padding: 40px 25px;
+  padding: 30px 20px;
   background: #f8fbff;
-  border-radius: 12px;
-  border: 2px dashed #e8f4ff;
+  border-radius: 10px;
+  border: 1.5px dashed #e8f4ff;
   margin-bottom: 30px;
 }
 
 .empty-state.small {
-  padding: 30px 20px;
+  padding: 25px 15px;
   margin-bottom: 25px;
 }
 
 .empty-icon {
-  font-size: 3rem;
-  margin-bottom: 15px;
+  font-size: 2.2rem;
+  margin-bottom: 12px;
   opacity: 0.7;
 }
 
 .empty-state h3 {
   color: #003366;
   margin-bottom: 8px;
-  font-size: 1.2rem;
+  font-size: 0.9rem;
+  font-weight: 700;
 }
 
 .empty-state p {
   color: #666;
-  margin-bottom: 20px;
-  font-size: 0.9rem;
+  margin-bottom: 15px;
+  font-size: 0.75rem;
   line-height: 1.4;
 }
 
 .empty-state.small h3 {
-  font-size: 1rem;
+  font-size: 0.85rem;
 }
 
 .empty-state.small p {
-  font-size: 0.85rem;
+  font-size: 0.7rem;
 }
 
-/* Кнопки */
+/* Кнопки - в стиле регистрации */
 .btn {
-  padding: 10px 18px;
-  border-radius: 8px;
+  padding: 10px 16px;
+  border-radius: 7px;
   text-decoration: none;
   font-weight: 600;
-  font-size: 0.85rem;
-  transition: all 0.3s ease;
+  font-size: 0.8rem;
+  transition: all 0.22s ease;
   border: none;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   gap: 6px;
   justify-content: center;
+  font-family: inherit;
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #007bff, #0056b3);
+  background: linear-gradient(135deg, #007bff, #0047b3);
   color: white;
-  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+  box-shadow: 0 3px 8px rgba(0, 123, 255, 0.15);
+  border: 1px solid #0056b3;
 }
 
-.btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 15px rgba(0, 123, 255, 0.4);
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
 }
 
 .btn-small {
   padding: 6px 12px;
   border-radius: 6px;
   text-decoration: none;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   font-weight: 600;
-  transition: all 0.3s ease;
+  transition: all 0.22s ease;
 }
 
 .btn-small.edit {
@@ -683,26 +716,47 @@
   border: 1px solid #007bff;
 }
 
+.btn-small.edit:hover {
+  background: #007bff;
+  color: white;
+  transform: translateY(-1px);
+}
+
 .btn-small.outline {
   background: transparent;
   border: 1px solid #007bff;
   color: #007bff;
 }
 
-.btn-small:hover {
+.btn-small.outline:hover {
+  background: #007bff;
+  color: white;
   transform: translateY(-1px);
 }
 
+.btn-icon {
+  font-size: 0.8rem;
+}
+
+.btn-accept {
+  padding: 8px 16px;
+  font-size: 0.8rem;
+  width: 100%;
+  text-align: center;
+}
+
+/* Общие стили */
 .view-all {
   color: #007bff;
   text-decoration: none;
   font-weight: 600;
-  transition: color 0.3s ease;
-  font-size: 0.9rem;
+  transition: color 0.22s ease;
+  font-size: 0.8rem;
 }
 
 .view-all:hover {
   color: #0056b3;
+  text-decoration: underline;
 }
 
 .section-header {
@@ -731,10 +785,10 @@
     transform: translateY(0);
   }
   40% {
-    transform: translateY(-8px);
+    transform: translateY(-5px);
   }
   60% {
-    transform: translateY(-4px);
+    transform: translateY(-2px);
   }
 }
 
@@ -746,22 +800,18 @@
 
   .dashboard-hero {
     padding: 20px 15px;
-    border-radius: 12px;
+    border-radius: 10px;
   }
 
   .welcome-title {
-    font-size: 1.5rem;
-    flex-direction: column;
+    font-size: 1.2rem;
+    flex-direction: row;
     gap: 8px;
-    text-align: center;
+    text-align: left;
   }
 
   .hero-stats {
-    flex-direction: column;
-  }
-
-  .stat-card {
-    min-width: auto;
+    grid-template-columns: 1fr;
   }
 
   .actions-grid {
@@ -778,19 +828,19 @@
   }
 
   .invitation-content {
-    flex-direction: column;
-    text-align: center;
-    gap: 10px;
+    flex-direction: row;
+    text-align: left;
+    gap: 12px;
   }
 
   .section-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
   }
 
   .section-title {
-    font-size: 1.2rem;
+    font-size: 0.85rem;
   }
 
   .action-card {
@@ -798,15 +848,15 @@
   }
 
   .action-icon {
-    font-size: 2rem;
+    font-size: 1.5rem;
   }
 
   .empty-state {
-    padding: 30px 20px;
+    padding: 25px 15px;
   }
 
   .empty-icon {
-    font-size: 2.5rem;
+    font-size: 2rem;
   }
 }
 
@@ -816,11 +866,11 @@
   }
 
   .welcome-title {
-    font-size: 1.3rem;
+    font-size: 1rem;
   }
 
   .welcome-subtitle {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
   }
 
   .stat-card {
@@ -828,19 +878,19 @@
   }
 
   .stat-icon {
-    font-size: 1.5rem;
-  }
-
-  .stat-number {
     font-size: 1.3rem;
   }
 
+  .stat-number {
+    font-size: 1.1rem;
+  }
+
   .empty-state {
-    padding: 25px 15px;
+    padding: 20px 12px;
   }
 
   .empty-icon {
-    font-size: 2rem;
+    font-size: 1.8rem;
   }
 
   .achievement-header,
@@ -856,8 +906,14 @@
     align-self: flex-start;
   }
 
-  .invitation-meta {
-    justify-content: center;
+  .invitation-content {
+    flex-direction: column;
+    text-align: center;
+    gap: 10px;
+  }
+
+  .invitation-avatar {
+    margin: 0 auto;
   }
 }
 
@@ -874,16 +930,21 @@
   }
 
   .action-content h3 {
-    font-size: 0.95rem;
+    font-size: 0.8rem;
   }
 
   .action-content p {
-    font-size: 0.8rem;
+    font-size: 0.7rem;
   }
 
   .btn {
-    padding: 8px 14px;
-    font-size: 0.8rem;
+    padding: 8px 12px;
+    font-size: 0.75rem;
+  }
+
+  .btn-small {
+    padding: 5px 10px;
+    font-size: 0.65rem;
   }
 }
 </style>
