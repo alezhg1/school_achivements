@@ -1,1144 +1,1194 @@
-{% extends 'base.html' %}
-{% block title %}Уведомления{% endblock %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Уведомления - Мои достижения 444</title>
+  <style>
+    /* СБРОС СТИЛЕЙ */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-{% block content %}
-<div class="notifications-page">
-  <!-- Заголовок и статистика -->
-  <div class="notifications-hero">
-    <div class="hero-content">
-      <div class="hero-text">
-        <h1 class="hero-title">
-          <span class="hero-icon">🔔</span>
-          Уведомления
-        </h1>
-        <p class="hero-subtitle">Все ваши важные события и обновления в одном месте</p>
-      </div>
-      <div class="hero-stats">
-        <div class="stat-card">
-          <div class="stat-icon">📨</div>
-          <div class="stat-info">
-            <span class="stat-number">{{ notifications.count }}</span>
-            <span class="stat-label">Всего</span>
-          </div>
-        </div>
-        <div class="stat-card accent">
-          <div class="stat-icon">🔴</div>
-          <div class="stat-info">
-            <span class="stat-number">{{ unread_count }}</span>
-            <span class="stat-label">Непрочитано</span>
-          </div>
-        </div>
-      </div>
+    html, body {
+      height: 100%;
+      background: white;
+      font-family: "Segoe UI", Roboto, -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+      font-size: 13px;
+      line-height: 1.3;
+    }
+
+    /* HEADER */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(90deg, #0077e6 0%, #005bb5 100%);
+      color: #fff;
+      z-index: 1200;
+      box-shadow: 0 3px 8px rgba(3, 36, 74, 0.12);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 12px;
+      width: 100%;
+      height: 55px;
+    }
+
+    .logo a {
+      font-weight: 700;
+      font-size: 1rem;
+      color: #fff;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      flex: 1;
+    }
+
+    nav a {
+      color: rgba(255, 255, 255, 0.95);
+      text-decoration: none;
+      padding: 5px 7px;
+      border-radius: 5px;
+      font-weight: 600;
+      transition: all 0.22s;
+      font-size: 0.8rem;
+      white-space: nowrap;
+    }
+
+    nav a:hover {
+      background: rgba(255, 255, 255, 0.08);
+      transform: translateY(-1px);
+    }
+
+    nav a.active {
+      background: rgba(255, 255, 255, 0.15);
+      font-weight: 700;
+    }
+
+    .logout-btn {
+      background: rgba(220, 53, 69, 0.9);
+      color: white;
+      padding: 5px 8px;
+      border-radius: 5px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.75rem;
+      border: none;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.3s ease;
+      margin-left: 5px;
+    }
+
+    .logout-btn:hover {
+      background: #dc3545;
+      transform: translateY(-1px);
+    }
+
+    .user-mini {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-left: 5px;
+      color: white;
+      font-weight: 600;
+      font-size: 0.8rem;
+    }
+
+    /* ОСНОВНОЙ КОНТЕНТ */
+    .main-content {
+      padding-top: 55px;
+      min-height: 100vh;
+      background: white;
+    }
+
+    .notifications-page {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 20px 15px 40px;
+      animation: fadeIn 0.6s ease;
+      background: white;
+    }
+
+    /* Заголовок страницы */
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .page-title {
+      color: #003366;
+      font-size: 1.4rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .page-icon {
+      font-size: 1.6rem;
+    }
+
+    /* Фильтры уведомлений */
+    .notifications-filters {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 25px;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      padding: 8px 16px;
+      border-radius: 8px;
+      background: #f8fbff;
+      border: 1.5px solid #e8f4ff;
+      color: #003366;
+      font-weight: 600;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.22s ease;
+      white-space: nowrap;
+    }
+
+    .filter-btn:hover {
+      background: #e8f4ff;
+      transform: translateY(-1px);
+    }
+
+    .filter-btn.active {
+      background: #007bff;
+      color: white;
+      border-color: #007bff;
+    }
+
+    .actions-container {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .mark-all-btn {
+      padding: 8px 16px;
+      border-radius: 8px;
+      background: #28a745;
+      color: white;
+      border: none;
+      font-weight: 600;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.22s ease;
+      white-space: nowrap;
+    }
+
+    .mark-all-btn:hover {
+      background: #218838;
+      transform: translateY(-1px);
+    }
+
+    .clear-all-btn {
+      padding: 8px 16px;
+      border-radius: 8px;
+      background: #dc3545;
+      color: white;
+      border: none;
+      font-weight: 600;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.22s ease;
+      white-space: nowrap;
+    }
+
+    .clear-all-btn:hover {
+      background: #c82333;
+      transform: translateY(-1px);
+    }
+
+    /* Список уведомлений */
+    .notifications-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 30px;
+    }
+
+    .notification-card {
+      background: white;
+      border-radius: 12px;
+      padding: 18px;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06);
+      border: 1.5px solid #e8f4ff;
+      display: flex;
+      gap: 15px;
+      align-items: flex-start;
+      transition: all 0.22s ease;
+      animation: slideIn 0.3s ease;
+    }
+
+    .notification-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(0, 123, 255, 0.1);
+      border-color: #007bff;
+    }
+
+    .notification-card.unread {
+      background: #f0f8ff;
+      border-left: 4px solid #007bff;
+    }
+
+    .notification-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+
+    .notification-icon.invitation {
+      background: linear-gradient(135deg, #4CAF50, #2E7D32);
+      color: white;
+    }
+
+    .notification-icon.achievement {
+      background: linear-gradient(135deg, #FF9800, #F57C00);
+      color: white;
+    }
+
+    .notification-icon.system {
+      background: linear-gradient(135deg, #9C27B0, #7B1FA2);
+      color: white;
+    }
+
+    .notification-icon.warning {
+      background: linear-gradient(135deg, #F44336, #D32F2F);
+      color: white;
+    }
+
+    .notification-icon.info {
+      background: linear-gradient(135deg, #2196F3, #1976D2);
+      color: white;
+    }
+
+    .notification-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .notification-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .notification-title {
+      color: #003366;
+      margin: 0;
+      font-size: 0.9rem;
+      font-weight: 700;
+      flex: 1;
+      min-width: 0;
+      word-break: break-word;
+    }
+
+    .notification-time {
+      color: #666;
+      font-size: 0.7rem;
+      white-space: nowrap;
+    }
+
+    .notification-message {
+      color: #555;
+      font-size: 0.8rem;
+      line-height: 1.4;
+      margin-bottom: 12px;
+      word-break: break-word;
+    }
+
+    .notification-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .notification-action-btn {
+      padding: 6px 12px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 0.75rem;
+      font-weight: 600;
+      transition: all 0.22s ease;
+      border: none;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .notification-action-btn.primary {
+      background: #007bff;
+      color: white;
+      border: 1px solid #007bff;
+    }
+
+    .notification-action-btn.primary:hover {
+      background: #0056b3;
+      transform: translateY(-1px);
+    }
+
+    .notification-action-btn.secondary {
+      background: transparent;
+      color: #007bff;
+      border: 1px solid #007bff;
+    }
+
+    .notification-action-btn.secondary:hover {
+      background: #007bff;
+      color: white;
+      transform: translateY(-1px);
+    }
+
+    .notification-action-btn.danger {
+      background: transparent;
+      color: #dc3545;
+      border: 1px solid #dc3545;
+    }
+
+    .notification-action-btn.danger:hover {
+      background: #dc3545;
+      color: white;
+      transform: translateY(-1px);
+    }
+
+    .notification-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .unread-badge {
+      background: #007bff;
+      color: white;
+      padding: 2px 6px;
+      border-radius: 10px;
+      font-size: 0.65rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .mark-read-btn {
+      background: none;
+      border: none;
+      color: #666;
+      cursor: pointer;
+      font-size: 0.7rem;
+      padding: 2px 6px;
+      border-radius: 4px;
+      transition: all 0.22s ease;
+    }
+
+    .mark-read-btn:hover {
+      color: #007bff;
+      background: #f0f4f8;
+    }
+
+    /* Пустое состояние */
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      background: #f8fbff;
+      border-radius: 12px;
+      border: 1.5px dashed #e8f4ff;
+      margin-bottom: 30px;
+    }
+
+    .empty-icon {
+      font-size: 3rem;
+      margin-bottom: 15px;
+      opacity: 0.7;
+    }
+
+    .empty-state h3 {
+      color: #003366;
+      margin-bottom: 10px;
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    .empty-state p {
+      color: #666;
+      margin-bottom: 20px;
+      font-size: 0.85rem;
+      line-height: 1.4;
+      max-width: 400px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Пагинация */
+    .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      margin-top: 30px;
+      flex-wrap: wrap;
+    }
+
+    .pagination-btn {
+      padding: 8px 12px;
+      border-radius: 6px;
+      background: #f8fbff;
+      border: 1.5px solid #e8f4ff;
+      color: #003366;
+      font-weight: 600;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.22s ease;
+      min-width: 36px;
+      text-align: center;
+    }
+
+    .pagination-btn:hover:not(:disabled) {
+      background: #e8f4ff;
+      transform: translateY(-1px);
+    }
+
+    .pagination-btn.active {
+      background: #007bff;
+      color: white;
+      border-color: #007bff;
+    }
+
+    .pagination-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Анимации */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(-10px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    /* АДАПТИВНОСТЬ ДЛЯ МОБИЛЬНЫХ */
+    @media (max-width: 768px) {
+      .notifications-page {
+        padding: 15px 10px 30px;
+      }
+
+      .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
+
+      .page-title {
+        font-size: 1.2rem;
+      }
+
+      .actions-container {
+        width: 100%;
+        justify-content: flex-start;
+      }
+
+      .notifications-filters {
+        overflow-x: auto;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+      }
+
+      .filter-btn {
+        flex-shrink: 0;
+      }
+
+      .notification-card {
+        padding: 15px;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .notification-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+      }
+
+      .notification-time {
+        align-self: flex-start;
+      }
+
+      .notification-actions {
+        flex-wrap: wrap;
+      }
+
+      .notification-action-btn {
+        flex: 1;
+        min-width: 120px;
+        text-align: center;
+      }
+
+      .empty-state {
+        padding: 30px 15px;
+      }
+
+      .empty-icon {
+        font-size: 2.5rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .notifications-page {
+        padding: 12px 8px 25px;
+      }
+
+      .page-title {
+        font-size: 1.1rem;
+      }
+
+      .filter-btn,
+      .mark-all-btn,
+      .clear-all-btn {
+        padding: 6px 12px;
+        font-size: 0.75rem;
+      }
+
+      .notification-card {
+        padding: 12px;
+      }
+
+      .notification-icon {
+        width: 36px;
+        height: 36px;
+        font-size: 1rem;
+      }
+
+      .notification-title {
+        font-size: 0.85rem;
+      }
+
+      .notification-message {
+        font-size: 0.75rem;
+      }
+
+      .notification-action-btn {
+        padding: 5px 10px;
+        font-size: 0.7rem;
+        min-width: 100px;
+      }
+
+      .empty-state {
+        padding: 25px 12px;
+      }
+
+      .empty-icon {
+        font-size: 2rem;
+      }
+
+      .empty-state h3 {
+        font-size: 1rem;
+      }
+
+      .empty-state p {
+        font-size: 0.8rem;
+      }
+
+      .pagination-btn {
+        padding: 6px 10px;
+        font-size: 0.75rem;
+        min-width: 32px;
+      }
+    }
+
+    /* Очень маленькие экраны */
+    @media (max-width: 360px) {
+      .notification-actions {
+        flex-direction: column;
+        width: 100%;
+      }
+
+      .notification-action-btn {
+        width: 100%;
+      }
+
+      .actions-container {
+        flex-direction: column;
+      }
+
+      .mark-all-btn,
+      .clear-all-btn {
+        width: 100%;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Хедер -->
+  <header>
+    <div class="logo">
+      <a href="/">Мои достижения</a>
     </div>
-    <div class="hero-actions">
-      {% if notifications %}
-      <button class="btn btn-primary" onclick="markAllAsRead()">
-        <span class="btn-icon">📭</span>
-        Прочитать все
-      </button>
-      <button class="btn btn-secondary" onclick="clearAllNotifications()">
-        <span class="btn-icon">🗑️</span>
-        Очистить все
-      </button>
+
+    <nav>
+      {% if user.is_authenticated %}
+        {% if user.role == 'teacher' or user.is_teacher %}
+          <a href="{% url 'teacher_dashboard' %}" class="{% if request.path == '/teacher/dashboard/' %}active{% endif %}">Главная</a>
+          <a href="{% url 'teacher_classes' %}" class="{% if 'classes' in request.path %}active{% endif %}">Классы</a>
+          <a href="{% url 'profile' user.username %}" class="{% if 'profile' in request.path %}active{% endif %}">Профиль</a>
+          <a href="{% url 'notifications' %}" class="{% if 'notifications' in request.path %}active{% endif %}">Уведомления</a>
+        {% else %}
+          <a href="{% url 'dashboard' %}" class="{% if request.path == '/dashboard/' %}active{% endif %}">Главная</a>
+          <a href="{% url 'dashboard' %}" class="{% if 'classes' in request.path %}active{% endif %}">Мои классы</a>
+          <a href="{% url 'profile' user.username %}" class="{% if 'profile' in request.path %}active{% endif %}">Профиль</a>
+          <a href="{% url 'notifications' %}" class="{% if 'notifications' in request.path %}active{% endif %}">Уведомления</a>
+        {% endif %}
+
+        <div class="user-mini">
+          <span>{{ user.get_full_name|default:user.username }}</span>
+          <a href="{% url 'logout' %}" class="logout-btn">Выйти</a>
+        </div>
+      {% else %}
+        <a href="{% url 'login' %}">Войти</a>
+        <a href="{% url 'register' %}" class="logout-btn">Регистрация</a>
+      {% endif %}
+    </nav>
+  </header>
+
+  <!-- Основной контент -->
+  <div class="main-content">
+    <div class="notifications-page">
+      <!-- Заголовок страницы -->
+      <div class="page-header">
+        <h1 class="page-title">
+          <span class="page-icon">🔔</span>
+          Уведомления
+          {% if unread_count > 0 %}
+            <span class="unread-badge">{{ unread_count }} новых</span>
+          {% endif %}
+        </h1>
+        
+        <div class="actions-container">
+          <button class="mark-all-btn" id="markAllReadBtn">Отметить все как прочитанные</button>
+          <button class="clear-all-btn" id="clearAllBtn">Очистить все</button>
+        </div>
+      </div>
+
+      <!-- Фильтры уведомлений -->
+      <div class="notifications-filters">
+        <button class="filter-btn active" data-filter="all">Все</button>
+        <button class="filter-btn" data-filter="unread">Непрочитанные</button>
+        <button class="filter-btn" data-filter="invitations">Приглашения</button>
+        <button class="filter-btn" data-filter="achievements">Достижения</button>
+        <button class="filter-btn" data-filter="system">Системные</button>
+      </div>
+
+      <!-- Список уведомлений -->
+      <div class="notifications-list" id="notificationsList">
+        {% if notifications %}
+          {% for notification in notifications %}
+          <div class="notification-card {% if not notification.is_read %}unread{% endif %}" 
+               data-type="{{ notification.type }}" 
+               data-id="{{ notification.id }}">
+            <div class="notification-icon {{ notification.type }}">
+              {% if notification.type == 'invitation' %}
+                📨
+              {% elif notification.type == 'achievement' %}
+                🏆
+              {% elif notification.type == 'warning' %}
+                ⚠️
+              {% else %}
+                ℹ️
+              {% endif %}
+            </div>
+            
+            <div class="notification-content">
+              <div class="notification-header">
+                <h3 class="notification-title">{{ notification.title }}</h3>
+                <div class="notification-status">
+                  {% if not notification.is_read %}
+                    <span class="unread-badge">Новое</span>
+                  {% endif %}
+                  <span class="notification-time">{{ notification.created_at|timesince }} назад</span>
+                </div>
+              </div>
+              
+              <p class="notification-message">{{ notification.message }}</p>
+              
+              <div class="notification-actions">
+                {% if notification.type == 'invitation' and not notification.is_accepted %}
+                  <button class="notification-action-btn primary" data-action="accept" data-id="{{ notification.id }}">
+                    Принять приглашение
+                  </button>
+                  <button class="notification-action-btn danger" data-action="decline" data-id="{{ notification.id }}">
+                    Отклонить
+                  </button>
+                {% endif %}
+                
+                {% if notification.related_url %}
+                  <a href="{{ notification.related_url }}" class="notification-action-btn secondary">
+                    Подробнее
+                  </a>
+                {% endif %}
+                
+                {% if not notification.is_read %}
+                  <button class="notification-action-btn secondary" data-action="mark-read" data-id="{{ notification.id }}">
+                    Отметить как прочитанное
+                  </button>
+                {% endif %}
+                
+                <button class="notification-action-btn danger" data-action="delete" data-id="{{ notification.id }}">
+                  Удалить
+                </button>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        {% else %}
+          <!-- Пустое состояние -->
+          <div class="empty-state">
+            <div class="empty-icon">📭</div>
+            <h3>Уведомлений пока нет</h3>
+            <p>Здесь будут появляться важные сообщения, приглашения в классы и уведомления о новых достижениях</p>
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Пагинация -->
+      {% if notifications.has_other_pages %}
+      <div class="pagination">
+        {% if notifications.has_previous %}
+          <button class="pagination-btn" onclick="window.location.href='?page={{ notifications.previous_page_number }}'">
+            ← Назад
+          </button>
+        {% else %}
+          <button class="pagination-btn" disabled>← Назад</button>
+        {% endif %}
+        
+        {% for i in notifications.paginator.page_range %}
+          {% if notifications.number == i %}
+            <button class="pagination-btn active">{{ i }}</button>
+          {% elif i > notifications.number|add:'-3' and i < notifications.number|add:'3' %}
+            <button class="pagination-btn" onclick="window.location.href='?page={{ i }}'">{{ i }}</button>
+          {% endif %}
+        {% endfor %}
+        
+        {% if notifications.has_next %}
+          <button class="pagination-btn" onclick="window.location.href='?page={{ notifications.next_page_number }}'">
+            Вперед →
+          </button>
+        {% else %}
+          <button class="pagination-btn" disabled>Вперед →</button>
+        {% endif %}
+      </div>
       {% endif %}
     </div>
   </div>
 
-  <!-- Панель управления -->
-  <div class="notifications-controls">
-    <div class="controls-left">
-      <div class="filter-tabs">
-        <button class="filter-tab active" data-filter="all">
-          <span class="tab-icon">📋</span>
-          Все
-          <span class="tab-badge">{{ notifications.count }}</span>
-        </button>
-        <button class="filter-tab" data-filter="unread">
-          <span class="tab-icon">🔴</span>
-          Непрочитанные
-          <span class="tab-badge">{{ unread_count }}</span>
-        </button>
-        <button class="filter-tab" data-filter="invitations">
-          <span class="tab-icon">👥</span>
-          Приглашения
-          <span class="tab-badge">{{ invitations_count }}</span>
-        </button>
-        <button class="filter-tab" data-filter="achievements">
-          <span class="tab-icon">🏆</span>
-          Достижения
-          <span class="tab-badge">{{ achievements_count }}</span>
-        </button>
-      </div>
-    </div>
-    <div class="controls-right">
-      <div class="search-box">
-        <input type="text" id="notificationSearch" placeholder="Поиск в уведомлениях...">
-        <span class="search-icon">🔍</span>
-      </div>
-      <div class="sort-dropdown">
-        <select id="sortNotifications" class="sort-select">
-          <option value="newest">Сначала новые</option>
-          <option value="oldest">Сначала старые</option>
-        </select>
-      </div>
-    </div>
-  </div>
-
-  <!-- Основной контент -->
-  <div class="notifications-content">
-    {% if notifications %}
-      <div class="notifications-grid">
-        {% for note in notifications %}
-        <div class="notification-card {% if not note.read %}unread{% endif %}"
-             data-type="{% if 'пригласил' in note.text or 'приглашение' in note.text %}invitations{% elif 'достижение' in note.text or 'добавил' in note.text %}achievements{% else %}other{% endif %}"
-             data-id="{{ note.id }}">
-
-          <!-- Индикатор статуса -->
-          <div class="notification-badge">
-            {% if not note.read %}
-            <div class="unread-dot" title="Непрочитано"></div>
-            {% endif %}
-          </div>
-
-          <!-- Аватар типа -->
-          <div class="notification-avatar">
-            {% if 'пригласил' in note.text or 'приглашение' in note.text %}
-            <div class="avatar-type invitation">
-              <span class="avatar-icon">👥</span>
-            </div>
-            {% elif 'достижение' in note.text or 'добавил' in note.text %}
-            <div class="avatar-type achievement">
-              <span class="avatar-icon">🏆</span>
-            </div>
-            {% else %}
-            <div class="avatar-type system">
-              <span class="avatar-icon">💡</span>
-            </div>
-            {% endif %}
-          </div>
-
-          <!-- Контент уведомления -->
-          <div class="notification-body">
-            <div class="notification-text">
-              <p>{{ note.text }}</p>
-            </div>
-            <div class="notification-meta">
-              <div class="meta-left">
-                <span class="notification-time">
-                  <span class="time-icon">🕒</span>
-                  {{ note.created_at|date:"d.m.Y в H:i" }}
-                </span>
-                <span class="notification-ago">
-                  {{ note.created_at|timesince }} назад
-                </span>
-              </div>
-              <div class="meta-right">
-                {% if 'пригласил' in note.text or 'приглашение' in note.text %}
-                <span class="notification-tag invitation">Приглашение</span>
-                {% elif 'достижение' in note.text or 'добавил' in note.text %}
-                <span class="notification-tag achievement">Достижение</span>
-                {% else %}
-                <span class="notification-tag system">Системное</span>
-                {% endif %}
-              </div>
-            </div>
-          </div>
-
-          <!-- Действия -->
-          <div class="notification-actions">
-            {% if note.link %}
-            <a href="{{ note.link }}" class="action-btn primary" title="Перейти">
-              <span class="action-icon">↗️</span>
-            </a>
-            {% endif %}
-
-            {% if not note.read %}
-            <button class="action-btn success" onclick="markAsRead({{ note.id }})" title="Отметить прочитанным">
-              <span class="action-icon">✓</span>
-            </button>
-            {% else %}
-            <button class="action-btn" onclick="markAsUnread({{ note.id }})" title="Отметить непрочитанным">
-              <span class="action-icon">↶</span>
-            </button>
-            {% endif %}
-
-            <button class="action-btn danger" onclick="deleteNotification({{ note.id }})" title="Удалить">
-              <span class="action-icon">🗑️</span>
-            </button>
-          </div>
-
-          <!-- Эффект градиента при наведении -->
-          <div class="card-hover"></div>
-        </div>
-        {% endfor %}
-      </div>
-
-      <!-- Пагинация и статистика -->
-      <div class="notifications-footer">
-        <div class="footer-info">
-          <div class="info-item">
-            <span class="info-label">Показано:</span>
-            <span class="info-value">{{ notifications.count }} из {{ total_count }}</span>
-          </div>
-          <div class="info-item">
-            <span class="info-label">Непрочитанных:</span>
-            <span class="info-value accent">{{ unread_count }}</span>
-          </div>
-        </div>
-        <div class="footer-actions">
-          <button class="btn btn-outline" onclick="loadMoreNotifications()">
-            <span class="btn-icon">📥</span>
-            Загрузить еще
-          </button>
-        </div>
-      </div>
-
-    {% else %}
-      <!-- Пустое состояние -->
-      <div class="empty-state">
-        <div class="empty-visual">
-          <div class="empty-icon">
-            <div class="bell-animation">🔔</div>
-          </div>
-          <div class="empty-sparkles">
-            <span class="sparkle">✨</span>
-            <span class="sparkle">✨</span>
-            <span class="sparkle">✨</span>
-          </div>
-        </div>
-        <div class="empty-content">
-          <h3>Уведомлений пока нет</h3>
-          <p>Когда появятся новые приглашения в классы, уведомления о достижениях или другие важные события, они будут отображаться здесь</p>
-          <div class="empty-actions">
-            <a href="{% url 'teacher_classes' %}" class="btn btn-primary">
-              <span class="btn-icon">🏫</span>
-              Перейти к классам
-            </a>
-            <a href="{% url 'teacher_dashboard' %}" class="btn btn-secondary">
-              <span class="btn-icon">📊</span>
-              На главную
-            </a>
-          </div>
-        </div>
-      </div>
-    {% endif %}
-  </div>
-</div>
-
-<!-- Модальное окно подтверждения -->
-<div id="confirmModal" class="modal-overlay">
-  <div class="modal-container">
-    <div class="modal-header">
-      <div class="modal-icon">⚠️</div>
-      <h3 class="modal-title">Очистить все уведомления?</h3>
-    </div>
-    <div class="modal-body">
-      <p>Это действие нельзя будет отменить. Все уведомления будут удалены без возможности восстановления.</p>
-    </div>
-    <div class="modal-actions">
-      <button class="btn btn-secondary" onclick="closeModal()">Отмена</button>
-      <button class="btn btn-danger" onclick="confirmClearAll()">Очистить все</button>
-    </div>
-  </div>
-</div>
-
-<style>
-.notifications-page {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 30px 20px;
-  animation: fadeIn 0.6s ease;
-}
-
-/* Герой секция */
-.notifications-hero {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 24px;
-  padding: 40px;
-  color: white;
-  margin-bottom: 30px;
-  box-shadow: 0 20px 40px rgba(102, 126, 234, 0.3);
-  position: relative;
-  overflow: hidden;
-}
-
-.notifications-hero::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
-  opacity: 0.1;
-}
-
-.hero-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 25px;
-  position: relative;
-  z-index: 2;
-}
-
-.hero-text {
-  flex: 1;
-}
-
-.hero-title {
-  font-size: 2.8rem;
-  font-weight: 800;
-  margin-bottom: 8px;
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.hero-icon {
-  font-size: 2.5rem;
-  animation: bellSwing 3s ease-in-out infinite;
-}
-
-.hero-subtitle {
-  font-size: 1.3rem;
-  opacity: 0.9;
-  margin: 0;
-}
-
-.hero-stats {
-  display: flex;
-  gap: 20px;
-}
-
-.stat-card {
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(10px);
-  border-radius: 16px;
-  padding: 20px;
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  min-width: 140px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  transition: transform 0.3s ease;
-}
-
-.stat-card:hover {
-  transform: translateY(-5px);
-}
-
-.stat-card.accent {
-  background: rgba(255, 255, 255, 0.25);
-}
-
-.stat-icon {
-  font-size: 2rem;
-}
-
-.stat-number {
-  display: block;
-  font-size: 2rem;
-  font-weight: 800;
-  margin-bottom: 4px;
-}
-
-.stat-label {
-  font-size: 0.9rem;
-  opacity: 0.9;
-}
-
-.hero-actions {
-  display: flex;
-  gap: 15px;
-  justify-content: flex-end;
-  position: relative;
-  z-index: 2;
-}
-
-/* Панель управления */
-.notifications-controls {
-  background: white;
-  border-radius: 20px;
-  padding: 25px 30px;
-  box-shadow: 0 8px 25px rgba(0, 91, 181, 0.08);
-  border: 1px solid #e8f4ff;
-  margin-bottom: 30px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 30px;
-}
-
-.controls-left {
-  flex: 1;
-}
-
-.filter-tabs {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.filter-tab {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 20px;
-  background: #f8f9fa;
-  border: 2px solid transparent;
-  border-radius: 12px;
-  cursor: pointer;
-  font-weight: 600;
-  color: #6c757d;
-  transition: all 0.3s ease;
-  position: relative;
-}
-
-.filter-tab.active,
-.filter-tab:hover {
-  background: #007bff;
-  color: white;
-  border-color: #007bff;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 123, 255, 0.3);
-}
-
-.tab-icon {
-  font-size: 1.1rem;
-}
-
-.tab-badge {
-  background: rgba(255, 255, 255, 0.2);
-  padding: 2px 8px;
-  border-radius: 12px;
-  font-size: 0.8rem;
-  font-weight: 700;
-}
-
-.filter-tab.active .tab-badge,
-.filter-tab:hover .tab-badge {
-  background: rgba(255, 255, 255, 0.3);
-}
-
-.controls-right {
-  display: flex;
-  gap: 15px;
-  align-items: center;
-}
-
-.search-box {
-  position: relative;
-  min-width: 280px;
-}
-
-.search-box input {
-  width: 100%;
-  padding: 12px 45px 12px 15px;
-  border: 2px solid #e8f4ff;
-  border-radius: 12px;
-  font-size: 14px;
-  transition: all 0.3s ease;
-  background: #f8fbff;
-}
-
-.search-box input:focus {
-  border-color: #007bff;
-  box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.1);
-  outline: none;
-  background: white;
-}
-
-.search-icon {
-  position: absolute;
-  right: 15px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #6c757d;
-  font-size: 1.1rem;
-}
-
-.sort-select {
-  padding: 12px 15px;
-  border: 2px solid #e8f4ff;
-  border-radius: 12px;
-  background: #f8fbff;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  min-width: 180px;
-}
-
-.sort-select:focus {
-  border-color: #007bff;
-  outline: none;
-  background: white;
-}
-
-/* Сетка уведомлений */
-.notifications-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  margin-bottom: 40px;
-}
-
-.notification-card {
-  background: white;
-  border-radius: 20px;
-  padding: 25px;
-  display: flex;
-  align-items: flex-start;
-  gap: 20px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
-  border: 2px solid transparent;
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-  animation: slideUp 0.5s ease;
-}
-
-.notification-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 15px 30px rgba(0, 123, 255, 0.15);
-  border-color: #007bff;
-}
-
-.notification-card.unread {
-  border-left: 4px solid #007bff;
-  background: linear-gradient(135deg, #f8fbff 0%, #f0f7ff 100%);
-}
-
-/* Бейдж статуса */
-.notification-badge {
-  padding-top: 4px;
-  flex-shrink: 0;
-}
-
-.unread-dot {
-  width: 12px;
-  height: 12px;
-  background: #007bff;
-  border-radius: 50%;
-  animation: pulse 2s infinite;
-  box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.7);
-}
-
-/* Аватар типа */
-.notification-avatar {
-  flex-shrink: 0;
-}
-
-.avatar-type {
-  width: 60px;
-  height: 60px;
-  border-radius: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.8rem;
-  transition: all 0.3s ease;
-}
-
-.avatar-type.invitation {
-  background: linear-gradient(135deg, #e8f4ff, #d4e7ff);
-  color: #007bff;
-}
-
-.avatar-type.achievement {
-  background: linear-gradient(135deg, #f0fff4, #e8f8ec);
-  color: #28a745;
-}
-
-.avatar-type.system {
-  background: linear-gradient(135deg, #fff4e6, #ffedd5);
-  color: #fd7e14;
-}
-
-/* Тело уведомления */
-.notification-body {
-  flex: 1;
-  min-width: 0;
-}
-
-.notification-text p {
-  margin: 0 0 15px 0;
-  font-size: 16px;
-  line-height: 1.5;
-  color: #333;
-  font-weight: 500;
-}
-
-.notification-meta {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.meta-left {
-  display: flex;
-  gap: 15px;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-.notification-time,
-.notification-ago {
-  font-size: 0.85rem;
-  color: #6c757d;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.time-icon {
-  font-size: 0.8rem;
-}
-
-.notification-tag {
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.notification-tag.invitation {
-  background: #e8f4ff;
-  color: #007bff;
-}
-
-.notification-tag.achievement {
-  background: #f0fff4;
-  color: #28a745;
-}
-
-.notification-tag.system {
-  background: #fff4e6;
-  color: #fd7e14;
-}
-
-/* Действия */
-.notification-actions {
-  display: flex;
-  gap: 8px;
-  align-items: flex-start;
-  flex-shrink: 0;
-}
-
-.action-btn {
-  width: 44px;
-  height: 44px;
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.action-btn.primary {
-  background: #007bff;
-  color: white;
-}
-
-.action-btn.success {
-  background: #28a745;
-  color: white;
-}
-
-.action-btn.danger {
-  background: #dc3545;
-  color: white;
-}
-
-.action-btn:hover {
-  transform: scale(1.1);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-}
-
-/* Эффект при наведении */
-.card-hover {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(135deg, rgba(0, 123, 255, 0.03), rgba(0, 86, 179, 0.03));
-  opacity: 0;
-  transition: all 0.3s ease;
-  pointer-events: none;
-  border-radius: 20px;
-}
-
-.notification-card:hover .card-hover {
-  opacity: 1;
-}
-
-/* Футер */
-.notifications-footer {
-  background: white;
-  border-radius: 20px;
-  padding: 25px 30px;
-  box-shadow: 0 8px 25px rgba(0, 91, 181, 0.08);
-  border: 1px solid #e8f4ff;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 20px;
-}
-
-.footer-info {
-  display: flex;
-  gap: 30px;
-  flex-wrap: wrap;
-}
-
-.info-item {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.info-label {
-  font-size: 0.85rem;
-  color: #6c757d;
-  font-weight: 500;
-}
-
-.info-value {
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: #003366;
-}
-
-.info-value.accent {
-  color: #007bff;
-}
-
-/* Пустое состояние */
-.empty-state {
-  background: white;
-  border-radius: 24px;
-  padding: 80px 40px;
-  text-align: center;
-  box-shadow: 0 15px 35px rgba(0, 91, 181, 0.08);
-  border: 2px dashed #e8f4ff;
-  animation: fadeIn 0.8s ease;
-}
-
-.empty-visual {
-  position: relative;
-  margin-bottom: 40px;
-}
-
-.empty-icon {
-  font-size: 5rem;
-  margin-bottom: 20px;
-  position: relative;
-}
-
-.bell-animation {
-  animation: bellRing 3s ease-in-out infinite;
-}
-
-.empty-sparkles {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-}
-
-.sparkle {
-  position: absolute;
-  font-size: 1.5rem;
-  animation: sparkleFloat 4s ease-in-out infinite;
-}
-
-.sparkle:nth-child(1) { top: 20%; left: 30%; animation-delay: 0s; }
-.sparkle:nth-child(2) { top: 10%; right: 25%; animation-delay: 1s; }
-.sparkle:nth-child(3) { bottom: 30%; left: 40%; animation-delay: 2s; }
-
-.empty-content h3 {
-  color: #003366;
-  margin-bottom: 16px;
-  font-size: 1.8rem;
-}
-
-.empty-content p {
-  color: #666;
-  margin-bottom: 40px;
-  font-size: 1.1rem;
-  max-width: 500px;
-  margin-left: auto;
-  margin-right: auto;
-  line-height: 1.6;
-}
-
-.empty-actions {
-  display: flex;
-  gap: 15px;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-/* Модальное окно */
-.modal-overlay {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(5px);
-  justify-content: center;
-  align-items: center;
-  z-index: 2000;
-}
-
-.modal-container {
-  background: white;
-  border-radius: 24px;
-  padding: 40px;
-  text-align: center;
-  max-width: 450px;
-  width: 90%;
-  animation: modalAppear 0.3s ease;
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
-}
-
-.modal-header {
-  margin-bottom: 20px;
-}
-
-.modal-icon {
-  font-size: 4rem;
-  margin-bottom: 20px;
-}
-
-.modal-title {
-  color: #003366;
-  margin-bottom: 15px;
-  font-size: 1.5rem;
-}
-
-.modal-body p {
-  color: #666;
-  margin-bottom: 25px;
-  line-height: 1.5;
-}
-
-.modal-actions {
-  display: flex;
-  gap: 15px;
-  justify-content: center;
-}
-
-/* Кнопки */
-.btn {
-  padding: 14px 28px;
-  border-radius: 12px;
-  text-decoration: none;
-  font-weight: 700;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-  border: none;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.btn-primary {
-  background: linear-gradient(135deg, #007bff, #0056b3);
-  color: white;
-  box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
-}
-
-.btn-secondary {
-  background: #f8f9fa;
-  color: #003366;
-  border: 2px solid #e9ecef;
-}
-
-.btn-danger {
-  background: linear-gradient(135deg, #dc3545, #c82333);
-  color: white;
-}
-
-.btn-outline {
-  background: transparent;
-  border: 2px solid #007bff;
-  color: #007bff;
-}
-
-.btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 123, 255, 0.4);
-}
-
-/* Анимации */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes bellRing {
-  0%, 100% { transform: rotate(0deg); }
-  10%, 30%, 50%, 70%, 90% { transform: rotate(-10deg); }
-  20%, 40%, 60%, 80% { transform: rotate(10deg); }
-}
-
-@keyframes bellSwing {
-  0%, 100% { transform: rotate(0deg); }
-  25% { transform: rotate(15deg); }
-  75% { transform: rotate(-15deg); }
-}
-
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(1.2);
-    opacity: 0.7;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-@keyframes sparkleFloat {
-  0%, 100% {
-    opacity: 0;
-    transform: translateY(0) rotate(0deg);
-  }
-  50% {
-    opacity: 1;
-    transform: translateY(-20px) rotate(180deg);
-  }
-}
-
-@keyframes modalAppear {
-  from {
-    opacity: 0;
-    transform: scale(0.8);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-/* Адаптивность */
-@media (max-width: 1024px) {
-  .hero-content {
-    flex-direction: column;
-    gap: 25px;
-    text-align: center;
-  }
-
-  .hero-stats {
-    justify-content: center;
-  }
-}
-
-@media (max-width: 768px) {
-  .notifications-page {
-    padding: 20px 15px;
-  }
-
-  .notifications-hero {
-    padding: 30px 25px;
-  }
-
-  .hero-title {
-    font-size: 2.2rem;
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .notifications-controls {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 20px;
-  }
-
-  .controls-right {
-    flex-direction: column;
-    gap: 15px;
-  }
-
-  .search-box {
-    min-width: auto;
-  }
-
-  .notification-card {
-    flex-direction: column;
-    gap: 15px;
-    padding: 20px;
-  }
-
-  .notification-meta {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-  }
-
-  .notifications-footer {
-    flex-direction: column;
-    text-align: center;
-  }
-
-  .footer-info {
-    justify-content: center;
-  }
-
-  .empty-actions {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .modal-actions {
-    flex-direction: column;
-  }
-}
-
-@media (max-width: 480px) {
-  .filter-tabs {
-    flex-direction: column;
-  }
-
-  .stat-card {
-    min-width: auto;
-    flex: 1;
-  }
-
-  .empty-state {
-    padding: 60px 20px;
-  }
-
-  .empty-content h3 {
-    font-size: 1.5rem;
-  }
-}
-</style>
-
-<script>
-// JavaScript код остается таким же как в предыдущей версии
-// (markAllAsRead, markAsRead, deleteNotification и т.д.)
-// для экономии места не дублирую его здесь
-
-document.addEventListener('DOMContentLoaded', function() {
-  // Инициализация фильтрации
-  initializeFilters();
-  initializeSearch();
-  initializeSorting();
-  animateNotifications();
-});
-
-function initializeFilters() {
-  const filterTabs = document.querySelectorAll('.filter-tab');
-  const notificationCards = document.querySelectorAll('.notification-card');
-
-  filterTabs.forEach(tab => {
-    tab.addEventListener('click', function() {
-      const filter = this.dataset.filter;
-
-      // Активная вкладка
-      filterTabs.forEach(t => t.classList.remove('active'));
-      this.classList.add('active');
-
-      // Применение фильтра
-      notificationCards.forEach(card => {
-        const matchesFilter = filter === 'all' ||
-                            (filter === 'unread' && card.classList.contains('unread')) ||
-                            card.dataset.type === filter;
-
-        if (matchesFilter) {
-          card.style.display = 'flex';
-          setTimeout(() => {
-            card.style.opacity = '1';
-            card.style.transform = 'translateY(0)';
-          }, 50);
-        } else {
-          card.style.opacity = '0';
-          card.style.transform = 'translateY(20px)';
-          setTimeout(() => {
-            card.style.display = 'none';
-          }, 300);
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const notificationsList = document.getElementById('notificationsList');
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const markAllReadBtn = document.getElementById('markAllReadBtn');
+    const clearAllBtn = document.getElementById('clearAllBtn');
+    const notificationCards = document.querySelectorAll('.notification-card');
+
+    // Фильтрация уведомлений
+    filterButtons.forEach(button => {
+      button.addEventListener('click', function() {
+        const filter = this.dataset.filter;
+        
+        // Обновляем активный фильтр
+        filterButtons.forEach(btn => btn.classList.remove('active'));
+        this.classList.add('active');
+        
+        // Показываем/скрываем уведомления
+        notificationCards.forEach(card => {
+          if (filter === 'all') {
+            card.style.display = 'flex';
+          } else if (filter === 'unread') {
+            card.style.display = card.classList.contains('unread') ? 'flex' : 'none';
+          } else {
+            card.style.display = card.dataset.type === filter ? 'flex' : 'none';
+          }
+        });
+        
+        // Проверяем, есть ли уведомления после фильтрации
+        const visibleCards = Array.from(notificationCards).filter(card => 
+          card.style.display !== 'none'
+        );
+        
+        if (visibleCards.length === 0 && notificationsList.querySelector('.empty-state') === null) {
+          showEmptyState(filter);
+        } else if (visibleCards.length > 0) {
+          removeEmptyState();
         }
       });
     });
-  });
-}
 
-function initializeSearch() {
-  const searchInput = document.getElementById('notificationSearch');
-  const notificationCards = document.querySelectorAll('.notification-card');
-
-  searchInput.addEventListener('input', function() {
-    const searchTerm = this.value.toLowerCase();
-
-    notificationCards.forEach(card => {
-      const text = card.querySelector('.notification-text p').textContent.toLowerCase();
-      const isVisible = text.includes(searchTerm);
-
-      if (isVisible) {
-        card.style.display = 'flex';
-        setTimeout(() => {
-          card.style.opacity = '1';
-          card.style.transform = 'translateY(0)';
-        }, 50);
-      } else {
-        card.style.opacity = '0';
-        card.style.transform = 'translateY(20px)';
-        setTimeout(() => {
-          card.style.display = 'none';
-        }, 300);
+    // Действия с уведомлениями
+    notificationsList.addEventListener('click', function(e) {
+      const actionBtn = e.target.closest('.notification-action-btn');
+      if (!actionBtn) return;
+      
+      e.preventDefault();
+      const action = actionBtn.dataset.action;
+      const notificationId = actionBtn.dataset.id;
+      const notificationCard = actionBtn.closest('.notification-card');
+      
+      switch(action) {
+        case 'accept':
+          acceptInvitation(notificationId, notificationCard);
+          break;
+        case 'decline':
+          declineInvitation(notificationId, notificationCard);
+          break;
+        case 'mark-read':
+          markAsRead(notificationId, notificationCard);
+          break;
+        case 'delete':
+          deleteNotification(notificationId, notificationCard);
+          break;
       }
     });
+
+    // Отметить все как прочитанные
+    markAllReadBtn.addEventListener('click', function() {
+      if (!confirm('Отметить все уведомления как прочитанные?')) return;
+      
+      fetch('/api/notifications/mark-all-read/', {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': getCookie('csrftoken'),
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          notificationCards.forEach(card => {
+            card.classList.remove('unread');
+            const unreadBadge = card.querySelector('.unread-badge');
+            if (unreadBadge) unreadBadge.remove();
+            
+            const markReadBtn = card.querySelector('[data-action="mark-read"]');
+            if (markReadBtn) markReadBtn.remove();
+          });
+          
+          // Обновляем счетчик в заголовке
+          const unreadBadge = document.querySelector('.page-title .unread-badge');
+          if (unreadBadge) unreadBadge.remove();
+          
+          showToast('Все уведомления отмечены как прочитанные', 'success');
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        showToast('Ошибка при обновлении уведомлений', 'error');
+      });
+    });
+
+    // Очистить все уведомления
+    clearAllBtn.addEventListener('click', function() {
+      if (!confirm('Удалить все уведомления? Это действие нельзя отменить.')) return;
+      
+      fetch('/api/notifications/clear-all/', {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': getCookie('csrftoken'),
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          notificationsList.innerHTML = '';
+          showEmptyState('all');
+          showToast('Все уведомления удалены', 'success');
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        showToast('Ошибка при удалении уведомлений', 'error');
+      });
+    });
+
+    // Вспомогательные функции
+    function acceptInvitation(notificationId, card) {
+      fetch(`/api/notifications/${notificationId}/accept/`, {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': getCookie('csrftoken'),
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          card.style.opacity = '0.5';
+          card.style.pointerEvents = 'none';
+          
+          const actionsDiv = card.querySelector('.notification-actions');
+          actionsDiv.innerHTML = `
+            <button class="notification-action-btn secondary" disabled>
+              ✅ Принято
+            </button>
+          `;
+          
+          showToast('Приглашение принято', 'success');
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        showToast('Ошибка при принятии приглашения', 'error');
+      });
+    }
+
+    function declineInvitation(notificationId, card) {
+      fetch(`/api/notifications/${notificationId}/decline/`, {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': getCookie('csrftoken'),
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          card.style.opacity = '0.5';
+          card.style.pointerEvents = 'none';
+          
+          const actionsDiv = card.querySelector('.notification-actions');
+          actionsDiv.innerHTML = `
+            <button class="notification-action-btn secondary" disabled>
+              ❌ Отклонено
+            </button>
+          `;
+          
+          showToast('Приглашение отклонено', 'success');
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        showToast('Ошибка при отклонении приглашения', 'error');
+      });
+    }
+
+    function markAsRead(notificationId, card) {
+      fetch(`/api/notifications/${notificationId}/mark-read/`, {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': getCookie('csrftoken'),
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          card.classList.remove('unread');
+          const unreadBadge = card.querySelector('.unread-badge');
+          if (unreadBadge) unreadBadge.remove();
+          
+          const markReadBtn = card.querySelector('[data-action="mark-read"]');
+          if (markReadBtn) markReadBtn.remove();
+          
+          // Обновляем счетчик
+          updateUnreadCount();
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        showToast('Ошибка при обновлении уведомления', 'error');
+      });
+    }
+
+    function deleteNotification(notificationId, card) {
+      if (!confirm('Удалить это уведомление?')) return;
+      
+      fetch(`/api/notifications/${notificationId}/delete/`, {
+        method: 'DELETE',
+        headers: {
+          'X-CSRFToken': getCookie('csrftoken'),
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          card.style.animation = 'slideOut 0.3s ease forwards';
+          setTimeout(() => {
+            card.remove();
+            
+            // Проверяем, остались ли уведомления
+            const remainingCards = document.querySelectorAll('.notification-card');
+            if (remainingCards.length === 0) {
+              showEmptyState('all');
+            }
+          }, 300);
+          
+          showToast('Уведомление удалено', 'success');
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        showToast('Ошибка при удалении уведомления', 'error');
+      });
+    }
+
+    function showEmptyState(filter) {
+      const emptyState = document.createElement('div');
+      emptyState.className = 'empty-state';
+      
+      let message = '';
+      let icon = '📭';
+      
+      switch(filter) {
+        case 'unread':
+          message = 'Нет непрочитанных уведомлений';
+          icon = '✅';
+          break;
+        case 'invitations':
+          message = 'Нет приглашений';
+          icon = '📨';
+          break;
+        case 'achievements':
+          message = 'Нет уведомлений о достижениях';
+          icon = '🏆';
+          break;
+        case 'system':
+          message = 'Нет системных уведомлений';
+          icon = '⚙️';
+          break;
+        default:
+          message = 'Уведомлений пока нет';
+          icon = '📭';
+      }
+      
+      emptyState.innerHTML = `
+        <div class="empty-icon">${icon}</div>
+        <h3>${message}</h3>
+        <p>Здесь будут появляться важные сообщения и уведомления</p>
+      `;
+      
+      notificationsList.appendChild(emptyState);
+    }
+
+    function removeEmptyState() {
+      const emptyState = notificationsList.querySelector('.empty-state');
+      if (emptyState) {
+        emptyState.remove();
+      }
+    }
+
+    function updateUnreadCount() {
+      const unreadCards = document.querySelectorAll('.notification-card.unread');
+      const unreadBadge = document.querySelector('.page-title .unread-badge');
+      
+      if (unreadCards.length === 0 && unreadBadge) {
+        unreadBadge.remove();
+      } else if (unreadCards.length > 0) {
+        if (!unreadBadge) {
+          const badge = document.createElement('span');
+          badge.className = 'unread-badge';
+          badge.textContent = `${unreadCards.length} новых`;
+          document.querySelector('.page-title').appendChild(badge);
+        } else {
+          unreadBadge.textContent = `${unreadCards.length} новых`;
+        }
+      }
+    }
+
+    function showToast(message, type) {
+      // Создаем тост
+      const toast = document.createElement('div');
+      toast.className = `toast toast-${type}`;
+      toast.textContent = message;
+      toast.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        padding: 12px 20px;
+        border-radius: 8px;
+        color: white;
+        font-weight: 600;
+        z-index: 10000;
+        animation: slideInRight 0.3s ease;
+      `;
+      
+      if (type === 'success') {
+        toast.style.background = '#28a745';
+      } else {
+        toast.style.background = '#dc3545';
+      }
+      
+      document.body.appendChild(toast);
+      
+      // Удаляем тост через 3 секунды
+      setTimeout(() => {
+        toast.style.animation = 'slideOutRight 0.3s ease forwards';
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
+    }
+
+    // Добавляем CSS для анимаций
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes slideOut {
+        from { opacity: 1; transform: translateX(0); }
+        to { opacity: 0; transform: translateX(-100px); }
+      }
+      
+      @keyframes slideInRight {
+        from { transform: translateX(100px); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+      }
+      
+      @keyframes slideOutRight {
+        from { transform: translateX(0); opacity: 1; }
+        to { transform: translateX(100px); opacity: 0; }
+      }
+    `;
+    document.head.appendChild(style);
   });
-}
-
-function initializeSorting() {
-  const sortSelect = document.getElementById('sortNotifications');
-
-  sortSelect.addEventListener('change', function() {
-    showToast(`Сортировка изменена на: ${this.options[this.selectedIndex].text}`);
-  });
-}
-
-function animateNotifications() {
-  const notificationCards = document.querySelectorAll('.notification-card');
-
-  notificationCards.forEach((card, index) => {
-    card.style.animationDelay = `${index * 0.1}s`;
-  });
-}
-
-// Остальные функции (markAllAsRead, markAsRead, deleteNotification и т.д.)
-// остаются такими же как в предыдущей версии
-</script>
-{% endblock %}
+  </script>
+</body>
+</html>

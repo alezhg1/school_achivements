@@ -1,951 +1,1132 @@
-{% extends 'base.html' %}
-{% block title %}Мои достижения{% endblock %}
-{% block content %}
-<div class="student-dashboard">
-  <!-- Заголовок и приветствие -->
-  <div class="dashboard-hero">
-    <div class="hero-content">
-      <h1 class="welcome-title">
-        <span class="welcome-icon">👋</span>
-        Добро пожаловать, {{ user.first_name|default:user.username }}!
-      </h1>
-      <p class="welcome-subtitle">Отслеживайте свои достижения и прогресс</p>
-    </div>
-    <div class="hero-stats">
-      <div class="stat-card">
-        <div class="stat-icon">🏆</div>
-        <div class="stat-info">
-          <span class="stat-number">{{ achievements.count }}</span>
-          <span class="stat-label">Достижений</span>
-        </div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon">📚</div>
-        <div class="stat-info">
-          <span class="stat-number">{{ user.student_classes.count }}</span>
-          <span class="stat-label">Классов</span>
-        </div>
-      </div>
-    </div>
-  </div>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Мои достижения - Панель управления</title>
+  <style>
+    /* СБРОС СТИЛЕЙ */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-  <!-- Быстрые действия -->
-  <div class="quick-actions-section">
-    <h2 class="section-title">Быстрые действия</h2>
-    <div class="actions-grid">
-      <a href="{% url 'add_achievement' %}" class="action-card">
-        <div class="action-icon">➕</div>
-        <div class="action-content">
-          <h3>Добавить достижение</h3>
-          <p>Зафиксируйте новый успех</p>
-        </div>
-      </a>
-      <a href="{% url 'profile' user.username %}" class="action-card">
-        <div class="action-icon">👤</div>
-        <div class="action-content">
-          <h3>Мой профиль</h3>
-          <p>Посмотреть портфолио</p>
-        </div>
-      </a>
-      <a href="{% url 'notifications' %}" class="action-card">
-        <div class="action-icon">🔔</div>
-        <div class="action-content">
-          <h3>Уведомления</h3>
-          <p>Новые приглашения</p>
-        </div>
-      </a>
-      <a href="#recent" class="action-card">
-        <div class="action-icon">📊</div>
-        <div class="action-content">
-          <h3>Статистика</h3>
-          <p>Ваш прогресс</p>
-        </div>
-      </a>
-    </div>
-  </div>
+    html, body {
+      height: 100%;
+      background: white;
+      font-family: "Segoe UI", Roboto, -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+      font-size: 13px;
+      line-height: 1.3;
+    }
 
-  <!-- Последние достижения -->
-  <div class="recent-achievements" id="recent">
-    <div class="section-header">
-      <h2 class="section-title">
-        <span class="section-icon">🏆</span>
-        Последние достижения
-      </h2>
-      <a href="{% url 'profile' user.username %}" class="view-all">Все достижения →</a>
+    /* HEADER */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(90deg, #0077e6 0%, #005bb5 100%);
+      color: #fff;
+      z-index: 1200;
+      box-shadow: 0 3px 8px rgba(3, 36, 74, 0.12);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 12px;
+      width: 100%;
+      height: 55px;
+    }
+
+    .logo a {
+      font-weight: 700;
+      font-size: 1rem;
+      color: #fff;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      flex: 1;
+    }
+
+    nav a {
+      color: rgba(255, 255, 255, 0.95);
+      text-decoration: none;
+      padding: 5px 7px;
+      border-radius: 5px;
+      font-weight: 600;
+      transition: all 0.22s;
+      font-size: 0.8rem;
+      white-space: nowrap;
+    }
+
+    nav a:hover {
+      background: rgba(255, 255, 255, 0.08);
+      transform: translateY(-1px);
+    }
+
+    .logout-btn {
+      background: rgba(220, 53, 69, 0.9);
+      color: white;
+      padding: 5px 8px;
+      border-radius: 5px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.75rem;
+      border: none;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.3s ease;
+      margin-left: 5px;
+    }
+
+    .logout-btn:hover {
+      background: #dc3545;
+      transform: translateY(-1px);
+    }
+
+    /* ОСНОВНОЙ КОНТЕНТ */
+    .main-content {
+      padding-top: 55px; /* Отступ под хедер */
+      min-height: 100vh;
+      background: white; /* Белый фон */
+    }
+
+    .student-dashboard {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 15px;
+      animation: fadeIn 0.6s ease;
+      font-family: "Segoe UI", Roboto, -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+      font-size: 13px;
+      line-height: 1.3;
+      background: white;
+    }
+
+    /* Герой секция */
+    .dashboard-hero {
+      background: linear-gradient(135deg, #0077e6 0%, #005bb5 100%);
+      border-radius: 12px;
+      padding: 25px 20px;
+      color: white;
+      margin-bottom: 25px;
+      box-shadow: 0 3px 8px rgba(3, 36, 74, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .hero-content {
+      margin-bottom: 20px;
+    }
+
+    .welcome-title {
+      font-size: 1.4rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      color: #fff;
+    }
+
+    .welcome-icon {
+      font-size: 1.4rem;
+      animation: bounce 2s infinite;
+    }
+
+    .welcome-subtitle {
+      font-size: 0.9rem;
+      opacity: 0.9;
+      margin: 0;
+      font-weight: 500;
+    }
+
+    .hero-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 15px;
+    }
+
+    .stat-card {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      border-radius: 10px;
+      padding: 15px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: all 0.22s ease;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .stat-icon {
+      font-size: 1.5rem;
+    }
+
+    .stat-info {
+      flex: 1;
+    }
+
+    .stat-number {
+      display: block;
+      font-size: 1.3rem;
+      font-weight: 800;
+      margin-bottom: 4px;
+      color: #fff;
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      opacity: 0.9;
+      font-weight: 600;
+    }
+
+    /* Быстрые действия */
+    .quick-actions-section {
+      margin-bottom: 30px;
+    }
+
+    .section-title {
+      color: #003366;
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-icon {
+      font-size: 1rem;
+    }
+
+    .actions-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 15px;
+    }
+
+    .action-card {
+      background: white;
+      border-radius: 10px;
+      padding: 18px;
+      text-decoration: none;
+      color: inherit;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06);
+      border: 1.5px solid #e8f4ff;
+      transition: all 0.22s ease;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .action-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(0, 123, 255, 0.15);
+      border-color: #007bff;
+    }
+
+    .action-icon {
+      font-size: 1.8rem;
+      flex-shrink: 0;
+    }
+
+    .action-content {
+      flex: 1;
+    }
+
+    .action-content h3 {
+      color: #003366;
+      margin: 0 0 6px 0;
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+
+    .action-content p {
+      color: #666;
+      margin: 0;
+      font-size: 0.75rem;
+      line-height: 1.3;
+    }
+
+    /* Сетка достижений */
+    .achievements-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+
+    .achievement-card {
+      background: white;
+      border-radius: 10px;
+      padding: 18px;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06);
+      border: 1.5px solid #e8f4ff;
+      transition: all 0.22s ease;
+    }
+
+    .achievement-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(0, 123, 255, 0.1);
+    }
+
+    .achievement-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .achievement-title {
+      color: #003366;
+      margin: 0;
+      font-size: 0.85rem;
+      font-weight: 700;
+      flex: 1;
+      min-width: 0;
+      word-break: break-word;
+    }
+
+    .achievement-badge {
+      padding: 4px 8px;
+      border-radius: 8px;
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-left: 8px;
+      white-space: nowrap;
+    }
+
+    .achievement-badge.победитель {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .achievement-badge.призёр {
+      background: #fff3cd;
+      color: #856404;
+      border: 1px solid #ffeaa7;
+    }
+
+    .achievement-badge.участник {
+      background: #e2e3e5;
+      color: #383d41;
+      border: 1px solid #d6d8db;
+    }
+
+    .achievement-badge.другое {
+      background: #d1ecf1;
+      color: #0c5460;
+      border: 1px solid #bee5eb;
+    }
+
+    .achievement-description {
+      color: #666;
+      font-size: 0.75rem;
+      line-height: 1.4;
+      margin-bottom: 12px;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .achievement-meta {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.7rem;
+      color: #888;
+    }
+
+    .meta-icon {
+      font-size: 0.7rem;
+    }
+
+    .achievement-actions {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    /* Приглашения */
+    .invitations-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 30px;
+    }
+
+    .invitation-card {
+      background: white;
+      border-radius: 10px;
+      padding: 18px;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06);
+      border: 1.5px solid #e8f4ff;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      transition: all 0.22s ease;
+    }
+
+    .invitation-card:hover {
+      border-color: #007bff;
+    }
+
+    .invitation-content {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      flex: 1;
+    }
+
+    .invitation-avatar {
+      width: 45px;
+      height: 45px;
+      background: linear-gradient(135deg, #007bff, #0056b3);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+
+    .invitation-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .invitation-info h3 {
+      color: #003366;
+      margin: 0 0 6px 0;
+      font-size: 0.85rem;
+      font-weight: 700;
+      word-break: break-word;
+    }
+
+    .invitation-info p {
+      color: #666;
+      margin: 0 0 8px 0;
+      font-size: 0.75rem;
+    }
+
+    .invitation-meta {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .invitation-meta .meta-item {
+      background: #f8f9fa;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 0.7rem;
+      color: #555;
+      border: 1px solid #e8f4ff;
+    }
+
+    .invitation-actions {
+      flex-shrink: 0;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    /* Мои классы */
+    .classes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 15px;
+    }
+
+    .class-card {
+      background: white;
+      border-radius: 10px;
+      padding: 18px;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06);
+      border: 1.5px solid #e8f4ff;
+      transition: all 0.22s ease;
+    }
+
+    .class-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(0, 123, 255, 0.1);
+      border-color: #007bff;
+    }
+
+    .class-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .class-name {
+      color: #003366;
+      margin: 0;
+      font-size: 0.85rem;
+      font-weight: 700;
+      flex: 1;
+      min-width: 0;
+      word-break: break-word;
+    }
+
+    .student-count {
+      background: #e8f4ff;
+      color: #007bff;
+      padding: 4px 8px;
+      border-radius: 8px;
+      font-size: 0.65rem;
+      font-weight: 600;
+      border: 1px solid #cce5ff;
+      margin-left: 8px;
+      white-space: nowrap;
+    }
+
+    .class-description {
+      color: #666;
+      font-size: 0.75rem;
+      line-height: 1.4;
+      margin-bottom: 12px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .teacher-name {
+      font-size: 0.75rem;
+      color: #888;
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .class-actions {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    /* Пустые состояния */
+    .empty-state {
+      text-align: center;
+      padding: 30px 20px;
+      background: #f8fbff;
+      border-radius: 10px;
+      border: 1.5px dashed #e8f4ff;
+      margin-bottom: 30px;
+    }
+
+    .empty-state.small {
+      padding: 25px 15px;
+      margin-bottom: 25px;
+    }
+
+    .empty-icon {
+      font-size: 2.2rem;
+      margin-bottom: 12px;
+      opacity: 0.7;
+    }
+
+    .empty-state h3 {
+      color: #003366;
+      margin-bottom: 8px;
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    .empty-state p {
+      color: #666;
+      margin-bottom: 15px;
+      font-size: 0.75rem;
+      line-height: 1.4;
+    }
+
+    .empty-state.small h3 {
+      font-size: 0.85rem;
+    }
+
+    .empty-state.small p {
+      font-size: 0.7rem;
+    }
+
+    /* Кнопки */
+    .btn {
+      padding: 10px 16px;
+      border-radius: 7px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.8rem;
+      transition: all 0.22s ease;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      justify-content: center;
+      font-family: inherit;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #007bff, #0047b3);
+      color: white;
+      box-shadow: 0 3px 8px rgba(0, 123, 255, 0.15);
+      border: 1px solid #0056b3;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+    }
+
+    .btn-small {
+      padding: 6px 12px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 0.7rem;
+      font-weight: 600;
+      transition: all 0.22s ease;
+    }
+
+    .btn-small.edit {
+      background: #f8f9fa;
+      color: #007bff;
+      border: 1px solid #007bff;
+    }
+
+    .btn-small.edit:hover {
+      background: #007bff;
+      color: white;
+      transform: translateY(-1px);
+    }
+
+    .btn-small.outline {
+      background: transparent;
+      border: 1px solid #007bff;
+      color: #007bff;
+    }
+
+    .btn-small.outline:hover {
+      background: #007bff;
+      color: white;
+      transform: translateY(-1px);
+    }
+
+    .btn-icon {
+      font-size: 0.8rem;
+    }
+
+    .btn-accept {
+      padding: 8px 16px;
+      font-size: 0.8rem;
+      width: 100%;
+      text-align: center;
+    }
+
+    /* Общие стили */
+    .view-all {
+      color: #007bff;
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.22s ease;
+      font-size: 0.8rem;
+    }
+
+    .view-all:hover {
+      color: #0056b3;
+      text-decoration: underline;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    /* Анимации */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(15px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+      }
+      40% {
+        transform: translateY(-5px);
+      }
+      60% {
+        transform: translateY(-2px);
+      }
+    }
+
+    /* Адаптивность для мобильных */
+    @media (max-width: 768px) {
+      .student-dashboard {
+        padding: 10px;
+      }
+
+      .dashboard-hero {
+        padding: 20px 15px;
+        border-radius: 10px;
+      }
+
+      .welcome-title {
+        font-size: 1.2rem;
+        flex-direction: row;
+        gap: 8px;
+        text-align: left;
+      }
+
+      .hero-stats {
+        grid-template-columns: 1fr;
+      }
+
+      .actions-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .achievements-grid,
+      .classes-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .invitation-card {
+        padding: 15px;
+      }
+
+      .invitation-content {
+        flex-direction: row;
+        text-align: left;
+        gap: 12px;
+      }
+
+      .section-header {
+        flex-direction: row;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .section-title {
+        font-size: 0.85rem;
+      }
+
+      .action-card {
+        padding: 15px;
+      }
+
+      .action-icon {
+        font-size: 1.5rem;
+      }
+
+      .empty-state {
+        padding: 25px 15px;
+      }
+
+      .empty-icon {
+        font-size: 2rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .dashboard-hero {
+        padding: 18px 12px;
+      }
+
+      .welcome-title {
+        font-size: 1rem;
+      }
+
+      .welcome-subtitle {
+        font-size: 0.8rem;
+      }
+
+      .stat-card {
+        padding: 12px;
+      }
+
+      .stat-icon {
+        font-size: 1.3rem;
+      }
+
+      .stat-number {
+        font-size: 1.1rem;
+      }
+
+      .empty-state {
+        padding: 20px 12px;
+      }
+
+      .empty-icon {
+        font-size: 1.8rem;
+      }
+
+      .achievement-header,
+      .class-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+      }
+
+      .achievement-badge,
+      .student-count {
+        margin-left: 0;
+        align-self: flex-start;
+      }
+
+      .invitation-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+      }
+
+      .invitation-avatar {
+        margin: 0 auto;
+      }
+    }
+
+    /* Очень маленькие экраны */
+    @media (max-width: 360px) {
+      .student-dashboard {
+        padding: 8px;
+      }
+
+      .action-card {
+        flex-direction: column;
+        text-align: center;
+        gap: 8px;
+      }
+
+      .action-content h3 {
+        font-size: 0.8rem;
+      }
+
+      .action-content p {
+        font-size: 0.7rem;
+      }
+
+      .btn {
+        padding: 8px 12px;
+        font-size: 0.75rem;
+      }
+
+      .btn-small {
+        padding: 5px 10px;
+        font-size: 0.65rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Хедер как в регистрации -->
+  <header>
+    <div class="logo">
+      <a href="/">Мои достижения</a>
     </div>
 
-    {% if achievements %}
-    <div class="achievements-grid">
-      {% for achievement in achievements|slice:":6" %}
-      <div class="achievement-card">
-        <div class="achievement-header">
-          <h3 class="achievement-title">{{ achievement.title }}</h3>
-          <span class="achievement-badge {{ achievement.result|lower }}">{{ achievement.result }}</span>
-        </div>
-        <p class="achievement-description">{{ achievement.description|truncatechars:120 }}</p>
-        <div class="achievement-meta">
-          <span class="meta-item">
-            <span class="meta-icon">📅</span>
-            {{ achievement.year }}
-          </span>
-          {% if achievement.image %}
-          <span class="meta-item">
-            <span class="meta-icon">📷</span>
-            Есть фото
-          </span>
-          {% endif %}
-        </div>
-        <div class="achievement-actions">
-          <a href="{% url 'edit_achievement' achievement.id %}" class="btn-small edit">Редактировать</a>
-        </div>
-      </div>
-      {% endfor %}
-    </div>
-    {% else %}
-    <div class="empty-state">
-      <div class="empty-icon">🏆</div>
-      <h3>Пока нет достижений</h3>
-      <p>Добавьте свое первое достижение, чтобы начать собирать портфолио</p>
-      <a href="{% url 'add_achievement' %}" class="btn btn-primary">
-        <span class="btn-icon">➕</span>
-        Добавить первое достижение
-      </a>
-    </div>
-    {% endif %}
-  </div>
+    <nav>
+      {% if user.is_authenticated %}
+        {% if user.role == 'teacher' or user.is_teacher %}
+          <a href="{% url 'teacher_dashboard' %}" class="{% if request.path == '/teacher/dashboard/' %}active{% endif %}">Главная</a>
+          <a href="{% url 'teacher_classes' %}" class="{% if 'classes' in request.path %}active{% endif %}">Классы</a>
+          <a href="{% url 'profile' user.username %}" class="{% if 'profile' in request.path %}active{% endif %}">Профиль</a>
+          <a href="{% url 'notifications' %}" class="{% if 'notifications' in request.path %}active{% endif %}">Уведомления</a>
+        {% else %}
+          <a href="{% url 'dashboard' %}" class="{% if request.path == '/dashboard/' %}active{% endif %}">Главная</a>
+          <a href="{% url 'dashboard' %}" class="{% if 'classes' in request.path %}active{% endif %}">Мои классы</a>
+          <a href="{% url 'profile' user.username %}" class="{% if 'profile' in request.path %}active{% endif %}">Профиль</a>
+          <a href="{% url 'notifications' %}" class="{% if 'notifications' in request.path %}active{% endif %}">Уведомления</a>
+        {% endif %}
 
-  <!-- Приглашения в классы -->
-  <div class="invitations-section">
-    <div class="section-header">
-      <h2 class="section-title">
-        <span class="section-icon">📨</span>
-        Приглашения в классы
-      </h2>
-    </div>
+        <div class="user-mini">
+          <span>{{ user.get_full_name|default:user.username }}</span>
+          <a href="{% url 'logout' %}" class="logout-btn">Выйти</a>
+        </div>
+      {% else %}
+        <a href="{% url 'login' %}">Войти</a>
+        <a href="{% url 'register' %}" class="logout-btn">Регистрация</a>
+      {% endif %}
+    </nav>
+  </header>
 
-    {% if invitations %}
-    <div class="invitations-list">
-      {% for invitation in invitations %}
-      <div class="invitation-card">
-        <div class="invitation-content">
-          <div class="invitation-avatar">🏫</div>
-          <div class="invitation-info">
-            <h3>Приглашение в класс "{{ invitation.classroom.name }}"</h3>
-            <p>От учителя: {{ invitation.from_user.get_full_name|default:invitation.from_user.username }}</p>
-            <div class="invitation-meta">
-              <span class="meta-item">{{ invitation.classroom.school }}</span>
-              <span class="meta-item">{{ invitation.classroom.grade }}</span>
+  <!-- Основной контент -->
+  <div class="main-content">
+    <div class="student-dashboard">
+      <!-- Заголовок и приветствие -->
+      <div class="dashboard-hero">
+        <div class="hero-content">
+          <h1 class="welcome-title">
+            <span class="welcome-icon">👋</span>
+            Добро пожаловать, {{ user.first_name|default:user.username }}!
+          </h1>
+          <p class="welcome-subtitle">Отслеживайте свои достижения и прогресс</p>
+        </div>
+        <div class="hero-stats">
+          <div class="stat-card">
+            <div class="stat-icon">🏆</div>
+            <div class="stat-info">
+              <span class="stat-number">{{ achievements.count }}</span>
+              <span class="stat-label">Достижений</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">📚</div>
+            <div class="stat-info">
+              <span class="stat-number">{{ user.student_classes.count }}</span>
+              <span class="stat-label">Классов</span>
             </div>
           </div>
         </div>
-        <div class="invitation-actions">
-          <a href="{% url 'accept_invite' invitation.id %}" class="btn btn-primary btn-accept">Принять</a>
+      </div>
+
+      <!-- Быстрые действия -->
+      <div class="quick-actions-section">
+        <h2 class="section-title">Быстрые действия</h2>
+        <div class="actions-grid">
+          <a href="{% url 'add_achievement' %}" class="action-card">
+            <div class="action-icon">➕</div>
+            <div class="action-content">
+              <h3>Добавить достижение</h3>
+              <p>Зафиксируйте новый успех</p>
+            </div>
+          </a>
+          <a href="{% url 'profile' user.username %}" class="action-card">
+            <div class="action-icon">👤</div>
+            <div class="action-content">
+              <h3>Мой профиль</h3>
+              <p>Посмотреть портфолио</p>
+            </div>
+          </a>
+          <a href="{% url 'notifications' %}" class="action-card">
+            <div class="action-icon">🔔</div>
+            <div class="action-content">
+              <h3>Уведомления</h3>
+              <p>Новые приглашения</p>
+            </div>
+          </a>
+          <a href="#recent" class="action-card">
+            <div class="action-icon">📊</div>
+            <div class="action-content">
+              <h3>Статистика</h3>
+              <p>Ваш прогресс</p>
+            </div>
+          </a>
         </div>
       </div>
-      {% endfor %}
-    </div>
-    {% else %}
-    <div class="empty-state small">
-      <div class="empty-icon">📭</div>
-      <h3>Нет новых приглашений</h3>
-      <p>Когда учителя будут приглашать вас в классы, приглашения появятся здесь</p>
-    </div>
-    {% endif %}
-  </div>
 
-  <!-- Мои классы -->
-  <div class="my-classes-section">
-    <div class="section-header">
-      <h2 class="section-title">
-        <span class="section-icon">📚</span>
-        Мои классы
-      </h2>
-    </div>
+      <!-- Последние достижения -->
+      <div class="recent-achievements" id="recent">
+        <div class="section-header">
+          <h2 class="section-title">
+            <span class="section-icon">🏆</span>
+            Последние достижения
+          </h2>
+          <a href="{% url 'profile' user.username %}" class="view-all">Все достижения →</a>
+        </div>
 
-    {% if user.student_classes.all %}
-    <div class="classes-grid">
-      {% for class in user.student_classes.all %}
-      <div class="class-card">
-        <div class="class-header">
-          <h3 class="class-name">{{ class.name }}</h3>
-          <span class="student-count">{{ class.students.count }} учеников</span>
+        {% if achievements %}
+        <div class="achievements-grid">
+          {% for achievement in achievements|slice:":6" %}
+          <div class="achievement-card">
+            <div class="achievement-header">
+              <h3 class="achievement-title">{{ achievement.title }}</h3>
+              <span class="achievement-badge {{ achievement.result|lower }}">{{ achievement.result }}</span>
+            </div>
+            <p class="achievement-description">{{ achievement.description|truncatechars:120 }}</p>
+            <div class="achievement-meta">
+              <span class="meta-item">
+                <span class="meta-icon">📅</span>
+                {{ achievement.year }}
+              </span>
+              {% if achievement.image %}
+              <span class="meta-item">
+                <span class="meta-icon">📷</span>
+                Есть фото
+              </span>
+              {% endif %}
+            </div>
+            <div class="achievement-actions">
+              <a href="{% url 'edit_achievement' achievement.id %}" class="btn-small edit">Редактировать</a>
+            </div>
+          </div>
+          {% endfor %}
         </div>
-        <p class="class-description">{{ class.description|default:"Описание отсутствует"|truncatechars:100 }}</p>
-        <div class="class-meta">
-          <span class="teacher-name">Учитель: {{ class.teacher.get_full_name|default:class.teacher.username }}</span>
+        {% else %}
+        <div class="empty-state">
+          <div class="empty-icon">🏆</div>
+          <h3>Пока нет достижений</h3>
+          <p>Добавьте свое первое достижение, чтобы начать собирать портфолио</p>
+          <a href="{% url 'add_achievement' %}" class="btn btn-primary">
+            <span class="btn-icon">➕</span>
+            Добавить первое достижение
+          </a>
         </div>
-        <div class="class-actions">
-          <a href="{% url 'class_detail' class.id %}" class="btn-small outline">Подробнее</a>
-        </div>
+        {% endif %}
       </div>
-      {% endfor %}
+
+      <!-- Приглашения в классы -->
+      <div class="invitations-section">
+        <div class="section-header">
+          <h2 class="section-title">
+            <span class="section-icon">📨</span>
+            Приглашения в классы
+          </h2>
+        </div>
+
+        {% if invitations %}
+        <div class="invitations-list">
+          {% for invitation in invitations %}
+          <div class="invitation-card">
+            <div class="invitation-content">
+              <div class="invitation-avatar">🏫</div>
+              <div class="invitation-info">
+                <h3>Приглашение в класс "{{ invitation.classroom.name }}"</h3>
+                <p>От учителя: {{ invitation.from_user.get_full_name|default:invitation.from_user.username }}</p>
+                <div class="invitation-meta">
+                  <span class="meta-item">{{ invitation.classroom.school }}</span>
+                  <span class="meta-item">{{ invitation.classroom.grade }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="invitation-actions">
+              <a href="{% url 'accept_invite' invitation.id %}" class="btn btn-primary btn-accept">Принять</a>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state small">
+          <div class="empty-icon">📭</div>
+          <h3>Нет новых приглашений</h3>
+          <p>Когда учителя будут приглашать вас в классы, приглашения появятся здесь</p>
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- Мои классы -->
+      <div class="my-classes-section">
+        <div class="section-header">
+          <h2 class="section-title">
+            <span class="section-icon">📚</span>
+            Мои классы
+          </h2>
+        </div>
+
+        {% if user.student_classes.all %}
+        <div class="classes-grid">
+          {% for class in user.student_classes.all %}
+          <div class="class-card">
+            <div class="class-header">
+              <h3 class="class-name">{{ class.name }}</h3>
+              <span class="student-count">{{ class.students.count }} учеников</span>
+            </div>
+            <p class="class-description">{{ class.description|default:"Описание отсутствует"|truncatechars:100 }}</p>
+            <div class="class-meta">
+              <span class="teacher-name">Учитель: {{ class.teacher.get_full_name|default:class.teacher.username }}</span>
+            </div>
+            <div class="class-actions">
+              <a href="{% url 'class_detail' class.id %}" class="btn-small outline">Подробнее</a>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state small">
+          <div class="empty-icon">📚</div>
+          <h3>Вы пока не вступили в классы</h3>
+          <p>Принимайте приглашения от учителей, чтобы присоединиться к классам</p>
+        </div>
+        {% endif %}
+      </div>
     </div>
-    {% else %}
-    <div class="empty-state small">
-      <div class="empty-icon">📚</div>
-      <h3>Вы пока не вступили в классы</h3>
-      <p>Принимайте приглашения от учителей, чтобы присоединиться к классам</p>
-    </div>
-    {% endif %}
   </div>
-</div>
 
-<style>
-/* ОСНОВНЫЕ СТИЛИ - Согласованные с регистрацией */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-.student-dashboard {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 15px;
-  animation: fadeIn 0.6s ease;
-  font-family: "Segoe UI", Roboto, -apple-system, BlinkMacSystemFont, Arial, sans-serif;
-  font-size: 13px;
-  line-height: 1.3;
-  background: white;
-}
-
-/* Герой секция - в стиле регистрации */
-.dashboard-hero {
-  background: linear-gradient(135deg, #0077e6 0%, #005bb5 100%);
-  border-radius: 12px;
-  padding: 25px 20px;
-  color: white;
-  margin-bottom: 25px;
-  box-shadow: 0 3px 8px rgba(3, 36, 74, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.hero-content {
-  margin-bottom: 20px;
-}
-
-.welcome-title {
-  font-size: 1.4rem;
-  font-weight: 800;
-  margin-bottom: 8px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
-  color: #fff;
-}
-
-.welcome-icon {
-  font-size: 1.4rem;
-  animation: bounce 2s infinite;
-}
-
-.welcome-subtitle {
-  font-size: 0.9rem;
-  opacity: 0.9;
-  margin: 0;
-  font-weight: 500;
-}
-
-.hero-stats {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 15px;
-}
-
-.stat-card {
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(10px);
-  border-radius: 10px;
-  padding: 15px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  transition: all 0.22s ease;
-}
-
-.stat-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.stat-icon {
-  font-size: 1.5rem;
-}
-
-.stat-info {
-  flex: 1;
-}
-
-.stat-number {
-  display: block;
-  font-size: 1.3rem;
-  font-weight: 800;
-  margin-bottom: 4px;
-  color: #fff;
-}
-
-.stat-label {
-  font-size: 0.75rem;
-  opacity: 0.9;
-  font-weight: 600;
-}
-
-/* Быстрые действия */
-.quick-actions-section {
-  margin-bottom: 30px;
-}
-
-.section-title {
-  color: #003366;
-  font-size: 0.9rem;
-  font-weight: 600;
-  margin-bottom: 15px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.section-icon {
-  font-size: 1rem;
-}
-
-.actions-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 15px;
-}
-
-.action-card {
-  background: white;
-  border-radius: 10px;
-  padding: 18px;
-  text-decoration: none;
-  color: inherit;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06);
-  border: 1.5px solid #e8f4ff;
-  transition: all 0.22s ease;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.action-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 15px rgba(0, 123, 255, 0.15);
-  border-color: #007bff;
-}
-
-.action-icon {
-  font-size: 1.8rem;
-  flex-shrink: 0;
-}
-
-.action-content {
-  flex: 1;
-}
-
-.action-content h3 {
-  color: #003366;
-  margin: 0 0 6px 0;
-  font-size: 0.85rem;
-  font-weight: 700;
-}
-
-.action-content p {
-  color: #666;
-  margin: 0;
-  font-size: 0.75rem;
-  line-height: 1.3;
-}
-
-/* Сетка достижений */
-.achievements-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 15px;
-  margin-bottom: 30px;
-}
-
-.achievement-card {
-  background: white;
-  border-radius: 10px;
-  padding: 18px;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06);
-  border: 1.5px solid #e8f4ff;
-  transition: all 0.22s ease;
-}
-
-.achievement-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 15px rgba(0, 123, 255, 0.1);
-}
-
-.achievement-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 10px;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.achievement-title {
-  color: #003366;
-  margin: 0;
-  font-size: 0.85rem;
-  font-weight: 700;
-  flex: 1;
-  min-width: 0;
-  word-break: break-word;
-}
-
-.achievement-badge {
-  padding: 4px 8px;
-  border-radius: 8px;
-  font-size: 0.65rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  margin-left: 8px;
-  white-space: nowrap;
-}
-
-.achievement-badge.победитель {
-  background: #d4edda;
-  color: #155724;
-  border: 1px solid #c3e6cb;
-}
-
-.achievement-badge.призёр {
-  background: #fff3cd;
-  color: #856404;
-  border: 1px solid #ffeaa7;
-}
-
-.achievement-badge.участник {
-  background: #e2e3e5;
-  color: #383d41;
-  border: 1px solid #d6d8db;
-}
-
-.achievement-badge.другое {
-  background: #d1ecf1;
-  color: #0c5460;
-  border: 1px solid #bee5eb;
-}
-
-.achievement-description {
-  color: #666;
-  font-size: 0.75rem;
-  line-height: 1.4;
-  margin-bottom: 12px;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.achievement-meta {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 12px;
-  flex-wrap: wrap;
-}
-
-.meta-item {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 0.7rem;
-  color: #888;
-}
-
-.meta-icon {
-  font-size: 0.7rem;
-}
-
-.achievement-actions {
-  display: flex;
-  justify-content: flex-end;
-}
-
-/* Приглашения */
-.invitations-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-bottom: 30px;
-}
-
-.invitation-card {
-  background: white;
-  border-radius: 10px;
-  padding: 18px;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06);
-  border: 1.5px solid #e8f4ff;
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  transition: all 0.22s ease;
-}
-
-.invitation-card:hover {
-  border-color: #007bff;
-}
-
-.invitation-content {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  flex: 1;
-}
-
-.invitation-avatar {
-  width: 45px;
-  height: 45px;
-  background: linear-gradient(135deg, #007bff, #0056b3);
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.2rem;
-  flex-shrink: 0;
-}
-
-.invitation-info {
-  flex: 1;
-  min-width: 0;
-}
-
-.invitation-info h3 {
-  color: #003366;
-  margin: 0 0 6px 0;
-  font-size: 0.85rem;
-  font-weight: 700;
-  word-break: break-word;
-}
-
-.invitation-info p {
-  color: #666;
-  margin: 0 0 8px 0;
-  font-size: 0.75rem;
-}
-
-.invitation-meta {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.invitation-meta .meta-item {
-  background: #f8f9fa;
-  padding: 4px 8px;
-  border-radius: 6px;
-  font-size: 0.7rem;
-  color: #555;
-  border: 1px solid #e8f4ff;
-}
-
-.invitation-actions {
-  flex-shrink: 0;
-  display: flex;
-  justify-content: flex-end;
-}
-
-/* Мои классы */
-.classes-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 15px;
-}
-
-.class-card {
-  background: white;
-  border-radius: 10px;
-  padding: 18px;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06);
-  border: 1.5px solid #e8f4ff;
-  transition: all 0.22s ease;
-}
-
-.class-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 15px rgba(0, 123, 255, 0.1);
-  border-color: #007bff;
-}
-
-.class-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 10px;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.class-name {
-  color: #003366;
-  margin: 0;
-  font-size: 0.85rem;
-  font-weight: 700;
-  flex: 1;
-  min-width: 0;
-  word-break: break-word;
-}
-
-.student-count {
-  background: #e8f4ff;
-  color: #007bff;
-  padding: 4px 8px;
-  border-radius: 8px;
-  font-size: 0.65rem;
-  font-weight: 600;
-  border: 1px solid #cce5ff;
-  margin-left: 8px;
-  white-space: nowrap;
-}
-
-.class-description {
-  color: #666;
-  font-size: 0.75rem;
-  line-height: 1.4;
-  margin-bottom: 12px;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.teacher-name {
-  font-size: 0.75rem;
-  color: #888;
-  margin-bottom: 12px;
-  display: block;
-}
-
-.class-actions {
-  display: flex;
-  justify-content: flex-end;
-}
-
-/* Пустые состояния */
-.empty-state {
-  text-align: center;
-  padding: 30px 20px;
-  background: #f8fbff;
-  border-radius: 10px;
-  border: 1.5px dashed #e8f4ff;
-  margin-bottom: 30px;
-}
-
-.empty-state.small {
-  padding: 25px 15px;
-  margin-bottom: 25px;
-}
-
-.empty-icon {
-  font-size: 2.2rem;
-  margin-bottom: 12px;
-  opacity: 0.7;
-}
-
-.empty-state h3 {
-  color: #003366;
-  margin-bottom: 8px;
-  font-size: 0.9rem;
-  font-weight: 700;
-}
-
-.empty-state p {
-  color: #666;
-  margin-bottom: 15px;
-  font-size: 0.75rem;
-  line-height: 1.4;
-}
-
-.empty-state.small h3 {
-  font-size: 0.85rem;
-}
-
-.empty-state.small p {
-  font-size: 0.7rem;
-}
-
-/* Кнопки - в стиле регистрации */
-.btn {
-  padding: 10px 16px;
-  border-radius: 7px;
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 0.8rem;
-  transition: all 0.22s ease;
-  border: none;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  justify-content: center;
-  font-family: inherit;
-}
-
-.btn-primary {
-  background: linear-gradient(135deg, #007bff, #0047b3);
-  color: white;
-  box-shadow: 0 3px 8px rgba(0, 123, 255, 0.15);
-  border: 1px solid #0056b3;
-}
-
-.btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
-}
-
-.btn-small {
-  padding: 6px 12px;
-  border-radius: 6px;
-  text-decoration: none;
-  font-size: 0.7rem;
-  font-weight: 600;
-  transition: all 0.22s ease;
-}
-
-.btn-small.edit {
-  background: #f8f9fa;
-  color: #007bff;
-  border: 1px solid #007bff;
-}
-
-.btn-small.edit:hover {
-  background: #007bff;
-  color: white;
-  transform: translateY(-1px);
-}
-
-.btn-small.outline {
-  background: transparent;
-  border: 1px solid #007bff;
-  color: #007bff;
-}
-
-.btn-small.outline:hover {
-  background: #007bff;
-  color: white;
-  transform: translateY(-1px);
-}
-
-.btn-icon {
-  font-size: 0.8rem;
-}
-
-.btn-accept {
-  padding: 8px 16px;
-  font-size: 0.8rem;
-  width: 100%;
-  text-align: center;
-}
-
-/* Общие стили */
-.view-all {
-  color: #007bff;
-  text-decoration: none;
-  font-weight: 600;
-  transition: color 0.22s ease;
-  font-size: 0.8rem;
-}
-
-.view-all:hover {
-  color: #0056b3;
-  text-decoration: underline;
-}
-
-.section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 15px;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-/* Анимации */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(15px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes bounce {
-  0%, 20%, 50%, 80%, 100% {
-    transform: translateY(0);
-  }
-  40% {
-    transform: translateY(-5px);
-  }
-  60% {
-    transform: translateY(-2px);
-  }
-}
-
-/* Адаптивность для мобильных */
-@media (max-width: 768px) {
-  .student-dashboard {
-    padding: 10px;
-  }
-
-  .dashboard-hero {
-    padding: 20px 15px;
-    border-radius: 10px;
-  }
-
-  .welcome-title {
-    font-size: 1.2rem;
-    flex-direction: row;
-    gap: 8px;
-    text-align: left;
-  }
-
-  .hero-stats {
-    grid-template-columns: 1fr;
-  }
-
-  .actions-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .achievements-grid,
-  .classes-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .invitation-card {
-    padding: 15px;
-  }
-
-  .invitation-content {
-    flex-direction: row;
-    text-align: left;
-    gap: 12px;
-  }
-
-  .section-header {
-    flex-direction: row;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .section-title {
-    font-size: 0.85rem;
-  }
-
-  .action-card {
-    padding: 15px;
-  }
-
-  .action-icon {
-    font-size: 1.5rem;
-  }
-
-  .empty-state {
-    padding: 25px 15px;
-  }
-
-  .empty-icon {
-    font-size: 2rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .dashboard-hero {
-    padding: 18px 12px;
-  }
-
-  .welcome-title {
-    font-size: 1rem;
-  }
-
-  .welcome-subtitle {
-    font-size: 0.8rem;
-  }
-
-  .stat-card {
-    padding: 12px;
-  }
-
-  .stat-icon {
-    font-size: 1.3rem;
-  }
-
-  .stat-number {
-    font-size: 1.1rem;
-  }
-
-  .empty-state {
-    padding: 20px 12px;
-  }
-
-  .empty-icon {
-    font-size: 1.8rem;
-  }
-
-  .achievement-header,
-  .class-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 6px;
-  }
-
-  .achievement-badge,
-  .student-count {
-    margin-left: 0;
-    align-self: flex-start;
-  }
-
-  .invitation-content {
-    flex-direction: column;
-    text-align: center;
-    gap: 10px;
-  }
-
-  .invitation-avatar {
-    margin: 0 auto;
-  }
-}
-
-/* Очень маленькие экраны */
-@media (max-width: 360px) {
-  .student-dashboard {
-    padding: 8px;
-  }
-
-  .action-card {
-    flex-direction: column;
-    text-align: center;
-    gap: 8px;
-  }
-
-  .action-content h3 {
-    font-size: 0.8rem;
-  }
-
-  .action-content p {
-    font-size: 0.7rem;
-  }
-
-  .btn {
-    padding: 8px 12px;
-    font-size: 0.75rem;
-  }
-
-  .btn-small {
-    padding: 5px 10px;
-    font-size: 0.65rem;
-  }
-}
-</style>
-{% endblock %}
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Плавный скролл для якорных ссылок
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        if (this.getAttribute('href') !== '#') {
+          e.preventDefault();
+          const targetId = this.getAttribute('href');
+          if (targetId !== '#recent') return; // Пропускаем якорь #recent
+          
+          const targetElement = document.querySelector(targetId);
+          if (targetElement) {
+            window.scrollTo({
+              top: targetElement.offsetTop - 70,
+              behavior: 'smooth'
+            });
+          }
+        }
+      });
+    });
+
+    // Автоматическое скрытие приглашений при клике вне карточки
+    document.addEventListener('click', function(e) {
+      const invitationCards = document.querySelectorAll('.invitation-card');
+      invitationCards.forEach(card => {
+        if (!card.contains(e.target) && !e.target.closest('.btn-accept')) {
+          card.style.transform = '';
+        }
+      });
+    });
+
+    // Анимация при наведении на карточки
+    const cards = document.querySelectorAll('.action-card, .achievement-card, .class-card');
+    cards.forEach(card => {
+      card.addEventListener('mouseenter', () => {
+        card.style.zIndex = '10';
+      });
+      
+      card.addEventListener('mouseleave', () => {
+        card.style.zIndex = '';
+      });
+    });
+
+    // Подтверждение действий (опционально)
+    const deleteButtons = document.querySelectorAll('.btn-small[data-action="delete"]');
+    deleteButtons.forEach(button => {
+      button.addEventListener('click', function(e) {
+        if (!confirm('Вы уверены, что хотите удалить этот элемент?')) {
+          e.preventDefault();
+        }
+      });
+    });
+  });
+  </script>
+</body>
+</html>

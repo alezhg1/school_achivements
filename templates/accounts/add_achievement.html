@@ -1,93 +1,806 @@
-{% extends 'base.html' %}
-{% block title %}Добавить достижение{% endblock %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Добавить достижение - Мои достижения 444</title>
+  <style>
+    /* СБРОС СТИЛЕЙ */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-{% block content %}
-<div class="auth-page">
-  <div class="auth-card">
-    <h2>Добавление достижения{% if target != user %} ученику {{ target.get_full_name }}{% endif %}</h2>
-    <p class="subtitle">Заполните данные о мероприятии</p>
+    html, body {
+      height: 100%;
+      background: white;
+      font-family: "Segoe UI", Roboto, -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+      font-size: 13px;
+      line-height: 1.3;
+      overflow: hidden; /* Убираем прокрутку на всем сайте */
+    }
 
-    <form method="post" enctype="multipart/form-data" class="achievement-form">
-      {% csrf_token %}
-      <div class="form-group">
-        <label for="id_title">Название мероприятия</label>
-        {{ form.title }}
-      </div>
+    /* HEADER */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(90deg, #0077e6 0%, #005bb5 100%);
+      color: #fff;
+      z-index: 1200;
+      box-shadow: 0 3px 8px rgba(3, 36, 74, 0.12);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 12px;
+      width: 100%;
+      height: 55px;
+    }
 
-      <div class="form-group">
-        <label for="id_description">Описание</label>
-        {{ form.description }}
-      </div>
+    .logo a {
+      font-weight: 700;
+      font-size: 1rem;
+      color: #fff;
+      text-decoration: none;
+      white-space: nowrap;
+    }
 
-      <div class="form-row">
-        <div class="form-group" style="flex:1;">
-          <label for="id_result">Результат</label>
-          <select name="result" id="id_result" required>
-            <option value="Победитель">Победитель</option>
-            <option value="Призёр">Призёр</option>
-            <option value="Участник" selected>Участник</option>
-            <option value="Другое">Другое</option>
-          </select>
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      flex: 1;
+    }
+
+    nav a {
+      color: rgba(255, 255, 255, 0.95);
+      text-decoration: none;
+      padding: 5px 7px;
+      border-radius: 5px;
+      font-weight: 600;
+      transition: all 0.22s;
+      font-size: 0.8rem;
+      white-space: nowrap;
+    }
+
+    nav a:hover {
+      background: rgba(255, 255, 255, 0.08);
+      transform: translateY(-1px);
+    }
+
+    .logout-btn {
+      background: rgba(220, 53, 69, 0.9);
+      color: white;
+      padding: 5px 8px;
+      border-radius: 5px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.75rem;
+      border: none;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.3s ease;
+      margin-left: 5px;
+    }
+
+    .logout-btn:hover {
+      background: #dc3545;
+      transform: translateY(-1px);
+    }
+
+    /* ОСНОВНОЙ КОНТЕНТ */
+    .main-content {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: calc(100vh - 55px);
+      margin-top: 55px;
+      box-sizing: border-box;
+      padding: 15px;
+      background: white;
+      overflow: hidden; /* Убираем прокрутку */
+    }
+
+    /* КОНТЕЙНЕР ФОРМЫ */
+    .form-container {
+      display: grid;
+      grid-template-columns: 0.5fr 1.5fr;
+      gap: 20px;
+      max-width: 800px;
+      width: 100%;
+      animation: fadeIn 0.5s ease;
+      align-self: center;
+      overflow: hidden; /* Убираем прокрутку */
+    }
+
+    /* Левый блок */
+    .form-info-card {
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      border: 1px solid #dee2e6;
+      color: #333;
+      padding: 20px 15px;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 15px;
+      text-align: center;
+      height: auto;
+      overflow: hidden; /* Убираем прокрутку */
+    }
+
+    .form-header h1 {
+      font-size: 1.4rem;
+      margin: 0;
+      font-weight: 800;
+      line-height: 1.2;
+      color: #003366;
+    }
+
+    .form-icon {
+      font-size: 2rem;
+      margin: 8px auto;
+    }
+
+    .form-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #007bff;
+      margin: 0;
+    }
+
+    .brief-description p {
+      font-size: 0.75rem;
+      color: #666;
+      line-height: 1.3;
+      margin: 0;
+    }
+
+    /* Ссылка назад */
+    .form-back {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid #dee2e6;
+    }
+
+    .form-back p {
+      color: #666;
+      font-size: 0.75rem;
+      margin: 0 0 6px 0;
+    }
+
+    .back-link {
+      display: inline-block;
+      background: #6c757d;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.75rem;
+      transition: all 0.3s ease;
+    }
+
+    .back-link:hover {
+      background: #545b62;
+      transform: translateY(-2px);
+    }
+
+    /* Правый блок - Форма */
+    .form-card {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06);
+      border: 1px solid #e9ecef;
+      height: auto;
+      overflow: hidden; /* Убираем прокрутку */
+    }
+
+    .achievement-form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      overflow: hidden; /* Убираем прокрутку */
+    }
+
+    /* Секции формы */
+    .form-section {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      overflow: hidden; /* Убираем прокрутку */
+    }
+
+    .form-section h3 {
+      color: #003366;
+      margin: 0;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    /* Группы формы */
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      overflow: hidden; /* Убираем прокрутку */
+    }
+
+    .form-group label {
+      font-weight: 600;
+      color: #003366;
+      font-size: 0.75rem;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 10px;
+      overflow: hidden; /* Убираем прокрутку */
+    }
+
+    .form-row .form-group {
+      flex: 1;
+    }
+
+    .achievement-form input,
+    .achievement-form textarea,
+    .achievement-form select {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1.5px solid #e8f4ff;
+      border-radius: 6px;
+      background: #f9fcff;
+      font-size: 0.8rem;
+      transition: all 0.3s ease;
+      font-family: inherit;
+    }
+
+    .achievement-form input:focus,
+    .achievement-form textarea:focus,
+    .achievement-form select:focus {
+      border-color: #007bff;
+      box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.1);
+      outline: none;
+      background: white;
+    }
+
+    .achievement-form textarea {
+      min-height: 100px;
+      resize: vertical;
+      overflow: auto; /* Прокрутка только внутри textarea */
+    }
+
+    .error-field {
+      border-color: #dc3545 !important;
+    }
+
+    /* Ошибки */
+    .alert {
+      padding: 8px 10px;
+      border-radius: 6px;
+      margin-bottom: 10px;
+    }
+
+    .alert-error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    .field-errors {
+      margin-top: 2px;
+    }
+
+    .error {
+      color: #dc3545;
+      font-size: 0.65rem;
+      display: block;
+    }
+
+    /* Загрузка файла */
+    .file-input-container {
+      position: relative;
+      overflow: hidden; /* Убираем прокрутку */
+    }
+
+    .file-input {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1.5px solid #e8f4ff;
+      border-radius: 6px;
+      background: #f9fcff;
+      font-size: 0.8rem;
+      cursor: pointer;
+    }
+
+    .file-input::-webkit-file-upload-button {
+      visibility: hidden;
+    }
+
+    .file-input::before {
+      content: '📁 Выбрать файл';
+      display: inline-block;
+      background: #007bff;
+      color: white;
+      padding: 6px 10px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-right: 10px;
+    }
+
+    .file-input:hover::before {
+      background: #0056b3;
+    }
+
+    .file-hint {
+      margin-top: 4px;
+      font-size: 0.65rem;
+      color: #666;
+    }
+
+    /* Кнопки */
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 10px;
+      overflow: hidden; /* Убираем прокрутку */
+    }
+
+    .btn {
+      padding: 10px 16px;
+      border-radius: 7px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.8rem;
+      transition: all 0.22s ease;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      justify-content: center;
+      font-family: inherit;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #007bff, #0047b3);
+      color: white;
+      box-shadow: 0 3px 8px rgba(0, 123, 255, 0.15);
+      border: 1px solid #0056b3;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+    }
+
+    .btn-secondary {
+      background: #f8f9fa;
+      color: #003366;
+      border: 1px solid #dee2e6;
+    }
+
+    .btn-secondary:hover {
+      background: #e9ecef;
+      transform: translateY(-2px);
+    }
+
+    .btn:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Футер формы */
+    .form-footer {
+      text-align: center;
+      margin-top: 10px;
+      color: #666;
+      font-size: 0.7rem;
+    }
+
+    .form-footer a {
+      color: #007bff;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .form-footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* Анимации */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Для очень маленьких экранов */
+    @media (max-width: 768px) {
+      .form-container {
+        grid-template-columns: 1fr;
+        max-width: 95%;
+        gap: 15px;
+      }
+
+      .form-info-card {
+        padding: 15px 12px;
+        display: none;
+      }
+
+      .form-card {
+        padding: 15px;
+      }
+
+      .form-row {
+        flex-direction: column;
+      }
+    }
+
+    /* Стили для ошибок Django */
+    .errorlist {
+      list-style: none;
+      padding: 0;
+      margin: 4px 0 0 0;
+      color: #dc3545;
+      font-size: 0.65rem;
+    }
+
+    .errorlist li {
+      margin-bottom: 2px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Хедер -->
+  <header>
+    <div class="logo">
+      <a href="/">Мои достижения</a>
+    </div>
+
+    <nav>
+      {% if user.is_authenticated %}
+        <a href="{% url 'dashboard' %}">Главная</a>
+        <a href="{% url 'profile' user.username %}">Профиль</a>
+        <a href="{% url 'logout' %}" class="logout-btn">Выйти</a>
+      {% else %}
+        <a href="{% url 'login' %}">Войти</a>
+        <a href="{% url 'register' %}" class="logout-btn">Регистрация</a>
+      {% endif %}
+    </nav>
+  </header>
+
+  <!-- Основной контент -->
+  <div class="main-content">
+    <div class="form-container">
+
+      <!-- Левый блок -->
+      <div class="form-info-card">
+        <div class="form-header">
+          <h1>Добавить достижение</h1>
+          <div class="form-icon">🏆</div>
+          <p class="form-title">Мои достижения 444</p>
         </div>
-        <div class="form-group" style="width:150px;">
-          <label for="id_year">Год</label>
-          <input type="number" name="year" id="id_year" min="2000" max="2100" placeholder="2025" required>
+
+        <div class="brief-description">
+          <p>Заполните информацию о вашем достижении для портфолио</p>
+        </div>
+
+        <div class="form-back">
+          <p>Передумали?</p>
+          <a href="javascript:history.back()" class="back-link">Вернуться назад</a>
         </div>
       </div>
 
-      <div class="form-group">
-        <label for="id_image">Фото / грамота</label>
-        {{ form.image }}
+      <!-- Правый блок - Форма -->
+      <div class="form-card">
+        <form method="post" enctype="multipart/form-data" class="achievement-form" id="achievementForm" novalidate>
+          {% csrf_token %}
+
+          <!-- Заголовок формы -->
+          <div class="form-section">
+            <h3>Добавление достижения{% if target != user %} ученику {{ target.get_full_name }}{% endif %}</h3>
+            <p class="brief-description" style="color: #666; font-size: 0.75rem; margin-bottom: 10px;">
+              Заполните данные о мероприятии
+            </p>
+          </div>
+
+          <!-- Вывод общих ошибок -->
+          {% if form.non_field_errors %}
+            <div class="alert alert-error">
+              {% for error in form.non_field_errors %}
+                {{ error }}
+              {% endfor %}
+            </div>
+          {% endif %}
+
+          <!-- Основная информация -->
+          <div class="form-section">
+            <div class="form-group">
+              <label for="id_title">Название мероприятия *</label>
+              <input type="text" name="title" id="id_title"
+                     value="{{ form.title.value|default:'' }}"
+                     placeholder="Например: Олимпиада по математике" required>
+              {% if form.title.errors %}
+                <div class="field-errors">
+                  {% for error in form.title.errors %}
+                    <span class="error">{{ error }}</span>
+                  {% endfor %}
+                </div>
+              {% endif %}
+            </div>
+
+            <div class="form-group">
+              <label for="id_description">Описание</label>
+              <textarea name="description" id="id_description"
+                        placeholder="Подробное описание достижения">{{ form.description.value|default:'' }}</textarea>
+              {% if form.description.errors %}
+                <div class="field-errors">
+                  {% for error in form.description.errors %}
+                    <span class="error">{{ error }}</span>
+                  {% endfor %}
+                </div>
+              {% endif %}
+            </div>
+          </div>
+
+          <!-- Результат и год -->
+          <div class="form-section">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="id_result">Результат *</label>
+                <select name="result" id="id_result" required>
+                  <option value="Победитель" {% if form.result.value == "Победитель" %}selected{% endif %}>Победитель</option>
+                  <option value="Призёр" {% if form.result.value == "Призёр" %}selected{% endif %}>Призёр</option>
+                  <option value="Участник" {% if not form.result.value or form.result.value == "Участник" %}selected{% endif %}>Участник</option>
+                  <option value="Другое" {% if form.result.value == "Другое" %}selected{% endif %}>Другое</option>
+                </select>
+                {% if form.result.errors %}
+                  <div class="field-errors">
+                    {% for error in form.result.errors %}
+                      <span class="error">{{ error }}</span>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+              </div>
+
+              <div class="form-group">
+                <label for="id_year">Год *</label>
+                <input type="number" name="year" id="id_year"
+                       value="{{ form.year.value|default:2026 }}"
+                       min="2000" max="2100" placeholder="2026" required>
+                {% if form.year.errors %}
+                  <div class="field-errors">
+                    {% for error in form.year.errors %}
+                      <span class="error">{{ error }}</span>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+
+          <!-- Фото / грамота -->
+          <div class="form-section">
+            <div class="form-group">
+              <label for="id_image">Фото / грамота</label>
+              <div class="file-input-container">
+                <input type="file" name="image" id="id_image"
+                       class="file-input" accept="image/*">
+              </div>
+              <div class="file-hint">
+                Можно загрузить фото грамоты, диплома или сертификата (JPG, PNG, до 5MB)
+              </div>
+              {% if form.image.errors %}
+                <div class="field-errors">
+                  {% for error in form.image.errors %}
+                    <span class="error">{{ error }}</span>
+                  {% endfor %}
+                </div>
+              {% endif %}
+            </div>
+          </div>
+
+          <!-- Кнопки отправки -->
+          <div class="form-actions">
+            <button type="button" onclick="window.history.back()" class="btn btn-secondary">
+              Отмена
+            </button>
+            <button type="submit" class="btn btn-primary" id="submitBtn">
+              <span class="btn-text">Добавить достижение</span>
+              <span class="btn-loading" style="display: none;">⏳ Добавляем...</span>
+            </button>
+          </div>
+
+          <div class="form-footer">
+            Есть вопросы? <a href="https://t.me/+JRCNgvvtxdtmMWUy" target="_blank" rel="noopener noreferrer">Написать в поддержку</a>
+          </div>
+        </form>
       </div>
 
-      <div class="form-actions">
-        <a href="javascript:history.back()" class="btn-gray">Отмена</a>
-        <button type="submit" class="btn-blue">Добавить</button>
-      </div>
-    </form>
+    </div>
   </div>
-</div>
 
-<style>
-body { background: linear-gradient(180deg, #eaf4ff 0%, #dbeeff 100%); }
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('achievementForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const yearInput = document.getElementById('id_year');
+    const fileInput = document.getElementById('id_image');
+    const resultSelect = document.getElementById('id_result');
 
-.auth-page { display:flex; justify-content:center; align-items:center; min-height:80vh; }
-.auth-card {
-  background:white;
-  padding:40px 45px;
-  border-radius:20px;
-  box-shadow:0 8px 24px rgba(0,0,0,0.1);
-  width:100%;
-  max-width:700px;
-  animation:fadeIn .5s ease;
-}
-.auth-card h2 { text-align:center; color:#003366; margin-bottom:8px; }
-.subtitle { text-align:center; color:#567; margin-bottom:25px; }
+    // Установка текущего года по умолчанию
+    if (!yearInput.value) {
+      const currentYear = new Date().getFullYear();
+      yearInput.value = currentYear;
+    }
 
-.achievement-form { display:flex; flex-direction:column; gap:18px; }
-.form-row { display:flex; gap:16px; flex-wrap:wrap; }
-.form-group label { color:#01325c; font-weight:600; margin-bottom:6px; display:block; }
-.achievement-form input, .achievement-form textarea, .achievement-form select {
-  width:100%; padding:10px 12px;
-  border-radius:10px; border:1px solid #cde0ff; background:#f9fcff;
-  font-size:15px; transition:.2s ease;
-}
-.achievement-form input:focus, .achievement-form textarea:focus, .achievement-form select:focus {
-  border-color:#007bff; box-shadow:0 0 0 3px rgba(0,123,255,0.15); outline:none;
-}
-.achievement-form textarea { min-height:100px; resize:vertical; }
-.btn-blue {
-  background:linear-gradient(135deg,#007bff,#0047b3);
-  color:white; border:none; padding:10px 16px;
-  font-weight:600; border-radius:10px; cursor:pointer;
-  transition:.3s ease;
-}
-.btn-blue:hover { transform:translateY(-2px); box-shadow:0 8px 18px rgba(0,123,255,0.25); }
-.btn-gray {
-  background:#f2f4f8; color:#002b5c; border:1px solid #d0e0ff;
-  padding:10px 16px; font-weight:600; border-radius:10px; text-decoration:none;
-}
-.form-actions { display:flex; justify-content:flex-end; gap:10px; }
-@keyframes fadeIn { from{opacity:0;transform:translateY(20px);} to{opacity:1;transform:none;} }
-</style>
-{% endblock %}
+    // Обработка загрузки файла
+    if (fileInput) {
+      fileInput.addEventListener('change', function() {
+        if (this.files && this.files[0]) {
+          const fileName = this.files[0].name;
+          const fileSize = this.files[0].size;
+          const maxSize = 5 * 1024 * 1024; // 5MB
+
+          if (fileSize > maxSize) {
+            alert('Файл слишком большой. Максимальный размер: 5MB');
+            this.value = '';
+            return;
+          }
+
+          // Показываем имя файла
+          this.style.color = '#155724';
+          this.style.backgroundColor = '#d4edda';
+          this.setAttribute('data-filename', fileName);
+        }
+      });
+    }
+
+    // Валидация формы перед отправкой
+    form.addEventListener('submit', function(e) {
+      const btnText = submitBtn.querySelector('.btn-text');
+      const btnLoading = submitBtn.querySelector('.btn-loading');
+
+      // Показываем индикатор загрузки
+      btnText.style.display = 'none';
+      btnLoading.style.display = 'inline';
+      submitBtn.disabled = true;
+
+      // Валидация года
+      const year = parseInt(yearInput.value);
+      if (year < 2000 || year > 2100) {
+        e.preventDefault();
+        btnText.style.display = 'inline';
+        btnLoading.style.display = 'none';
+        submitBtn.disabled = false;
+        alert('Пожалуйста, введите год от 2000 до 2100');
+        yearInput.focus();
+        return;
+      }
+
+      // Валидация обязательных полей
+      const requiredFields = [
+        { field: document.getElementById('id_title'), name: 'название мероприятия' },
+        { field: yearInput, name: 'год' }
+      ];
+
+      let isValid = true;
+      let firstErrorField = null;
+
+      requiredFields.forEach(({ field, name }) => {
+        if (!field.value.trim()) {
+          isValid = false;
+          field.classList.add('error-field');
+          if (!firstErrorField) firstErrorField = field;
+
+          // Создаем сообщение об ошибке
+          const errorDiv = field.nextElementSibling;
+          if (!errorDiv || !errorDiv.classList.contains('field-errors')) {
+            const errorContainer = document.createElement('div');
+            errorContainer.className = 'field-errors';
+            const errorSpan = document.createElement('span');
+            errorSpan.className = 'error';
+            errorSpan.textContent = `Пожалуйста, заполните поле "${name}"`;
+            errorContainer.appendChild(errorSpan);
+            field.parentNode.insertBefore(errorContainer, field.nextSibling);
+          }
+        } else {
+          field.classList.remove('error-field');
+          // Удаляем сообщение об ошибке
+          const errorDiv = field.nextElementSibling;
+          if (errorDiv && errorDiv.classList.contains('field-errors')) {
+            errorDiv.remove();
+          }
+        }
+      });
+
+      if (!isValid) {
+        e.preventDefault();
+        btnText.style.display = 'inline';
+        btnLoading.style.display = 'none';
+        submitBtn.disabled = false;
+
+        if (firstErrorField) {
+          firstErrorField.focus();
+        }
+      }
+    });
+
+    // Автофокус на поле названия
+    const titleInput = document.getElementById('id_title');
+    if (titleInput) {
+      titleInput.focus();
+    }
+
+    // Убираем класс ошибки при вводе
+    const inputs = form.querySelectorAll('input, textarea, select');
+    inputs.forEach(input => {
+      input.addEventListener('input', function() {
+        this.classList.remove('error-field');
+        // Удаляем сообщение об ошибке при вводе
+        const errorDiv = this.nextElementSibling;
+        if (errorDiv && errorDiv.classList.contains('field-errors')) {
+          errorDiv.remove();
+        }
+      });
+    });
+
+    // Поддержка клавиши Enter
+    form.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA' && e.target.type !== 'file') {
+        e.preventDefault();
+        form.submit();
+      }
+    });
+
+    // Предотвращаем прокрутку колесиком мыши только на пустых областях
+    document.addEventListener('wheel', function(e) {
+      // Проверяем, находится ли курсор в textarea или input
+      const target = e.target;
+      const isInputElement = target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.tagName === 'SELECT';
+
+      // Если это не поле ввода и скролл идет по пустой области - предотвращаем
+      if (!isInputElement && !target.closest('textarea')) {
+        e.preventDefault();
+      }
+    }, { passive: false });
+
+    // Предотвращаем прокрутку касанием на мобильных только на пустых областях
+    document.addEventListener('touchmove', function(e) {
+      const target = e.target;
+      const isInputElement = target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.tagName === 'SELECT';
+
+      if (!isInputElement && !target.closest('textarea')) {
+        e.preventDefault();
+      }
+    }, { passive: false });
+
+    // Убираем блокировку клавиши пробела - позволяет ставить пробелы в полях ввода
+    document.addEventListener('keydown', function(e) {
+      // Блокируем только клавиши прокрутки, кроме пробела
+      const scrollKeys = [33, 34, 35, 36, 37, 38, 39, 40]; // Page Up, Page Down, Home, End, стрелки
+
+      if (scrollKeys.includes(e.keyCode)) {
+        // Если это не поле ввода - предотвращаем прокрутку
+        const target = e.target;
+        const isInputElement = target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.tagName === 'SELECT';
+
+        if (!isInputElement && !target.closest('textarea')) {
+          e.preventDefault();
+        }
+      }
+      // Клавиша пробела (32) теперь работает нормально
+    });
+  });
+  </script>
+</body>
+</html>
