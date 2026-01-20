@@ -1,14 +1,14 @@
-from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from accounts import views
-from accounts.admin import my_admin_site  # Импортируем кастомный админ-сайт
 from django.conf.urls import handler404, handler500
+from accounts import views
 
+# ✅ ВАЖНО: Импортируем кастомный админ из accounts - это регистрирует все модели!
+import accounts.admin
 
 urlpatterns = [
-    path('admin/', my_admin_site.urls),  # Используем кастомный админ-сайт
+    path('admin/', accounts.admin.admin.site.urls),  # Используем кастомный админ-сайт
     path('', views.home, name='home'),
     path('accounts/', include('accounts.urls')),
 ]
