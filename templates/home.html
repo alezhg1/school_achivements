@@ -62,19 +62,49 @@
           </div>
         </div>
 
-        <!-- Визуальная часть - ТОЛЬКО картинки -->
+        <!-- Визуальная часть - 6 плавающих картинок -->
         <div style="position: relative; height: 500px;">
-          <!-- Первая картинка (заменяет 🏆 блок) -->
+          <!-- Картинка 1 -->
           <img id="floating-image-1"
                src="{% static 'images/home/hse.svg' %}"
-               alt="Победитель ВСОШ"
-               style="position: absolute; top: 50px; left: 0; width: 120px; height: auto; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3)); animation: floatCard 8s ease-in-out infinite, slideInLeft 0.8s ease 0.5s forwards; opacity: 0; cursor: pointer; z-index: 2;">
+               alt="Высшая проба"
+               class="floating-img"
+               style="position: absolute; top: 50px; left: 0; width: 120px; height: auto; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3)); opacity: 0; cursor: pointer; z-index: 2; transform: translateY(0px);">
 
-          <!-- Вторая картинка (заменяет 🎨 блок) -->
+          <!-- Картинка 2 -->
           <img id="floating-image-2"
                src="{% static 'images/home/vosh.png' %}"
-               alt="Творческий конкурс"
-               style="position: absolute; top: 200px; right: 0; width: 120px; height: auto; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3)); animation: floatCard 8s ease-in-out infinite, slideInRight 0.8s ease 0.7s forwards; animation-delay: 2s; opacity: 0; cursor: pointer; z-index: 2;">
+               alt="Всероссийская олимпиада"
+               class="floating-img"
+               style="position: absolute; top: 200px; right: 0; width: 120px; height: auto; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3)); opacity: 0; cursor: pointer; z-index: 2; transform: translateY(0px);">
+
+          <!-- Картинка 3 -->
+          <img id="floating-image-3"
+               src="{% static 'images/home/hse.svg' %}"
+               alt="Достижение 3"
+               class="floating-img"
+               style="position: absolute; top: 100px; left: 30%; width: 100px; height: auto; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3)); opacity: 0; cursor: pointer; z-index: 2; transform: translateY(0px);">
+
+          <!-- Картинка 4 -->
+          <img id="floating-image-4"
+               src="{% static 'images/home/vosh.png' %}"
+               alt="Достижение 4"
+               class="floating-img"
+               style="position: absolute; top: 300px; right: 30%; width: 110px; height: auto; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3)); opacity: 0; cursor: pointer; z-index: 2; transform: translateY(0px);">
+
+          <!-- Картинка 5 -->
+          <img id="floating-image-5"
+               src="{% static 'images/home/hse.svg' %}"
+               alt="Достижение 5"
+               class="floating-img"
+               style="position: absolute; top: 350px; left: 10%; width: 90px; height: auto; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3)); opacity: 0; cursor: pointer; z-index: 2; transform: translateY(0px);">
+
+          <!-- Картинка 6 -->
+          <img id="floating-image-6"
+               src="{% static 'images/home/vosh.png' %}"
+               alt="Достижение 6"
+               class="floating-img"
+               style="position: absolute; top: 150px; right: 20%; width: 130px; height: auto; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3)); opacity: 0; cursor: pointer; z-index: 2; transform: translateY(0px);">
         </div>
       </div>
     </div>
@@ -89,18 +119,6 @@
   }
   50% {
     transform: translateY(-20px);
-  }
-}
-
-@keyframes floatCard {
-  0%, 100% {
-    transform: translateY(0) rotate(0deg);
-  }
-  33% {
-    transform: translateY(-20px) rotate(2deg);
-  }
-  66% {
-    transform: translateY(10px) rotate(-1deg);
   }
 }
 
@@ -187,7 +205,7 @@
   .hero-section > div > div > div:last-child > img {
     position: relative !important;
     margin: 0 auto 1rem auto !important;
-    width: 100px !important;
+    width: 80px !important;
     left: auto !important;
     right: auto !important;
   }
@@ -197,7 +215,19 @@
   }
 
   #floating-image-2 {
-    top: 150px !important;
+    top: 100px !important;
+  }
+
+  #floating-image-3 {
+    top: 180px !important;
+  }
+
+  #floating-image-4 {
+    top: 260px !important;
+  }
+
+  #floating-image-5, #floating-image-6 {
+    display: none !important; /* Скрываем 5 и 6 картинку на мобильных для лучшего вида */
   }
 }
 
@@ -216,7 +246,7 @@
   }
 
   .hero-section > div > div > div:last-child > img {
-    width: 80px !important;
+    width: 70px !important;
   }
 }
 </style>
@@ -260,42 +290,114 @@ document.addEventListener('DOMContentLoaded', function() {
   // Запускаем анимацию печатной машинки
   setTimeout(typeWriter, 1000);
 
-  // Добавляем обработчики клика для плавающих картинок
-  const floatingImage1 = document.getElementById('floating-image-1');
-  const floatingImage2 = document.getElementById('floating-image-2');
-
-  function makeImageFall(imageElement) {
-    // Сохраняем текущие стили
-    const currentAnimation = imageElement.style.animation;
-
-    // Останавливаем плавающую анимацию
-    imageElement.style.animation = 'none';
-
-    // Запускаем анимацию падения
-    imageElement.style.animation = 'fallDown 1.5s ease-in forwards';
-
-    // Через 1.5 секунды удаляем картинку (больше не возвращаем)
-    setTimeout(() => {
-      imageElement.remove(); // Удаляем элемент полностью
-    }, 1500);
-  }
-
-  // Добавляем обработчики клика
-  if (floatingImage1) {
-    floatingImage1.addEventListener('click', function(e) {
-      if (e.button === 0) { // Левая кнопка мыши
-        makeImageFall(this);
-      }
-    });
-  }
-
-  if (floatingImage2) {
-    floatingImage2.addEventListener('click', function(e) {
-      if (e.button === 0) { // Левая кнопка мыши
-        makeImageFall(this);
-      }
-    });
-  }
+  // Настраиваем плавающие картинки
+  setupFloatingImages();
 });
+
+function setupFloatingImages() {
+  const floatingImages = document.querySelectorAll('.floating-img');
+  const imageAnimations = [
+    { duration: 6000, delay: 0, enterAnimation: 'slideInLeft', enterDelay: 500 },
+    { duration: 7000, delay: 1000, enterAnimation: 'slideInRight', enterDelay: 700 },
+    { duration: 8000, delay: 2000, enterAnimation: 'fadeInUp', enterDelay: 900 },
+    { duration: 5000, delay: 500, enterAnimation: 'fadeInUp', enterDelay: 1100 },
+    { duration: 9000, delay: 1500, enterAnimation: 'fadeInUp', enterDelay: 1300 },
+    { duration: 6500, delay: 2500, enterAnimation: 'fadeInUp', enterDelay: 1500 }
+  ];
+
+  floatingImages.forEach((image, index) => {
+    const animation = imageAnimations[index] || imageAnimations[0];
+
+    // Анимация появления
+    setTimeout(() => {
+      image.style.opacity = '1';
+      image.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+
+      if (animation.enterAnimation === 'slideInLeft') {
+        image.style.transform = 'translateX(0) translateY(0px)';
+      } else if (animation.enterAnimation === 'slideInRight') {
+        image.style.transform = 'translateX(0) translateY(0px)';
+      } else {
+        image.style.transform = 'translateY(0px)';
+      }
+    }, animation.enterDelay);
+
+    // Запускаем плавающую анимацию через JavaScript
+    startFloatingAnimation(image, animation.duration, animation.delay);
+
+    // Добавляем обработчик клика
+    image.addEventListener('click', function(e) {
+      if (e.button === 0) { // Левая кнопка мыши
+        makeImageFall(this);
+      }
+    });
+  });
+}
+
+function startFloatingAnimation(image, duration, delay) {
+  setTimeout(() => {
+    let startTime = null;
+    let isFloating = true;
+
+    function float(timestamp) {
+      if (!startTime) startTime = timestamp;
+      if (!isFloating) return;
+
+      const elapsed = timestamp - startTime;
+      const progress = (elapsed % duration) / duration;
+
+      // Синусоидальное движение вверх-вниз
+      const yOffset = Math.sin(progress * Math.PI * 2) * 15; // ±15px
+
+      // Легкое вращение
+      const rotation = Math.sin(progress * Math.PI * 2) * 2; // ±2 градуса
+
+      // Применяем трансформацию
+      const currentTransform = image.style.transform;
+      const baseTransform = currentTransform.replace(/translateY\([^)]*\)/g, '').replace(/rotate\([^)]*\)/g, '').trim();
+      image.style.transform = `${baseTransform} translateY(${yOffset}px) rotate(${rotation}deg)`;
+
+      if (isFloating) {
+        requestAnimationFrame(float);
+      }
+    }
+
+    // Сохраняем функцию остановки
+    image.stopFloating = function() {
+      isFloating = false;
+    };
+
+    // Запускаем анимацию
+    requestAnimationFrame(float);
+  }, delay);
+}
+
+function makeImageFall(imageElement) {
+  // Останавливаем плавающую анимацию
+  if (imageElement.stopFloating) {
+    imageElement.stopFloating();
+  }
+
+  // Сохраняем текущее положение
+  const rect = imageElement.getBoundingClientRect();
+  imageElement.style.position = 'fixed';
+  imageElement.style.top = rect.top + 'px';
+  imageElement.style.left = rect.left + 'px';
+  imageElement.style.zIndex = '1000';
+  imageElement.style.transition = 'none';
+
+  // Даем время на перерисовку
+  requestAnimationFrame(() => {
+    // Запускаем анимацию падения
+    imageElement.style.transition = 'transform 1.5s ease-in, opacity 1.5s ease-in';
+    imageElement.style.transform = 'translateY(100vh) rotate(360deg)';
+    imageElement.style.opacity = '0';
+
+    // Через 1.5 секунды удаляем картинку
+    setTimeout(() => {
+      imageElement.remove();
+    }, 1500);
+  });
+}
 </script>
 {% endblock %}
