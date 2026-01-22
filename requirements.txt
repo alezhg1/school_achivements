@@ -1,0 +1,4 @@
+Django
+pytelegrambotapi
+Pillow
+telebot
