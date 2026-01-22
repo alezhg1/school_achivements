@@ -2,3 +2,4 @@ Django
 pytelegrambotapi
 Pillow
 telebot
+WhiteNoise==2.0.6
