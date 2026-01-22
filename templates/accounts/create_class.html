@@ -1,851 +1,1073 @@
-{% extends 'base.html' %}
-{% block title %}Создать класс{% endblock %}
-{% block content %}
-<div class="create-class-page">
-  <div class="create-class-container">
-    <!-- Заголовок с анимацией -->
-    <div class="create-class-header">
-      <div class="header-content">
-        <h1 class="page-title">
-          <span class="title-icon">🏫</span>
-          Создание нового класса
-        </h1>
-        <p class="page-subtitle"></p>
-      </div>
-      <div class="header-decoration">
-        <div class="decoration-circle circle-1"></div>
-        <div class="decoration-circle circle-2"></div>
-        <div class="decoration-circle circle-3"></div>
-      </div>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Создать класс — Мои достижения</title>
+  <style>
+    /* СБРОС СТИЛЕЙ */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      background: linear-gradient(135deg, #f8fbff 0%, #e8f4ff 100%);
+      font-family: "Segoe UI", Roboto, -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+      font-size: 13px;
+      line-height: 1.3;
+    }
+
+    /* HEADER */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(90deg, #0077e6 0%, #005bb5 100%);
+      color: #fff;
+      z-index: 1200;
+      box-shadow: 0 3px 8px rgba(3, 36, 74, 0.12);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 12px;
+      width: 100%;
+      height: 55px;
+    }
+
+    .logo a {
+      font-weight: 700;
+      font-size: 1rem;
+      color: #fff;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      flex: 1;
+    }
+
+    nav a {
+      color: rgba(255, 255, 255, 0.95);
+      text-decoration: none;
+      padding: 5px 7px;
+      border-radius: 5px;
+      font-weight: 600;
+      transition: all 0.22s;
+      font-size: 0.8rem;
+      white-space: nowrap;
+    }
+
+    nav a:hover {
+      background: rgba(255, 255, 255, 0.08);
+      transform: translateY(-1px);
+    }
+
+    .logout-btn {
+      background: rgba(220, 53, 69, 0.9);
+      color: white;
+      padding: 5px 8px;
+      border-radius: 5px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.75rem;
+      border: none;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.3s ease;
+      margin-left: 5px;
+    }
+
+    .logout-btn:hover {
+      background: #dc3545;
+      transform: translateY(-1px);
+    }
+
+    /* ОСНОВНОЙ КОНТЕНТ */
+    .main-content {
+      padding-top: 55px;
+      min-height: 100vh;
+      background: transparent;
+    }
+
+    .create-class-page {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 30px 20px 50px;
+      animation: fadeIn 0.6s ease;
+    }
+
+    /* ====== Заголовок и описание ====== */
+    .page-header {
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .page-header h1 {
+      font-size: 1.8rem;
+      color: #002b5c;
+      margin-bottom: 10px;
+      line-height: 1.2;
+      font-weight: 700;
+    }
+
+    .page-header p {
+      color: #5a6b80;
+      font-size: 1rem;
+      max-width: 700px;
+      margin: 0 auto;
+      line-height: 1.4;
+    }
+
+    /* ====== Основной контейнер с двумя колонками ====== */
+    .main-container {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 25px;
+      margin-bottom: 30px;
+    }
+
+    /* ====== Левая колонка - Форма ====== */
+    .left-column {
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+    }
+
+    /* Школа блок */
+    .school-card {
+      background: white;
+      border-radius: 14px;
+      box-shadow: 0 6px 20px rgba(0, 87, 174, 0.12);
+      border: 1px solid #cde0ff;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      transition: all 0.3s ease;
+    }
+
+    .school-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(0, 123, 255, 0.15);
+    }
+
+    .school-icon {
+      background: linear-gradient(135deg, #007bff, #0047b3);
+      color: white;
+      width: 60px;
+      height: 60px;
+      border-radius: 12px;
+      font-size: 1.8rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .school-details h2 {
+      margin: 0 0 6px 0;
+      font-size: 1.2rem;
+      color: #002b5c;
+    }
+
+    .school-details p {
+      margin: 0;
+      color: #5a6b80;
+      font-size: 0.9rem;
+      line-height: 1.4;
+    }
+
+    /* Форма создания класса */
+    .form-card {
+      background: white;
+      border-radius: 14px;
+      box-shadow: 0 6px 20px rgba(0, 87, 174, 0.12);
+      border: 1px solid #cde0ff;
+      padding: 25px;
+      flex: 1;
+    }
+
+    .form-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .form-header-icon {
+      background: linear-gradient(135deg, #28a745, #1e7e34);
+      color: white;
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+    }
+
+    .form-header h2 {
+      color: #002b5c;
+      margin: 0;
+      font-size: 1.3rem;
+    }
+
+    .form-header p {
+      color: #5a6b80;
+      font-size: 0.85rem;
+      margin: 4px 0 0 0;
+    }
+
+    /* Форма */
+    .class-form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .form-group label {
+      font-weight: 600;
+      color: #003366;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .form-group label .label-icon {
+      font-size: 1rem;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1.5px solid #e8f4ff;
+      border-radius: 10px;
+      background: #f9fcff;
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+      font-family: inherit;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      border-color: #007bff;
+      box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+      outline: none;
+      background: white;
+      transform: translateY(-1px);
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
+
+    .form-hint {
+      color: #5a6b80;
+      font-size: 0.8rem;
+      margin-top: 4px;
+      line-height: 1.4;
+    }
+
+    .required-star {
+      color: #dc3545;
+    }
+
+    /* Счетчик символов */
+    .char-counter {
+      text-align: right;
+      font-size: 0.75rem;
+      color: #5a6b80;
+      margin-top: 4px;
+    }
+
+    .char-counter.warning {
+      color: #ff9800;
+    }
+
+    .char-counter.error {
+      color: #dc3545;
+    }
+
+    /* ====== Правая колонка - Преимущества ====== */
+    .right-column {
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+    }
+
+    /* Прогресс создания */
+    .progress-card {
+      background: white;
+      border-radius: 14px;
+      box-shadow: 0 6px 20px rgba(0, 87, 174, 0.12);
+      border: 1px solid #cde0ff;
+      padding: 25px;
+    }
+
+    .progress-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .progress-header-icon {
+      background: linear-gradient(135deg, #ff9800, #f57c00);
+      color: white;
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+    }
+
+    .progress-header h2 {
+      color: #002b5c;
+      margin: 0;
+      font-size: 1.3rem;
+    }
+
+    .progress-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .progress-step {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 15px;
+      background: #f8fbff;
+      border-radius: 10px;
+      border: 1px solid #e8f4ff;
+      transition: all 0.3s ease;
+    }
+
+    .progress-step.active {
+      background: #e8f4ff;
+      border-color: #007bff;
+      transform: translateX(5px);
+    }
+
+    .step-number {
+      background: #dee2e6;
+      color: #6c757d;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+
+    .progress-step.active .step-number {
+      background: #007bff;
+      color: white;
+    }
+
+    .step-content {
+      flex: 1;
+    }
+
+    .step-title {
+      font-weight: 600;
+      color: #002b5c;
+      font-size: 0.9rem;
+      margin-bottom: 3px;
+    }
+
+    .step-desc {
+      color: #5a6b80;
+      font-size: 0.8rem;
+      line-height: 1.3;
+    }
+
+    /* Блок преимуществ */
+    .benefits-card {
+      background: white;
+      border-radius: 14px;
+      box-shadow: 0 6px 20px rgba(0, 87, 174, 0.12);
+      border: 1px solid #cde0ff;
+      padding: 25px;
+      flex: 1;
+    }
+
+    .benefits-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .benefits-header-icon {
+      background: linear-gradient(135deg, #17a2b8, #117a8b);
+      color: white;
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+    }
+
+    .benefits-header h2 {
+      color: #002b5c;
+      margin: 0;
+      font-size: 1.3rem;
+    }
+
+    .benefits-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .benefit-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 15px;
+      background: #f8fbff;
+      border-radius: 10px;
+      border: 1px solid #e8f4ff;
+      transition: all 0.3s ease;
+    }
+
+    .benefit-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 123, 255, 0.1);
+      border-color: #007bff;
+    }
+
+    .benefit-icon {
+      background: linear-gradient(135deg, #007bff, #0047b3);
+      color: white;
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+
+    .benefit-content h3 {
+      color: #002b5c;
+      margin: 0 0 6px 0;
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    .benefit-content p {
+      color: #5a6b80;
+      font-size: 0.8rem;
+      line-height: 1.4;
+      margin: 0;
+    }
+
+    /* ====== Кнопки действий ====== */
+    .action-buttons {
+      display: flex;
+      gap: 15px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      text-decoration: none;
+      padding: 14px 28px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: none;
+      text-align: center;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      flex: 1;
+      min-width: 180px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #28a745, #1e7e34);
+      color: white;
+      box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(40, 167, 69, 0.4);
+    }
+
+    .btn-secondary {
+      background: #f2f4f8;
+      border: 1px solid #d0e0ff;
+      color: #002b5c;
+    }
+
+    .btn-secondary:hover {
+      background: #eef4ff;
+      transform: translateY(-3px);
+      box-shadow: 0 4px 12px rgba(0, 123, 255, 0.1);
+    }
+
+    .btn-icon {
+      font-size: 1.1rem;
+    }
+
+    /* ====== Ошибки ====== */
+    .form-errors {
+      background: #f8d7da;
+      border: 1px solid #f5c6cb;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 20px;
+    }
+
+    .form-errors ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .form-errors li {
+      color: #721c24;
+      font-size: 0.85rem;
+      margin-bottom: 5px;
+      padding-left: 20px;
+      position: relative;
+    }
+
+    .form-errors li:before {
+      content: "⚠️";
+      position: absolute;
+      left: 0;
+      top: 1px;
+    }
+
+    .field-error {
+      color: #dc3545;
+      font-size: 0.8rem;
+      margin-top: 5px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* ====== Анимации ====== */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    /* ====== АДАПТИВНОСТЬ ====== */
+    @media (max-width: 1024px) {
+      .main-container {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+      
+      .left-column, .right-column {
+        gap: 20px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .create-class-page {
+        padding: 20px 15px 40px;
+      }
+
+      .page-header h1 {
+        font-size: 1.5rem;
+      }
+
+      .page-header p {
+        font-size: 0.9rem;
+      }
+
+      .school-card,
+      .form-card,
+      .progress-card,
+      .benefits-card {
+        padding: 20px;
+      }
+
+      .action-buttons {
+        flex-direction: column;
+      }
+
+      .btn {
+        min-width: auto;
+        width: 100%;
+      }
+
+      .form-header,
+      .progress-header,
+      .benefits-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      .form-header-icon,
+      .progress-header-icon,
+      .benefits-header-icon {
+        align-self: flex-start;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .create-class-page {
+        padding: 15px 10px 30px;
+      }
+
+      .page-header h1 {
+        font-size: 1.3rem;
+      }
+
+      .school-card {
+        flex-direction: column;
+        text-align: center;
+        gap: 12px;
+      }
+
+      .benefit-item {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+      }
+
+      .benefit-icon {
+        align-self: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Хедер -->
+  <header>
+    <div class="logo">
+      <a href="/">Мои достижения</a>
     </div>
 
-    <!-- Баннер школы -->
-    <div class="school-banner">
-      <div class="school-avatar">
-        <div class="avatar-icon">🏫</div>
+    <nav>
+      {% if user.is_authenticated %}
+        {% if user.role == 'teacher' or user.is_teacher %}
+          <a href="{% url 'teacher_dashboard' %}" class="{% if request.path == '/teacher/dashboard/' %}active{% endif %}">Главная</a>
+          <a href="{% url 'teacher_classes' %}" class="{% if 'classes' in request.path %}active{% endif %}">Классы</a>
+          <a href="{% url 'profile' user.username %}" class="{% if 'profile' in request.path %}active{% endif %}">Профиль</a>
+          <a href="{% url 'notifications' %}" class="{% if 'notifications' in request.path %}active{% endif %}">Уведомления</a>
+        {% else %}
+          <a href="{% url 'dashboard' %}" class="{% if request.path == '/dashboard/' %}active{% endif %}">Главная</a>
+          <a href="{% url 'dashboard' %}" class="{% if 'classes' in request.path %}active{% endif %}">Мои классы</a>
+          <a href="{% url 'profile' user.username %}" class="{% if 'profile' in request.path %}active{% endif %}">Профиль</a>
+          <a href="{% url 'notifications' %}" class="{% if 'notifications' in request.path %}active{% endif %}">Уведомления</a>
+        {% endif %}
+
+        <div class="user-mini">
+          <span>{{ user.get_full_name|default:user.username }}</span>
+          <a href="{% url 'logout' %}" class="logout-btn">Выйти</a>
+        </div>
+      {% else %}
+        <a href="{% url 'login' %}">Войти</a>
+        <a href="{% url 'register' %}" class="logout-btn">Регистрация</a>
+      {% endif %}
+    </nav>
+  </header>
+
+  <!-- Основной контент -->
+  <div class="main-content">
+    <div class="create-class-page">
+      <!-- Заголовок страницы -->
+      <div class="page-header">
+        <h1>Создание нового класса</h1>
+        <p>Заполните информацию о классе для управления достижениями учеников в ГБОУ 444</p>
       </div>
-      <div class="school-details">
-        <h3>ГБОУ 444</h3>
-        <p>Создавайте классы, приглашайте учеников и отслеживайте их достижения</p>
-      </div>
-    </div>
 
-    <!-- Основная форма -->
-    <div class="create-class-card">
-      <form method="post" class="class-form">
-        {% csrf_token %}
-
-        <!-- Визуальные шаги прогресса -->
-        <div class="form-progress">
-          <div class="progress-steps">
-            <div class="step active" data-step="1">
-              <div class="step-number">1</div>
-              <span class="step-label">Основная информация</span>
-            </div>
-            <div class="step" data-step="2">
-              <div class="step-number">2</div>
-              <span class="step-label">Описание</span>
-            </div>
-            <div class="step" data-step="3">
-              <div class="step-number">3</div>
-              <span class="step-label">Завершение</span>
+      <!-- Основной контейнер с двумя колонками -->
+      <div class="main-container">
+        <!-- Левая колонка -->
+        <div class="left-column">
+          <!-- Школа блок -->
+          <div class="school-card">
+            <div class="school-icon">🏫</div>
+            <div class="school-details">
+              <h2>ГБОУ 444</h2>
+              <p>Создавайте классы, приглашайте учеников и отслеживайте их достижения в реальном времени</p>
             </div>
           </div>
-          <div class="progress-bar">
-            <div class="progress-fill"></div>
+
+          <!-- Форма создания класса -->
+          <div class="form-card">
+            <div class="form-header">
+              <div class="form-header-icon">📝</div>
+              <div>
+                <h2>Информация о классе</h2>
+                <p>Заполните все обязательные поля для создания класса</p>
+              </div>
+            </div>
+
+            {% if form.errors %}
+              <div class="form-errors">
+                <ul>
+                  {% for field, errors in form.errors.items %}
+                    {% for error in errors %}
+                      <li>{{ error }}</li>
+                    {% endfor %}
+                  {% endfor %}
+                </ul>
+              </div>
+            {% endif %}
+
+            <form method="post" class="class-form">
+              {% csrf_token %}
+
+              <!-- Название класса -->
+              <div class="form-group">
+                <label for="id_name">
+                  <span class="label-icon">🏷️</span>
+                  Название класса <span class="required-star">*</span>
+                </label>
+                <input type="text" 
+                       name="name" 
+                       id="id_name" 
+                       value="{{ form.name.value|default:'' }}"
+                       placeholder="Например: 5А Математика" 
+                       required>
+                {% if form.name.errors %}
+                  <div class="field-error">⚠️ {{ form.name.errors.0 }}</div>
+                {% endif %}
+                <div class="form-hint">Используйте понятное название, чтобы ученикам было легко найти ваш класс</div>
+              </div>
+
+              <!-- Класс/группа -->
+              <div class="form-group">
+                <label for="id_grade">
+                  <span class="label-icon">🎒</span>
+                  Класс / Группа <span class="required-star">*</span>
+                </label>
+                <input type="text" 
+                       name="grade" 
+                       id="id_grade" 
+                       value="{{ form.grade.value|default:'' }}"
+                       placeholder="Например: 5А или Группа 1" 
+                       required>
+                {% if form.grade.errors %}
+                  <div class="field-error">⚠️ {{ form.grade.errors.0 }}</div>
+                {% endif %}
+                <div class="form-hint">Укажите номер и букву класса, например: "5А", "10Б" или название группы</div>
+              </div>
+
+              <!-- Описание -->
+              <div class="form-group">
+                <label for="id_description">
+                  <span class="label-icon">📋</span>
+                  Описание класса
+                </label>
+                <textarea name="description" 
+                          id="id_description" 
+                          rows="4"
+                          placeholder="Расскажите о целях и особенностях вашего класса...">{{ form.description.value|default:'' }}</textarea>
+                {% if form.description.errors %}
+                  <div class="field-error">⚠️ {{ form.description.errors.0 }}</div>
+                {% endif %}
+                <div class="form-hint">Это описание будет видно ученикам при присоединении к классу</div>
+                <div class="char-counter" id="charCounter">
+                  <span id="charCount">0</span>/500 символов
+                </div>
+              </div>
+
+              <!-- Кнопки действий -->
+              <div class="action-buttons">
+                <a href="{% url 'teacher_classes' %}" class="btn btn-secondary">
+                  <span class="btn-icon">←</span>
+                  Назад к классам
+                </a>
+                <button type="submit" class="btn btn-primary" id="submitBtn">
+                  <span class="btn-icon">✨</span>
+                  Создать класс
+                </button>
+              </div>
+            </form>
           </div>
         </div>
 
-        <!-- Поля формы с анимациями -->
-        <div class="form-fields">
-          <!-- Название класса -->
-          <div class="form-group animated-field">
-            <label for="id_name" class="form-label">
-              <span class="label-icon">📝</span>
-              Название класса *
-            </label>
-            <div class="input-container">
-              <input type="text" name="name" id="id_name" class="form-input" required placeholder="Например: 5А Математика">
-              <div class="input-focus-line"></div>
+        <!-- Правая колонка -->
+        <div class="right-column">
+          <!-- Прогресс создания -->
+          <div class="progress-card">
+            <div class="progress-header">
+              <div class="progress-header-icon">📊</div>
+              <div>
+                <h2>Прогресс создания</h2>
+                <p>Шаги для успешного создания класса</p>
+              </div>
             </div>
-            <div class="field-hint">Например: "5А Математика" или "10Б Физика"</div>
+
+            <div class="progress-steps">
+              <div class="progress-step active" id="step1">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                  <div class="step-title">Заполнение информации</div>
+                  <div class="step-desc">Введите название класса и описание</div>
+                </div>
+              </div>
+
+              <div class="progress-step" id="step2">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                  <div class="step-title">Кто мы?</div>
+                  <div class="step-desc">Заполните поле класса</div>
+                </div>
+              </div>
+
+              <div class="progress-step" id="step3">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                  <div class="step-title">Настройка класса</div>
+                  <div class="step-desc">Добавьте предметы и настройте параметры</div>
+                </div>
+              </div>
+
+              <div class="progress-step" id="step4">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                  <div class="step-title">Начало работы</div>
+                  <div class="step-desc">Начните добавлять достижения учеников</div>
+                </div>
+              </div>
+            </div>
           </div>
 
-          <!-- Класс -->
-          <div class="form-group animated-field">
-            <label for="id_grade" class="form-label">
-              <span class="label-icon">🎒</span>
-              Класс / Группа *
-            </label>
-            <div class="input-container">
-              <input type="text" name="grade" id="id_grade" class="form-input" required placeholder="Например: 5А или Группа 1">
-              <div class="input-focus-line"></div>
+          <!-- Преимущества -->
+          <div class="benefits-card">
+            <div class="benefits-header">
+              <div class="benefits-header-icon">🏆</div>
+              <div>
+                <h2>Преимущества класса</h2>
+                <p>Что вы получите после создания</p>
+              </div>
             </div>
-            <div class="field-hint">Например: "5А", "10Б" или "Группа 1"</div>
-          </div>
 
-          <!-- Описание -->
-          <div class="form-group animated-field">
-            <label for="id_description" class="form-label">
-              <span class="label-icon">📋</span>
-              Описание класса
-            </label>
-            <div class="input-container">
-              <textarea name="description" id="id_description" class="form-textarea" rows="4" placeholder="Расскажите о целях и особенностях вашего класса"></textarea>
-              <div class="input-focus-line"></div>
-            </div>
-            <div class="field-hint">Расскажите о целях и особенностях вашего класса</div>
-            <div class="char-counter">
-              <span class="current-chars">0</span>/<span class="max-chars">500</span>
-            </div>
-          </div>
-        </div>
+            <div class="benefits-list">
+              <div class="benefit-item">
+                <div class="benefit-icon">📊</div>
+                <div class="benefit-content">
+                  <h3>Статистика успеваемости</h3>
+                  <p>Отслеживайте прогресс каждого ученика в вашем классе в реальном времени</p>
+                </div>
+              </div>
 
-        <!-- Действия формы -->
-        <div class="form-actions">
-          <a href="{% url 'teacher_classes' %}" class="btn btn-secondary">
-            <span class="btn-icon">←</span>
-            Назад к классам
-          </a>
-          <button type="submit" class="btn btn-primary btn-create">
-            <span class="btn-icon">✨</span>
-            Создать класс
-          </button>
-        </div>
+              <div class="benefit-item">
+                <div class="benefit-icon">🏅</div>
+                <div class="benefit-content">
+                  <h3>Управление достижениями</h3>
+                  <p>Добавляйте, редактируйте и удаляйте достижения ваших учеников</p>
+                </div>
+              </div>
 
-        <!-- Подсказки -->
-        <div class="form-tips">
-          <div class="tip-card">
-            <div class="tip-icon">💡</div>
-            <div class="tip-content">
-              <h4>Совет по названию</h4>
-              <p>Используйте понятные названия, чтобы ученикам было легко найти ваш класс</p>
+              <div class="benefit-item">
+                <div class="benefit-icon">🔔</div>
+                <div class="benefit-content">
+                  <h3>Уведомления</h3>
+                  <p>Получайте мгновенные оповещения о новых достижениях учеников</p>
+                </div>
+              </div>
+
+              <div class="benefit-item">
+                <div class="benefit-icon">📱</div>
+                <div class="benefit-content">
+                  <h3>Доступ с любого устройства</h3>
+                  <p>Управляйте классом с компьютера, планшета или телефона</p>
+                </div>
+              </div>
             </div>
           </div>
-          <div class="tip-card">
-            <div class="tip-icon">👥</div>
-            <div class="tip-content">
-              <h4>Приглашение учеников</h4>
-              <p>После создания класса вы сможете пригласить учеников по ссылке</p>
-            </div>
-          </div>
-        </div>
-      </form>
-    </div>
-
-    <!-- Преимущества создания класса -->
-    <div class="benefits-section">
-      <h3 class="benefits-title">Что вы получите после создания класса:</h3>
-      <div class="benefits-grid">
-        <div class="benefit-card">
-          <div class="benefit-icon">📊</div>
-          <h4>Статистика успеваемости</h4>
-          <p>Отслеживайте прогресс каждого ученика в вашем классе</p>
-        </div>
-        <div class="benefit-card">
-          <div class="benefit-icon">🏆</div>
-          <h4>Управление достижениями</h4>
-          <p>Добавляйте и редактируйте достижения ваших учеников</p>
-        </div>
-        <div class="benefit-card">
-          <div class="benefit-icon">🔔</div>
-          <h4>Уведомления</h4>
-          <p>Получайте оповещения о новых достижениях учеников</p>
-        </div>
-        <div class="benefit-card">
-          <div class="benefit-icon">📱</div>
-          <h4>Доступ с любого устройства</h4>
-          <p>Управляйте классом с компьютера, планшета или телефона</p>
         </div>
       </div>
     </div>
   </div>
-</div>
 
-<style>
-.create-class-page {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #f8fbff 0%, #e8f4ff 100%);
-  padding: 40px 20px;
-  animation: fadeIn 0.8s ease;
-}
-
-.create-class-container {
-  max-width: 800px;
-  margin: 0 auto;
-  position: relative;
-}
-
-/* Заголовок */
-.create-class-header {
-  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
-  border-radius: 20px;
-  padding: 40px;
-  color: white;
-  margin-bottom: 30px;
-  position: relative;
-  overflow: hidden;
-  box-shadow: 0 15px 35px rgba(0, 123, 255, 0.2);
-  animation: slideDown 0.6s ease;
-}
-
-.header-content {
-  position: relative;
-  z-index: 2;
-}
-
-.page-title {
-  font-size: 2.5rem;
-  font-weight: 800;
-  margin-bottom: 12px;
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.title-icon {
-  font-size: 2.2rem;
-  animation: bounce 2s infinite;
-}
-
-.page-subtitle {
-  font-size: 1.2rem;
-  opacity: 0.9;
-  margin: 0;
-}
-
-.header-decoration {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  pointer-events: none;
-}
-
-.decoration-circle {
-  position: absolute;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.1);
-  animation: float 6s ease-in-out infinite;
-}
-
-.circle-1 {
-  width: 120px;
-  height: 120px;
-  top: -30px;
-  right: -30px;
-  animation-delay: 0s;
-}
-
-.circle-2 {
-  width: 80px;
-  height: 80px;
-  bottom: -20px;
-  left: 10%;
-  animation-delay: 2s;
-}
-
-.circle-3 {
-  width: 60px;
-  height: 60px;
-  top: 50%;
-  right: 20%;
-  animation-delay: 4s;
-}
-
-/* Баннер школы */
-.school-banner {
-  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
-  border-radius: 20px;
-  padding: 30px;
-  color: white;
-  margin-bottom: 30px;
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  box-shadow: 0 10px 30px rgba(0, 123, 255, 0.2);
-  animation: slideUp 0.6s ease 0.1s both;
-}
-
-.school-avatar {
-  flex-shrink: 0;
-}
-
-.avatar-icon {
-  width: 80px;
-  height: 80px;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 2.5rem;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-}
-
-.school-details h3 {
-  margin: 0 0 8px 0;
-  font-size: 1.8rem;
-}
-
-.school-details p {
-  margin: 0;
-  opacity: 0.9;
-  font-size: 1rem;
-}
-
-/* Карточка формы */
-.create-class-card {
-  background: white;
-  border-radius: 20px;
-  padding: 40px;
-  box-shadow: 0 10px 30px rgba(0, 91, 181, 0.1);
-  border: 1px solid #e8f4ff;
-  margin-bottom: 40px;
-  animation: slideUp 0.6s ease 0.2s both;
-}
-
-/* Прогресс формы */
-.form-progress {
-  margin-bottom: 40px;
-}
-
-.progress-steps {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 15px;
-  position: relative;
-}
-
-.step {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  z-index: 2;
-  transition: all 0.3s ease;
-}
-
-.step-number {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: #f8f9fa;
-  border: 2px solid #e9ecef;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  color: #6c757d;
-  transition: all 0.3s ease;
-}
-
-.step.active .step-number {
-  background: #007bff;
-  border-color: #007bff;
-  color: white;
-  transform: scale(1.1);
-  box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
-}
-
-.step-label {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #6c757d;
-  transition: all 0.3s ease;
-}
-
-.step.active .step-label {
-  color: #007bff;
-}
-
-.progress-bar {
-  height: 4px;
-  background: #e9ecef;
-  border-radius: 2px;
-  position: relative;
-  margin: 0 20px;
-}
-
-.progress-fill {
-  position: absolute;
-  height: 100%;
-  background: linear-gradient(90deg, #007bff, #0056b3);
-  border-radius: 2px;
-  width: 33.33%;
-  transition: all 0.3s ease;
-}
-
-/* Поля формы */
-.form-fields {
-  display: flex;
-  flex-direction: column;
-  gap: 30px;
-}
-
-.form-group {
-  position: relative;
-}
-
-.form-label {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-weight: 700;
-  color: #003366;
-  margin-bottom: 12px;
-  font-size: 1.1rem;
-}
-
-.label-icon {
-  font-size: 1.2rem;
-}
-
-.input-container {
-  position: relative;
-}
-
-.form-input,
-.form-textarea {
-  width: 100%;
-  padding: 16px 20px;
-  border: 2px solid #e8f4ff;
-  border-radius: 12px;
-  background: #f8fbff;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-  resize: vertical;
-  font-family: inherit;
-}
-
-.form-input:focus,
-.form-textarea:focus {
-  outline: none;
-  border-color: #007bff;
-  background: white;
-  box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.1);
-  transform: translateY(-2px);
-}
-
-.input-focus-line {
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  width: 0;
-  height: 2px;
-  background: linear-gradient(90deg, #007bff, #0056b3);
-  transition: all 0.3s ease;
-  transform: translateX(-50%);
-}
-
-.form-input:focus ~ .input-focus-line,
-.form-textarea:focus ~ .input-focus-line {
-  width: 100%;
-}
-
-.field-hint {
-  font-size: 0.85rem;
-  color: #6c757d;
-  margin-top: 8px;
-  opacity: 0;
-  transform: translateY(-10px);
-  transition: all 0.3s ease;
-}
-
-.animated-field:focus-within .field-hint {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.char-counter {
-  text-align: right;
-  font-size: 0.8rem;
-  color: #6c757d;
-  margin-top: 5px;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.form-textarea:focus ~ .char-counter {
-  opacity: 1;
-}
-
-/* Действия формы */
-.form-actions {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 40px;
-  padding-top: 30px;
-  border-top: 1px solid #e8f4ff;
-}
-
-.btn {
-  padding: 14px 28px;
-  border-radius: 12px;
-  text-decoration: none;
-  font-weight: 700;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-  border: none;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.btn-secondary {
-  background: #f8f9fa;
-  color: #003366;
-  border: 2px solid #e9ecef;
-}
-
-.btn-primary {
-  background: linear-gradient(135deg, #007bff, #0056b3);
-  color: white;
-  box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
-}
-
-.btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 123, 255, 0.4);
-}
-
-.btn-create {
-  position: relative;
-  overflow: hidden;
-}
-
-.btn-create::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-  transition: left 0.5s;
-}
-
-.btn-create:hover::before {
-  left: 100%;
-}
-
-/* Подсказки */
-.form-tips {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  margin-top: 40px;
-}
-
-.tip-card {
-  background: #f8fbff;
-  border: 1px solid #e8f4ff;
-  border-radius: 12px;
-  padding: 20px;
-  display: flex;
-  gap: 15px;
-  align-items: flex-start;
-  transition: all 0.3s ease;
-}
-
-.tip-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 5px 15px rgba(0, 123, 255, 0.1);
-}
-
-.tip-icon {
-  font-size: 1.5rem;
-  flex-shrink: 0;
-}
-
-.tip-content h4 {
-  margin: 0 0 8px 0;
-  color: #003366;
-  font-size: 1rem;
-}
-
-.tip-content p {
-  margin: 0;
-  color: #666;
-  font-size: 0.9rem;
-  line-height: 1.4;
-}
-
-/* Преимущества */
-.benefits-section {
-  background: white;
-  border-radius: 20px;
-  padding: 40px;
-  box-shadow: 0 10px 30px rgba(0, 91, 181, 0.1);
-  border: 1px solid #e8f4ff;
-  animation: slideUp 0.6s ease 0.4s both;
-}
-
-.benefits-title {
-  text-align: center;
-  color: #003366;
-  margin-bottom: 40px;
-  font-size: 1.5rem;
-  font-weight: 700;
-}
-
-.benefits-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 25px;
-}
-
-.benefit-card {
-  text-align: center;
-  padding: 25px 20px;
-  border-radius: 15px;
-  background: #f8fbff;
-  border: 1px solid #e8f4ff;
-  transition: all 0.3s ease;
-  animation: fadeIn 0.6s ease;
-}
-
-.benefit-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 25px rgba(0, 123, 255, 0.15);
-  border-color: #007bff;
-}
-
-.benefit-icon {
-  font-size: 2.5rem;
-  margin-bottom: 15px;
-  display: block;
-}
-
-.benefit-card h4 {
-  color: #003366;
-  margin-bottom: 10px;
-  font-size: 1.1rem;
-}
-
-.benefit-card p {
-  color: #666;
-  font-size: 0.9rem;
-  line-height: 1.4;
-  margin: 0;
-}
-
-/* Анимации */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes bounce {
-  0%, 20%, 50%, 80%, 100% {
-    transform: translateY(0);
-  }
-  40% {
-    transform: translateY(-10px);
-  }
-  60% {
-    transform: translateY(-5px);
-  }
-}
-
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-20px);
-  }
-}
-
-/* Адаптивность */
-@media (max-width: 768px) {
-  .create-class-page {
-    padding: 20px 15px;
-  }
-
-  .create-class-header {
-    padding: 30px 25px;
-  }
-
-  .page-title {
-    font-size: 2rem;
-    flex-direction: column;
-    gap: 10px;
-    text-align: center;
-  }
-
-  .school-banner {
-    flex-direction: column;
-    text-align: center;
-    gap: 15px;
-    padding: 25px;
-  }
-
-  .create-class-card {
-    padding: 30px 25px;
-  }
-
-  .form-actions {
-    flex-direction: column;
-    gap: 15px;
-  }
-
-  .form-tips {
-    grid-template-columns: 1fr;
-  }
-
-  .benefits-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .progress-steps {
-    flex-direction: column;
-    gap: 20px;
-    align-items: flex-start;
-  }
-
-  .step {
-    flex-direction: row;
-    gap: 15px;
-  }
-
-  .progress-bar {
-    display: none;
-  }
-}
-
-/* Стили для ошибок формы */
-.form-group .errorlist {
-  list-style: none;
-  padding: 0;
-  margin: 8px 0 0 0;
-}
-
-.form-group .errorlist li {
-  color: #dc3545;
-  font-size: 0.85rem;
-  padding: 8px 12px;
-  background: #f8d7da;
-  border: 1px solid #f5c6cb;
-  border-radius: 6px;
-  animation: shake 0.5s ease;
-}
-
-@keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-5px); }
-  75% { transform: translateX(5px); }
-}
-</style>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  // Анимация прогресса при фокусе на полях
-  const formFields = document.querySelectorAll('.form-input, .form-textarea');
-  const progressFill = document.querySelector('.progress-fill');
-
-  formFields.forEach((field, index) => {
-    field.addEventListener('focus', function() {
-      const step = Math.min(Math.floor((index + 1) / 2) + 1, 3);
-      progressFill.style.width = `${(step / 3) * 100}%`;
-
-      // Активация соответствующего шага
-      document.querySelectorAll('.step').forEach(stepEl => {
-        stepEl.classList.remove('active');
+  <script>
+  document.addEventListener("DOMContentLoaded", function() {
+    // Элементы DOM
+    const descriptionField = document.getElementById('id_description');
+    const charCounter = document.getElementById('charCounter');
+    const charCount = document.getElementById('charCount');
+    const submitBtn = document.getElementById('submitBtn');
+    const form = document.querySelector('.class-form');
+    
+    // Поля формы
+    const nameField = document.getElementById('id_name');
+    const gradeField = document.getElementById('id_grade');
+    
+    // Шаги прогресса
+    const progressSteps = document.querySelectorAll('.progress-step');
+
+    // Подсчет символов в поле описания
+    function updateCharCounter() {
+      if (!descriptionField || !charCount) return;
+      
+      const length = descriptionField.value.length;
+      charCount.textContent = length;
+      
+      // Изменение цвета счетчика
+      charCounter.classList.remove('warning', 'error');
+      if (length > 450 && length <= 500) {
+        charCounter.classList.add('warning');
+      } else if (length > 500) {
+        charCounter.classList.add('error');
+      }
+      
+      // Ограничение символов
+      if (length > 500) {
+        descriptionField.value = descriptionField.value.substring(0, 500);
+        charCount.textContent = 500;
+      }
+    }
+    
+    if (descriptionField) {
+      descriptionField.addEventListener('input', updateCharCounter);
+      updateCharCounter(); // Инициализация
+    }
+
+    // Подсветка заполненных полей и обновление прогресса
+    function updateProgress() {
+      let completedSteps = 0;
+      
+      // Проверка полей
+      if (nameField.value.trim()) completedSteps++;
+      if (gradeField.value.trim()) completedSteps++;
+      if (descriptionField.value.trim()) completedSteps++;
+      
+      // Обновление шагов прогресса
+      progressSteps.forEach((step, index) => {
+        step.classList.remove('active');
+        if (index < completedSteps) {
+          step.classList.add('active');
+        }
       });
-      document.querySelector(`.step[data-step="${step}"]`).classList.add('active');
-    });
-  });
-
-  // Счетчик символов для текстового поля
-  const descriptionField = document.querySelector('#id_description');
-  const charCounter = document.querySelector('.char-counter');
-  const currentChars = charCounter.querySelector('.current-chars');
-
-  if (descriptionField) {
-    descriptionField.addEventListener('input', function() {
-      const length = this.value.length;
-      currentChars.textContent = length;
-
-      if (length > 450) {
-        charCounter.style.color = '#dc3545';
-      } else if (length > 400) {
-        charCounter.style.color = '#fd7e14';
-      } else {
-        charCounter.style.color = '#6c757d';
+    }
+    
+    // Слушатели для полей формы
+    [nameField, gradeField, descriptionField].forEach(field => {
+      if (field) {
+        field.addEventListener('input', updateProgress);
+        field.addEventListener('change', updateProgress);
       }
     });
-  }
+    
+    updateProgress(); // Инициализация прогресса
 
-  // Анимация при наведении на карточки преимуществ
-  const benefitCards = document.querySelectorAll('.benefit-card');
-  benefitCards.forEach((card, index) => {
-    card.style.animationDelay = `${index * 0.1}s`;
-  });
-
-  // Плавное появление элементов при скролле
-  const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -50px 0px'
-  };
-
-  const observer = new IntersectionObserver(function(entries) {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.style.opacity = '1';
-        entry.target.style.transform = 'translateY(0)';
+    // Валидация формы
+    form.addEventListener('submit', function(e) {
+      let isValid = true;
+      const requiredFields = [nameField, gradeField];
+      
+      // Проверка обязательных полей
+      requiredFields.forEach(field => {
+        if (!field.value.trim()) {
+          isValid = false;
+          field.style.borderColor = '#dc3545';
+          field.style.boxShadow = '0 0 0 3px rgba(220, 53, 69, 0.1)';
+          
+          // Анимация ошибки
+          field.style.animation = 'pulse 0.5s';
+          setTimeout(() => {
+            field.style.animation = '';
+          }, 500);
+        } else {
+          field.style.borderColor = '';
+          field.style.boxShadow = '';
+        }
+      });
+      
+      if (!isValid) {
+        e.preventDefault();
+        
+        // Показываем сообщение об ошибке
+        const errorMsg = document.createElement('div');
+        errorMsg.className = 'form-errors';
+        errorMsg.innerHTML = '<ul><li>Пожалуйста, заполните все обязательные поля</li></ul>';
+        
+        const existingError = form.querySelector('.form-errors');
+        if (existingError) {
+          existingError.remove();
+        }
+        
+        form.prepend(errorMsg);
+        
+        // Прокрутка к ошибке
+        errorMsg.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        
+        return false;
       }
+      
+      // Показываем индикатор загрузки
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span class="btn-icon">⏳</span> Создание класса...';
+      
+      return true;
     });
-  }, observerOptions);
 
-  // Наблюдаем за анимированными элементами
-  document.querySelectorAll('.animated-field, .benefit-card').forEach(el => {
-    el.style.opacity = '0';
-    el.style.transform = 'translateY(20px)';
-    el.style.transition = 'all 0.6s ease';
-    observer.observe(el);
-  });
-
-  // Параллакс эффект для декоративных элементов
-  window.addEventListener('scroll', function() {
-    const scrolled = window.pageYOffset;
-    const circles = document.querySelectorAll('.decoration-circle');
-
-    circles.forEach((circle, index) => {
-      const speed = 0.1 + (index * 0.1);
-      const yPos = -(scrolled * speed);
-      circle.style.transform = `translateY(${yPos}px)`;
+    // Анимация при наведении на карточки преимуществ
+    const benefitItems = document.querySelectorAll('.benefit-item');
+    benefitItems.forEach(item => {
+      item.addEventListener('mouseenter', function() {
+        this.style.transform = 'translateY(-3px) scale(1.02)';
+      });
+      
+      item.addEventListener('mouseleave', function() {
+        this.style.transform = '';
+      });
     });
+
+    // Автофокус на первое поле
+    if (nameField) {
+      nameField.focus();
+    }
+
+    // Динамическое обновление прогресса при загрузке
+    setTimeout(updateProgress, 100);
   });
-});
-</script>
-{% endblock %}
+  </script>
+</body>
+</html>
