@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block title %}Главная - Мои достижения{% endblock %}
 {% block content %}
 <div class="home-page" style="margin: 0; padding: 0; width: 100%;">
@@ -61,21 +62,19 @@
           </div>
         </div>
 
-        <!-- Визуальная часть -->
+        <!-- Визуальная часть - ТОЛЬКО картинки -->
         <div style="position: relative; height: 500px;">
-          <div style="position: absolute; top: 50px; left: 0; background: white; padding: 1.5rem; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); max-width: 250px; animation: floatCard 8s ease-in-out infinite, slideInLeft 0.8s ease 0.5s forwards; opacity: 0;">
-            <div style="font-size: 2rem; margin-bottom: 0.5rem;">🏆</div>
-            <h4 style="margin: 0 0 0.5rem 0; color: #003366;">Победитель</h4>
-            <p style="margin: 0 0 0.5rem 0; color: #666; font-size: 0.9rem;">ВСОШ информатика • 2025</p>
-            <span style="background: #007bff; color: white; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.8rem; font-weight: 600;">1 место</span>
-          </div>
+          <!-- Первая картинка (заменяет 🏆 блок) -->
+          <img id="floating-image-1"
+               src="{% static 'images/home/hse.svg' %}"
+               alt="Победитель ВСОШ"
+               style="position: absolute; top: 50px; left: 0; width: 120px; height: auto; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3)); animation: floatCard 8s ease-in-out infinite, slideInLeft 0.8s ease 0.5s forwards; opacity: 0; cursor: pointer; z-index: 2;">
 
-          <div style="position: absolute; top: 200px; right: 0; background: white; padding: 1.5rem; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); max-width: 250px; animation: floatCard 8s ease-in-out infinite, slideInRight 0.8s ease 0.7s forwards; animation-delay: 2s; opacity: 0;">
-            <div style="font-size: 2rem; margin-bottom: 0.5rem;">🎨</div>
-            <h4 style="margin: 0 0 0.5rem 0; color: #003366;">Творческий конкурс</h4>
-            <p style="margin: 0 0 0.5rem 0; color: #666; font-size: 0.9rem;">Рисование • Искусство</p>
-            <span style="background: #007bff; color: white; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.8rem; font-weight: 600;">Призёр</span>
-          </div>
+          <!-- Вторая картинка (заменяет 🎨 блок) -->
+          <img id="floating-image-2"
+               src="{% static 'images/home/vosh.png' %}"
+               alt="Творческий конкурс"
+               style="position: absolute; top: 200px; right: 0; width: 120px; height: auto; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3)); animation: floatCard 8s ease-in-out infinite, slideInRight 0.8s ease 0.7s forwards; animation-delay: 2s; opacity: 0; cursor: pointer; z-index: 2;">
         </div>
       </div>
     </div>
@@ -138,6 +137,17 @@
   }
 }
 
+@keyframes fallDown {
+  0% {
+    opacity: 1;
+    transform: translateY(0) rotate(0deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(100vh) rotate(360deg);
+  }
+}
+
 .hero-section a:hover {
   transform: translateY(-2px);
 }
@@ -174,10 +184,20 @@
     margin-top: 2rem;
   }
 
-  .hero-section > div > div > div:last-child > div {
+  .hero-section > div > div > div:last-child > img {
     position: relative !important;
     margin: 0 auto 1rem auto !important;
-    max-width: 200px !important;
+    width: 100px !important;
+    left: auto !important;
+    right: auto !important;
+  }
+
+  #floating-image-1 {
+    top: 20px !important;
+  }
+
+  #floating-image-2 {
+    top: 150px !important;
   }
 }
 
@@ -194,9 +214,12 @@
   .hero-stats > div {
     min-width: 100px !important;
   }
+
+  .hero-section > div > div > div:last-child > img {
+    width: 80px !important;
+  }
 }
 </style>
-
 <script>
 document.addEventListener('DOMContentLoaded', function() {
   // Анимация печатной машинки
@@ -236,6 +259,43 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Запускаем анимацию печатной машинки
   setTimeout(typeWriter, 1000);
+
+  // Добавляем обработчики клика для плавающих картинок
+  const floatingImage1 = document.getElementById('floating-image-1');
+  const floatingImage2 = document.getElementById('floating-image-2');
+
+  function makeImageFall(imageElement) {
+    // Сохраняем текущие стили
+    const currentAnimation = imageElement.style.animation;
+
+    // Останавливаем плавающую анимацию
+    imageElement.style.animation = 'none';
+
+    // Запускаем анимацию падения
+    imageElement.style.animation = 'fallDown 1.5s ease-in forwards';
+
+    // Через 1.5 секунды удаляем картинку (больше не возвращаем)
+    setTimeout(() => {
+      imageElement.remove(); // Удаляем элемент полностью
+    }, 1500);
+  }
+
+  // Добавляем обработчики клика
+  if (floatingImage1) {
+    floatingImage1.addEventListener('click', function(e) {
+      if (e.button === 0) { // Левая кнопка мыши
+        makeImageFall(this);
+      }
+    });
+  }
+
+  if (floatingImage2) {
+    floatingImage2.addEventListener('click', function(e) {
+      if (e.button === 0) { // Левая кнопка мыши
+        makeImageFall(this);
+      }
+    });
+  }
 });
 </script>
 {% endblock %}
