@@ -463,3 +463,14 @@ def teacher_status_check(request):
     return render(request, 'accounts/teacher_status_check.html', {
         'teacher_status': request.user.teacher_status
     })
+
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def faq(request):
+    """Страница FAQ с часто задаваемыми вопросами"""
+    context = {
+        'page_title': 'FAQ - Часто задаваемые вопросы',
+    }
+    return render(request, 'accounts/faq.html', context)

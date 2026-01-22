@@ -6,6 +6,10 @@ from django.contrib.auth.models import Group, Permission
 
 @admin.register(CustomUser)
 class CustomUserAdmin(UserAdmin):
+    #site_header = "🎓 Мой достижения 444"  # ← Заголовок вверху
+    #site_title = "Admin | Достижения"  # ← Title браузера
+    #index_title = "Добро пожаловать в админ!"
+
     list_display = ('username', 'email', 'first_name', 'last_name', 'role', 'teacher_status', 'is_active')
     list_filter = ('role', 'teacher_status', 'is_active', 'date_joined')
     search_fields = ('username', 'email', 'first_name', 'last_name')

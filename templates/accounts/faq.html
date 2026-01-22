@@ -1,0 +1,751 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}FAQ - Часто задаваемые вопросы{% endblock %}
+
+{% block content %}
+<style>
+    /* Убиваем чёрный фон глобально */
+    * {
+        background-color: unset !important;
+    }
+
+    html {
+        background-color: #f5f7fa !important;
+    }
+
+    body {
+        background-color: #f5f7fa !important;
+        background-image: none !important;
+    }
+
+    #container, #wrapper, main, .main-content, [role="main"] {
+        background-color: #f5f7fa !important;
+        background-image: none !important;
+    }
+
+    /* ===== ОСНОВНОЙ КОНТЕНТ ===== */
+    .faq-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 20px;
+        background-color: #f5f7fa !important;
+    }
+
+    .faq-header {
+        text-align: center;
+        margin-bottom: 40px;
+        background-color: transparent !important;
+    }
+
+    .faq-header h1 {
+        font-size: 2rem;
+        color: #333;
+        margin-bottom: 8px;
+        font-weight: 700;
+    }
+
+    .faq-subtitle {
+        font-size: 0.95rem;
+        color: #666;
+    }
+
+    /* Категории */
+    .faq-categories {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 40px;
+        flex-wrap: wrap;
+        justify-content: center;
+        background-color: transparent !important;
+    }
+
+    .category-btn {
+        padding: 10px 18px;
+        border: 2px solid #e0e0e0;
+        border-radius: 20px;
+        background: #fff !important;
+        cursor: pointer;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+        font-weight: 500;
+        color: #333;
+    }
+
+    .category-btn:hover {
+        border-color: #4361ee;
+        color: #4361ee;
+        background: #f8f9ff !important;
+    }
+
+    .category-btn.active {
+        background: #4361ee !important;
+        color: white;
+        border-color: #4361ee;
+    }
+
+    /* Аккордеон */
+    .faq-accordion {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        margin-bottom: 50px;
+        background-color: transparent !important;
+    }
+
+    .faq-item {
+        border: 1px solid #e5e5e5;
+        border-radius: 10px;
+        overflow: hidden;
+        background: #fff !important;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+        transition: all 0.3s ease;
+    }
+
+    .faq-item:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        border-color: #d0d0d0;
+    }
+
+    .faq-item.hidden {
+        display: none;
+    }
+
+    .faq-question {
+        width: 100%;
+        padding: 20px;
+        background: #fff !important;
+        border: none;
+        text-align: left;
+        font-size: 1.05rem;
+        font-weight: 600;
+        color: #333;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        transition: background 0.3s ease;
+    }
+
+    .faq-question:hover {
+        background: #f9f9f9 !important;
+    }
+
+    .question-icon {
+        font-size: 1.4rem;
+        flex-shrink: 0;
+    }
+
+    .question-text {
+        flex: 1;
+    }
+
+    .toggle-icon {
+        font-size: 1.4rem;
+        font-weight: bold;
+        color: #4361ee;
+        transition: transform 0.3s ease;
+        flex-shrink: 0;
+    }
+
+    .faq-item.active .toggle-icon {
+        transform: rotate(45deg);
+    }
+
+    .faq-answer {
+        max-height: 0;
+        overflow: hidden;
+        background: #f9f9f9 !important;
+        transition: max-height 0.3s ease, padding 0.3s ease;
+    }
+
+    .faq-item.active .faq-answer {
+        max-height: 2000px;
+        padding: 0 20px 20px 20px;
+    }
+
+    .answer-content {
+        color: #555;
+        line-height: 1.8;
+        background-color: transparent !important;
+    }
+
+    .answer-content h5 {
+        margin-top: 15px;
+        margin-bottom: 10px;
+        color: #333;
+        font-size: 1rem;
+        font-weight: 600;
+    }
+
+    .answer-content ul,
+    .answer-content ol {
+        margin: 10px 0;
+        padding-left: 25px;
+        background-color: transparent !important;
+    }
+
+    .answer-content li {
+        margin-bottom: 8px;
+        background-color: transparent !important;
+    }
+
+    .steps-list {
+        list-style: decimal;
+    }
+
+    .achievement-types {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin-top: 15px;
+        background-color: transparent !important;
+    }
+
+    .type-card {
+        padding: 15px;
+        background: #f5f5f5 !important;
+        border-left: 4px solid #4361ee;
+        border-radius: 5px;
+    }
+
+    .type-card h4 {
+        margin-top: 0;
+        margin-bottom: 8px;
+        color: #333;
+        font-size: 0.95rem;
+    }
+
+    .type-card p {
+        margin: 0;
+        font-size: 0.9rem;
+        color: #666;
+    }
+
+    .faq-tip,
+    .faq-warning {
+        padding: 12px 15px;
+        border-radius: 5px;
+        margin-top: 15px;
+        font-size: 0.95rem;
+    }
+
+    .faq-tip {
+        background: #e8f5e9 !important;
+        border-left: 4px solid #10b981;
+        color: #2d5a3d;
+    }
+
+    .faq-warning {
+        background: #fff3cd !important;
+        border-left: 4px solid #ffc107;
+        color: #856404;
+    }
+
+    .faq-warning strong {
+        color: #ff6b6b;
+    }
+
+    /* Contact section */
+    .faq-contact {
+        margin-top: 40px;
+        padding: 35px;
+        background: linear-gradient(135deg, #4361ee 0%, #7209b7 100%) !important;
+        border-radius: 12px;
+        color: white;
+        text-align: center;
+    }
+
+    .faq-contact h3 {
+        margin-top: 0;
+        margin-bottom: 10px;
+        font-size: 1.4rem;
+        font-weight: 600;
+        color: white !important;
+    }
+
+    .faq-contact p {
+        margin-bottom: 25px;
+        font-size: 1rem;
+        color: white !important;
+    }
+
+    .contact-buttons {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        flex-wrap: wrap;
+        background-color: transparent !important;
+    }
+
+    .btn {
+        padding: 12px 24px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: inline-block;
+        font-size: 0.95rem;
+        border: none;
+    }
+
+    .btn-primary {
+        background: white !important;
+        color: #4361ee;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-secondary {
+        background: rgba(255, 255, 255, 0.2) !important;
+        color: white;
+        border: 2px solid white;
+    }
+
+    .btn-secondary:hover {
+        background: white !important;
+        color: #4361ee;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .faq-container {
+            margin: 0;
+            padding: 20px 15px 30px 15px;
+        }
+
+        .faq-header h1 {
+            font-size: 1.6rem;
+        }
+
+        .faq-question {
+            font-size: 1rem;
+            padding: 15px;
+            gap: 12px;
+        }
+
+        .question-icon {
+            font-size: 1.2rem;
+        }
+
+        .toggle-icon {
+            font-size: 1.2rem;
+        }
+
+        .faq-contact {
+            padding: 25px;
+            margin-top: 30px;
+        }
+
+        .faq-contact h3 {
+            font-size: 1.2rem;
+        }
+
+        .contact-buttons {
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .btn {
+            width: 100%;
+        }
+    }
+</style>
+
+<!-- ОСНОВНОЙ КОНТЕНТ FAQ -->
+<div class="faq-container">
+    <!-- Заголовок страницы -->
+    <div class="faq-header">
+        <h1>Часто задаваемые вопросы</h1>
+        <p class="faq-subtitle">Найди ответ на свой вопрос</p>
+    </div>
+
+    <!-- Категории FAQ -->
+    <div class="faq-categories">
+        <button class="category-btn active" data-category="all">Все</button>
+        <button class="category-btn" data-category="achievements">🏆 Достижения</button>
+        <button class="category-btn" data-category="account">👤 Аккаунт</button>
+        <button class="category-btn" data-category="classroom">📚 Классы</button>
+        <button class="category-btn" data-category="technical">🔧 Техническое</button>
+    </div>
+
+    <!-- Аккордеон с вопросами -->
+    <div class="faq-accordion">
+
+        <!-- ========== ДОСТИЖЕНИЯ ========== -->
+        <div class="faq-item" data-category="achievements">
+            <button class="faq-question">
+                <span class="question-icon">🏆</span>
+                <span class="question-text">Как добавить достижение?</span>
+                <span class="toggle-icon">+</span>
+            </button>
+            <div class="faq-answer">
+                <div class="answer-content">
+                    <ol class="steps-list">
+                        <li>
+                            <strong>Перейди в профиль</strong>
+                            <p>Кликни на свой аватар в углу справа вверху</p>
+                        </li>
+                        <li>
+                            <strong>Нажми "Добавить достижение"</strong>
+                            <p>Найди кнопку в разделе "Мои достижения"</p>
+                        </li>
+                        <li>
+                            <strong>Заполни форму</strong>
+                            <p>Введи название достижения, описание, год и тип результата</p>
+                        </li>
+                        <li>
+                            <strong>Загрузи доказательство</strong>
+                            <p>Можешь добавить фото грамоты или сертификата (опционально)</p>
+                        </li>
+                        <li>
+                            <strong>Сохрани</strong>
+                            <p>Кликни кнопку "Сохранить" внизу формы</p>
+                        </li>
+                    </ol>
+                    <div class="faq-tip">
+                        <strong>💡 Совет:</strong> Чем подробнее описание, тем лучше другие ученики поймут твои достижения!
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="faq-item" data-category="achievements">
+            <button class="faq-question">
+                <span class="question-icon">🥇</span>
+                <span class="question-text">В чём разница между "Победитель", "Призёр" и "Участник"?</span>
+                <span class="toggle-icon">+</span>
+            </button>
+            <div class="faq-answer">
+                <div class="answer-content">
+                    <div class="achievement-types">
+                        <div class="type-card">
+                            <h4>🥇 Победитель</h4>
+                            <p>Ты занял 1-е место в соревновании. Это наиболее значимое достижение.</p>
+                        </div>
+                        <div class="type-card">
+                            <h4>🥈 Призёр</h4>
+                            <p>Ты занял 2-3-е место (призовое). Хорошее достижение, но не победа.</p>
+                        </div>
+                        <div class="type-card">
+                            <h4>🎯 Участник</h4>
+                            <p>Ты участвовал в соревновании, но не занял призовое место. Всё равно молодец!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="faq-item" data-category="achievements">
+            <button class="faq-question">
+                <span class="question-icon">📸</span>
+                <span class="question-text">Как загрузить фото грамоты как доказательство?</span>
+                <span class="toggle-icon">+</span>
+            </button>
+            <div class="faq-answer">
+                <div class="answer-content">
+                    <p>При добавлении достижения в форме есть поле <strong>"Загрузить изображение"</strong>.</p>
+                    <ul>
+                        <li>Кликни на это поле</li>
+                        <li>Выбери фото со своего компьютера или телефона</li>
+                        <li>Поддерживаются форматы: JPG, PNG (не более 10 МБ)</li>
+                        <li>Фото будет загружено и видно в профиле</li>
+                    </ul>
+                    <div class="faq-tip">
+                        <strong>💡 Совет:</strong> Убедись, что текст на грамоте хорошо читается. Фото в альбомной ориентации смотрится лучше.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="faq-item" data-category="achievements">
+            <button class="faq-question">
+                <span class="question-icon">✏️</span>
+                <span class="question-text">Как отредактировать достижение?</span>
+                <span class="toggle-icon">+</span>
+            </button>
+            <div class="faq-answer">
+                <div class="answer-content">
+                    <ol class="steps-list">
+                        <li>Перейди в раздел "Мои достижения" в профиле</li>
+                        <li>Найди нужное достижение</li>
+                        <li>Кликни на кнопку "Редактировать" (иконка карандаша)</li>
+                        <li>Внеси изменения в поля</li>
+                        <li>Сохрани изменения</li>
+                    </ol>
+                    <div class="faq-warning">
+                        <strong>⚠️ Внимание:</strong> Если достижение уже одобрено администратором, потребуется новое одобрение после редактирования.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="faq-item" data-category="achievements">
+            <button class="faq-question">
+                <span class="question-icon">🗑️</span>
+                <span class="question-text">Можно ли удалить достижение?</span>
+                <span class="toggle-icon">+</span>
+            </button>
+            <div class="faq-answer">
+                <div class="answer-content">
+                    <p>Да, ты можешь удалить свои достижения.</p>
+                    <ol class="steps-list">
+                        <li>Перейди в "Мои достижения"</li>
+                        <li>Найди нужное достижение</li>
+                        <li>Кликни на кнопку "Удалить" (иконка корзины)</li>
+                        <li>Подтверди удаление</li>
+                    </ol>
+                    <div class="faq-warning">
+                        <strong>⚠️ Важно:</strong> Удаление необратимо! Убедись, что ты точно хочешь удалить это достижение.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== АККАУНТ ========== -->
+        <div class="faq-item" data-category="account">
+            <button class="faq-question">
+                <span class="question-icon">🔑</span>
+                <span class="question-text">Как изменить пароль?</span>
+                <span class="toggle-icon">+</span>
+            </button>
+            <div class="faq-answer">
+                <div class="answer-content">
+                    <ol class="steps-list">
+                        <li>Кликни на свой профиль в углу справа вверху</li>
+                        <li>Выбери "Настройки" или "Параметры аккаунта"</li>
+                        <li>Найди раздел "Безопасность"</li>
+                        <li>Нажми "Изменить пароль"</li>
+                        <li>Введи текущий пароль</li>
+                        <li>Введи новый пароль дважды</li>
+                        <li>Сохрани изменения</li>
+                    </ol>
+                    <div class="faq-tip">
+                        <strong>💡 Совет:</strong> Используй надёжный пароль с буквами, цифрами и спецсимволами (минимум 8 символов).
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="faq-item" data-category="account">
+            <button class="faq-question">
+                <span class="question-icon">👤</span>
+                <span class="question-text">Как заполнить профиль?</span>
+                <span class="toggle-icon">+</span>
+            </button>
+            <div class="faq-answer">
+                <div class="answer-content">
+                    <ol class="steps-list">
+                        <li>Кликни на свой профиль в углу справа вверху</li>
+                        <li>Выбери "Редактировать профиль"</li>
+                        <li>Заполни поля:
+                            <ul style="margin-top: 10px;">
+                                <li><strong>Имя и Фамилия</strong> — твои настоящие данные</li>
+                                <li><strong>Аватар</strong> — фото профиля</li>
+                                <li><strong>О себе</strong> — краткое описание (опционально)</li>
+                                <li><strong>Школа</strong> — выбери из списка</li>
+                                <li><strong>Класс</strong> — номер и букву</li>
+                            </ul>
+                        </li>
+                        <li>Сохрани изменения</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <div class="faq-item" data-category="account">
+            <button class="faq-question">
+                <span class="question-icon">🔐</span>
+                <span class="question-text">Забыл пароль. Что делать?</span>
+                <span class="toggle-icon">+</span>
+            </button>
+            <div class="faq-answer">
+                <div class="answer-content">
+                    <ol class="steps-list">
+                        <li>На странице входа нажми "Забыл пароль?"</li>
+                        <li>Введи свой email</li>
+                        <li>Проверь письмо на почте (может быть в спаме)</li>
+                        <li>Перейди по ссылке из письма</li>
+                        <li>Установи новый пароль</li>
+                        <li>Логинься с новым паролем</li>
+                    </ol>
+                    <div class="faq-tip">
+                        <strong>💡 Совет:</strong> Если письмо не приходит, проверь:
+                        <ul style="margin-top: 8px;">
+                            <li>Правильность введённого email</li>
+                            <li>Папку спама/нежелательной почты</li>
+                            <li>Попробуй сделать запрос заново</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== КЛАССЫ ========== -->
+        <div class="faq-item" data-category="classroom">
+            <button class="faq-question">
+                <span class="question-icon">📚</span>
+                <span class="question-text">Как добавить себя в класс?</span>
+                <span class="toggle-icon">+</span>
+            </button>
+            <div class="faq-answer">
+                <div class="answer-content">
+                    <p>Есть два способа:</p>
+                    <div style="margin-top: 15px;">
+                        <h5>Способ 1: По приглашению учителя</h5>
+                        <ol class="steps-list" style="margin-bottom: 20px;">
+                            <li>Учитель создаёт приглашение и отправляет тебе ссылку</li>
+                            <li>Кликни на ссылку</li>
+                            <li>Подтверди присоединение к классу</li>
+                            <li>Готово! Ты теперь в классе</li>
+                        </ol>
+
+                        <h5>Способ 2: Через код класса</h5>
+                        <ol class="steps-list">
+                            <li>Попроси у учителя код класса</li>
+                            <li>В профиле найди раздел "Мои классы"</li>
+                            <li>Нажми "Присоединиться к классу"</li>
+                            <li>Введи код класса</li>
+                            <li>Нажми "Присоединиться"</li>
+                            <li>Учитель должен одобрить твою заявку</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="faq-item" data-category="classroom">
+            <button class="faq-question">
+                <span class="question-icon">📊</span>
+                <span class="question-text">Как посмотреть достижения класса?</span>
+                <span class="toggle-icon">+</span>
+            </button>
+            <div class="faq-answer">
+                <div class="answer-content">
+                    <ol class="steps-list">
+                        <li>Перейди в раздел "Классы"</li>
+                        <li>Выбери свой класс из списка</li>
+                        <li>Ты увидишь статистику и достижения всего класса</li>
+                        <li>Можешь отфильтровать по ученикам, типам достижений и году</li>
+                    </ol>
+                    <div class="faq-tip">
+                        <strong>💡 Совет:</strong> На странице класса видна общая статистика, топ-ученики по достижениям и тренды.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== ТЕХНИЧЕСКОЕ ========== -->
+        <div class="faq-item" data-category="technical">
+            <button class="faq-question">
+                <span class="question-icon">🐛</span>
+                <span class="question-text">Как сообщить об ошибке?</span>
+                <span class="toggle-icon">+</span>
+            </button>
+            <div class="faq-answer">
+                <div class="answer-content">
+                    <p>Если ты обнаружил ошибку или проблему в приложении:</p>
+                    <ol class="steps-list">
+                        <li>Напиши подробное описание в Telegram чат</li>
+                        <li>Скопируй ссылку страницы, где произошла ошибка</li>
+                        <li>Опиши, что ты делал до ошибки</li>
+                        <li>Команда разработчиков ответит в течение 24 часов</li>
+                    </ol>
+                    <div class="faq-tip">
+                        <strong>💡 Совет:</strong> Чем больше деталей ты дашь, тем быстрее мы сможем решить проблему!
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="faq-item" data-category="technical">
+            <button class="faq-question">
+                <span class="question-icon">⚡</span>
+                <span class="question-text">Сайт работает медленно. Что делать?</span>
+                <span class="toggle-icon">+</span>
+            </button>
+            <div class="faq-answer">
+                <div class="answer-content">
+                    <p>Попробуй эти решения:</p>
+                    <ul style="list-style: disc; margin-left: 20px;">
+                        <li><strong>Очистить кеш браузера</strong> — часто помогает</li>
+                        <li><strong>Перезагрузить страницу</strong> — используй Ctrl+R (Windows) или Cmd+R (Mac)</li>
+                        <li><strong>Отключить расширения браузера</strong> — некоторые замедляют сайты</li>
+                        <li><strong>Проверить интернет</strong> — убедись, что скорость в норме</li>
+                        <li><strong>Попробовать другой браузер</strong> — Chrome, Firefox, Safari</li>
+                    </ul>
+                    <p style="margin-top: 15px;">Если проблема остаётся — напиши в Telegram чат.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="faq-item" data-category="technical">
+            <button class="faq-question">
+                <span class="question-icon">📱</span>
+                <span class="question-text">Работает ли сайт на телефоне?</span>
+                <span class="toggle-icon">+</span>
+            </button>
+            <div class="faq-answer">
+                <div class="answer-content">
+                    <p>Да! Сайт полностью адаптирован для мобильных устройств.</p>
+                    <p><strong>Поддерживаемые браузеры:</strong></p>
+                    <ul style="list-style: disc; margin-left: 20px; margin-top: 10px;">
+                        <li>Chrome (Android, iOS)</li>
+                        <li>Firefox (Android, iOS)</li>
+                        <li>Safari (iOS)</li>
+                        <li>Любой встроенный браузер Android</li>
+                    </ul>
+                    <div class="faq-tip">
+                        <strong>💡 Совет:</strong> Можешь добавить сайт на главный экран телефона, тогда он будет открываться как приложение!
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Кнопка контакта -->
+    <div class="faq-contact">
+        <h3>❓ Остались вопросы?</h3>
+        <p>Напиши в Telegram чат поддержки</p>
+        <div class="contact-buttons">
+            <a href="https://t.me/your_support_chat" class="btn btn-primary" target="_blank">💬 Перейти в Telegram</a>
+            <a href="mailto:admin@school.ru" class="btn btn-secondary">📧 admin@school.ru</a>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // Логика аккордеона
+    document.querySelectorAll('.faq-question').forEach(button => {
+        button.addEventListener('click', function() {
+            const item = this.closest('.faq-item');
+            item.classList.toggle('active');
+        });
+    });
+
+    // Фильтрация по категориям
+    document.querySelectorAll('.category-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+
+            const category = this.dataset.category;
+            const items = document.querySelectorAll('.faq-item');
+
+            items.forEach(item => {
+                if (category === 'all' || item.dataset.category === category) {
+                    item.classList.remove('hidden');
+                } else {
+                    item.classList.add('hidden');
+                }
+            });
+        });
+    });
+</script>
+
+{% endblock %}

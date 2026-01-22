@@ -45,6 +45,8 @@ urlpatterns = [
     # ------------------- Уведомления -------------------
     path('notifications/', views.notifications_view, name='notifications'),
 
+    # ------------------- FAQ -------------------
+    path('faq/', views.faq, name='faq'),
 
     path('check-video/', views.check_video, name='check_video'),
 ]
