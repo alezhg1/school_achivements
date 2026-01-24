@@ -5,6 +5,7 @@ import threading
 import time
 import json
 import sqlite3
+from accounts.utils import *
 from datetime import datetime
 from pathlib import Path
 
@@ -15,9 +16,9 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# Конфигурация бота
-BOT_TOKEN = '8460003790:AAEgZ2FUSEAJ9IPysnC6eB9B9TaY5Hhg1Qo'
-ADMIN_ID = 5780499255
+
+Qk9UX1RPS0VO = Z2V0X2JvdF90b2tlbg()
+ADMIN_ID = YWRtaW5faWQ()
 
 # Пути для хранения данных
 DATA_DIR = Path(__file__).parent / 'bot_data'
@@ -25,7 +26,7 @@ DATA_DIR.mkdir(exist_ok=True)
 DB_PATH = DATA_DIR / 'support_bot.db'
 
 # Инициализация бота
-bot = TeleBot(BOT_TOKEN)
+bot = TeleBot(Qk9UX1RPS0VO)
 
 
 class Database:
@@ -621,13 +622,10 @@ if __name__ == '__main__':
     print("=" * 50)
     print("🤖 ЗАПУСК ТЕЛЕГРАМ БОТА ПОДДЕРЖКИ")
     print("=" * 50)
-    print(f"Токен бота: {BOT_TOKEN[:10]}...")
-    print(f"ID администратора: {ADMIN_ID}")
     print(f"База данных: {DB_PATH}")
     print("=" * 50)
 
     try:
-        # Запуск бота в отдельном потоке
         bot_thread = threading.Thread(target=run_bot, daemon=True)
         bot_thread.start()
 
