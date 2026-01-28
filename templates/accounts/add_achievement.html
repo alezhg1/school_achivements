@@ -104,6 +104,96 @@
       padding: 15px;
       background: white;
       overflow: hidden; /* Убираем прокрутку */
+      position: relative;
+    }
+
+    /* Фоновые картинки по бокам */
+    .side-images-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      pointer-events: none;
+      z-index: 1;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 20px;
+    }
+
+    .left-images {
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+      margin-left: 20px;
+      align-items: flex-start;
+    }
+
+    .right-image {
+      margin-right: 20px;
+      align-items: flex-end;
+    }
+
+    .side-image {
+      position: relative;
+      opacity: 0.15;
+      pointer-events: auto;
+      cursor: pointer;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .side-image:hover {
+      opacity: 0.25;
+      transform: scale(1.05);
+    }
+
+    .side-image img {
+      width: 180px;
+      height: auto;
+      filter: drop-shadow(0 10px 20px rgba(0,0,0,0.2));
+    }
+
+    /* Анимации для картинок */
+    .float-left-1 {
+      animation: floatLeft1 8s ease-in-out infinite;
+    }
+
+    .float-left-2 {
+      animation: floatLeft2 9s ease-in-out infinite;
+      animation-delay: 1s;
+    }
+
+    .float-right-1 {
+      animation: floatRight1 7s ease-in-out infinite;
+      animation-delay: 0.5s;
+    }
+
+    @keyframes floatLeft1 {
+      0%, 100% {
+        transform: translateY(0) translateX(0);
+      }
+      50% {
+        transform: translateY(-20px) translateX(10px);
+      }
+    }
+
+    @keyframes floatLeft2 {
+      0%, 100% {
+        transform: translateY(0) translateX(0);
+      }
+      50% {
+        transform: translateY(15px) translateX(-5px);
+      }
+    }
+
+    @keyframes floatRight1 {
+      0%, 100% {
+        transform: translateY(0) translateX(0);
+      }
+      50% {
+        transform: translateY(-25px) translateX(-15px);
+      }
     }
 
     /* КОНТЕЙНЕР ФОРМЫ */
@@ -116,6 +206,11 @@
       animation: fadeIn 0.5s ease;
       align-self: center;
       overflow: hidden; /* Убираем прокрутку */
+      position: relative;
+      z-index: 2;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0, 91, 181, 0.1);
     }
 
     /* Левый блок */
@@ -196,7 +291,6 @@
       background: white;
       padding: 20px;
       border-radius: 12px;
-      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06);
       border: 1px solid #e9ecef;
       height: auto;
       overflow: hidden; /* Убираем прокрутку */
@@ -424,6 +518,30 @@
     }
 
     /* Для очень маленьких экранов */
+    @media (max-width: 1200px) {
+      .side-image {
+        opacity: 0.1;
+      }
+
+      .side-image img {
+        width: 150px;
+      }
+
+      .left-images {
+        margin-left: -30px;
+      }
+
+      .right-image {
+        margin-right: -30px;
+      }
+    }
+
+    @media (max-width: 992px) {
+      .left-images, .right-image {
+        display: none; /* Скрываем картинки на планшетах и телефонах */
+      }
+    }
+
     @media (max-width: 768px) {
       .form-container {
         grid-template-columns: 1fr;
@@ -493,6 +611,26 @@
 
   <!-- Основной контент -->
   <div class="main-content">
+    <!-- Картинки по бокам -->
+    <div class="side-images-container">
+      <!-- Две картинки слева -->
+      <div class="left-images">
+        <div class="side-image float-left-1" id="leftImage1">
+          <img src="/static/images/add/checkmark.png" alt="Галочка" title="Подтверждение достижения">
+        </div>
+        <div class="side-image float-left-2" id="leftImage2">
+          <img src="/static/images/add/sertificate.png" alt="Сертификат" title="Добавьте сертификат">
+        </div>
+      </div>
+
+      <!-- Одна картинка справа -->
+      <div class="right-image">
+        <div class="side-image float-right-1" id="rightImage1">
+          <img src="/static/images/add/pdf.png" alt="PDF документ" title="Подробное описание">
+        </div>
+      </div>
+    </div>
+
     <div class="form-container">
 
       <!-- Левый блок -->
@@ -764,6 +902,21 @@
         if (errorDiv && errorDiv.classList.contains('field-errors')) {
           errorDiv.remove();
         }
+      });
+    });
+
+    // Обработчики для картинок (без исчезновения)
+    const sideImages = document.querySelectorAll('.side-image');
+    sideImages.forEach(image => {
+      image.addEventListener('click', function() {
+        // Просто добавляем анимацию "прыжка" при клике
+        this.style.transform = 'scale(1.2)';
+        this.style.opacity = '0.3';
+
+        setTimeout(() => {
+          this.style.transform = '';
+          this.style.opacity = '';
+        }, 300);
       });
     });
 

@@ -17,11 +17,12 @@ TEACHER_STATUS_CHOICES = (
 
 
 class CustomUser(AbstractUser):
+    """Расширенная модель пользователя"""
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='student')
     school = models.CharField("Школа", max_length=255, blank=True, default="ГБОУ 444")
     class_number = models.CharField("Класс", max_length=10, blank=True)
     class_letter = models.CharField("Буква", max_length=5, blank=True)
-    teacher_status = models.CharField(  # ДОБАВИТЬ ЭТО ПОЛЕ
+    teacher_status = models.CharField(
         max_length=20,
         choices=TEACHER_STATUS_CHOICES,
         default='pending'
@@ -92,6 +93,17 @@ class Classroom(models.Model):
 
 
 class Achievement(models.Model):
+    """
+        Модель достижения ученика
+
+        Args:
+            student: Владелец достижения
+            title: Название (олимпиада/конкурс)
+            description: Подробное описание
+            result: Победитель/Призёр/Участник
+            year: Год проведения
+            image: Фото грамоты (опционально)
+        """
     RESULT_CHOICES = [
         ('Победитель', 'Победитель'),
         ('Призёр', 'Призёр'),
