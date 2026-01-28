@@ -51,8 +51,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'accounts.middleware.DDoSProtectionMiddleware',  # ваше middleware
-    'accounts.middleware.RateLimitMiddleware',       # ваше middleware
+    'accounts.middleware.DDoSProtectionMiddleware',
+    'accounts.middleware.RateLimitMiddleware',
+    'accounts.media_serve_middleware.MediaServeMiddleware',
 ]
 
 ROOT_URLCONF = 'achievements_site.urls'

@@ -42,7 +42,7 @@
       width: 100%;
     }
 
-    /* HEADER - ПОЛНОСТЬЮ АДАПТИВНЫЙ */
+    /* HEADER - ТОЧНО КАК В notifications.html */
     header {
       position: fixed !important;
       top: 0 !important;
@@ -51,26 +51,20 @@
       background: linear-gradient(90deg, #0077e6 0%, #005bb5 100%) !important;
       color: #fff !important;
       z-index: 1200 !important;
-      box-shadow: 0 4px 12px rgba(3, 36, 74, 0.12) !important;
+      box-shadow: 0 3px 8px rgba(3, 36, 74, 0.12) !important;
       display: flex !important;
       align-items: center !important;
       justify-content: space-between !important;
-      gap: 12px !important;
-      padding: 12px 15px !important;
+      gap: 10px !important;
+      padding: 10px 12px !important;
       width: 100% !important;
-      max-width: 100% !important;
-      height: auto !important;
-      min-height: 60px !important;
+      height: 55px !important;
       box-sizing: border-box !important;
-    }
-
-    .logo {
-      flex-shrink: 0;
     }
 
     .logo a {
       font-weight: 700 !important;
-      font-size: 1.1rem !important;
+      font-size: 1rem !important;
       color: #fff !important;
       text-decoration: none !important;
       white-space: nowrap !important;
@@ -93,11 +87,11 @@
       background: rgba(255, 255, 255, 0.1) !important;
     }
 
-    /* ОСНОВНАЯ НАВИГАЦИЯ */
+    /* ОСНОВНАЯ НАВИГАЦИЯ - КАК В notifications.html */
     nav {
       display: flex !important;
       align-items: center !important;
-      gap: 8px !important;
+      gap: 6px !important;
       flex-wrap: wrap !important;
       justify-content: flex-end !important;
       flex: 1 !important;
@@ -106,11 +100,11 @@
     nav a {
       color: rgba(255, 255, 255, 0.95) !important;
       text-decoration: none !important;
-      padding: 6px 8px !important;
-      border-radius: 6px !important;
+      padding: 5px 7px !important;
+      border-radius: 5px !important;
       font-weight: 600 !important;
       transition: all 0.22s !important;
-      font-size: 0.85rem !important;
+      font-size: 0.8rem !important;
       white-space: nowrap !important;
     }
 
@@ -119,35 +113,35 @@
       transform: translateY(-1px) !important;
     }
 
+    nav a.active {
+      background: rgba(255, 255, 255, 0.15) !important;
+      font-weight: 700 !important;
+    }
+
     .user-mini {
       display: flex !important;
       align-items: center !important;
       gap: 8px !important;
-      margin-left: 8px !important;
-      flex-shrink: 0 !important;
-    }
-
-    .user-mini span {
-      color: rgba(255, 255, 255, 0.95) !important;
+      margin-left: 5px !important;
+      color: white !important;
       font-weight: 600 !important;
-      font-size: 0.85rem !important;
-      white-space: nowrap !important;
+      font-size: 0.8rem !important;
     }
 
-    /* КНОПКА ВЫХОДА */
+    /* КНОПКА ВЫХОДА - КАК В notifications.html */
     .logout-btn {
       background: rgba(220, 53, 69, 0.9) !important;
       color: white !important;
-      padding: 6px 10px !important;
-      border-radius: 6px !important;
+      padding: 5px 8px !important;
+      border-radius: 5px !important;
       text-decoration: none !important;
       font-weight: 600 !important;
-      font-size: 0.8rem !important;
+      font-size: 0.75rem !important;
       border: none !important;
       cursor: pointer !important;
       white-space: nowrap !important;
       transition: all 0.3s ease !important;
-      margin-left: 6px !important;
+      margin-left: 5px !important;
     }
 
     .logout-btn:hover {
@@ -170,9 +164,9 @@
     }
     {% else %}
     .content-wrapper {
-      padding-top: 70px;
+      padding-top: 65px;
       padding-bottom: 60px;
-      min-height: calc(100vh - 130px);
+      min-height: calc(100vh - 125px);
     }
     {% endif %}
 
@@ -226,6 +220,7 @@
     @media (max-width: 1024px) {
       header {
         padding: 10px 12px !important;
+        height: 55px !important;
       }
 
       nav {
@@ -233,7 +228,7 @@
       }
 
       nav a {
-        padding: 5px 6px !important;
+        padding: 5px 7px !important;
         font-size: 0.8rem !important;
       }
 
@@ -309,6 +304,7 @@
         gap: 8px !important;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
         border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+        z-index: 1199 !important;
       }
 
       nav.mobile-open {
@@ -350,21 +346,23 @@
       .logout-btn {
         margin-left: 10px !important;
         padding: 8px 12px !important;
+        font-size: 0.8rem !important;
       }
     }
 
     /* МАЛЕНЬКИЕ СМАРТФОНЫ */
     @media (max-width: 480px) {
       header {
-        padding: 8px 10px !important;
-        min-height: 50px !important;
+        padding: 10px 12px !important;
+        height: auto !important;
+        min-height: 55px !important;
       }
 
       {% if not request.path == '/' %}
       .content-wrapper {
-        padding-top: 60px;
+        padding-top: 65px;
         padding-bottom: 50px;
-        min-height: calc(100vh - 110px);
+        min-height: calc(100vh - 115px);
       }
       {% endif %}
 
@@ -411,6 +409,7 @@
         margin-left: 0 !important;
         width: 100% !important;
         text-align: center !important;
+        padding: 8px 10px !important;
       }
     }
 
@@ -431,17 +430,11 @@
 
       {% if not request.path == '/' %}
       .content-wrapper {
-        padding-top: 55px;
+        padding-top: 65px;
         padding-bottom: 45px;
-        min-height: calc(100vh - 100px);
+        min-height: calc(100vh - 110px);
       }
       {% endif %}
-    }
-
-    /* СТИЛИ ДЛЯ АКТИВНОЙ СТРАНИЦЫ */
-    nav a.active {
-      background: rgba(255, 255, 255, 0.2) !important;
-      font-weight: bold !important;
     }
 
     /* АНИМАЦИИ */
@@ -502,7 +495,6 @@
     </div>
   </main>
 
-
   <script>
     // Мобильное меню
     function toggleMobileMenu() {
@@ -515,6 +507,8 @@
       const nav = document.getElementById('mainNav');
       const menuBtn = document.querySelector('.mobile-menu-btn');
 
+      if (!nav || !menuBtn) return;
+
       if (!nav.contains(event.target) && !menuBtn.contains(event.target)) {
         nav.classList.remove('mobile-open');
       }
@@ -526,7 +520,10 @@
       const navLinks = document.querySelectorAll('nav a');
 
       navLinks.forEach(link => {
-        if (link.getAttribute('href') === currentPath) {
+        const href = link.getAttribute('href');
+        if (href && currentPath.startsWith(href) && href !== '/') {
+          link.classList.add('active');
+        } else if (href === currentPath) {
           link.classList.add('active');
         }
       });
@@ -535,7 +532,8 @@
     // Закрытие меню при изменении размера окна
     window.addEventListener('resize', function() {
       if (window.innerWidth > 768) {
-        document.getElementById('mainNav').classList.remove('mobile-open');
+        const nav = document.getElementById('mainNav');
+        if (nav) nav.classList.remove('mobile-open');
       }
     });
 
