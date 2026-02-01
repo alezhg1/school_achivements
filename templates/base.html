@@ -475,7 +475,6 @@
           <a href="{% url 'dashboard' %}" class="{% if 'classes' in request.path %}active{% endif %}">Мои классы</a>
           <a href="{% url 'profile' user.username %}" class="{% if 'profile' in request.path %}active{% endif %}">Профиль</a>
           <a href="{% url 'notifications' %}" class="{% if 'notifications' in request.path %}active{% endif %}">Уведомления</a>
-          <a href="{% url 'faq' %}" class="nav-link">❓ FAQ</a>
         {% endif %}
 
         <div class="user-mini">
