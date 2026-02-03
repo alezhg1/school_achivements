@@ -1,7 +1,7 @@
 import requests
 import time
 
-TUNA_URL = "https://2m1fvg-5-228-82-228.ru.tuna.am"
+TUNA_URL = "http://twszt2-213-87-90-132.ru.tuna.am"
 
 while True:
     try:
